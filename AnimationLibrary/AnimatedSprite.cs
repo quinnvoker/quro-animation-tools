@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.TextureAtlases;
 
 namespace QURO.AnimationLibrary
 {
     public class AnimatedSprite
     {
-        public TextureAtlas CurrentTextureAtlas { get; set; }
+        public Texture2D SpriteSheet { get; set; }
         private Animation currentAnimation;
         public Animation CurrentAnimation
         {
@@ -18,15 +17,15 @@ namespace QURO.AnimationLibrary
             }
         }
         public int CurrentFrameIndex { get; set; }
-        public TextureRegion2D CurrentFrame => CurrentAnimation.Frames[CurrentFrameIndex];
+        public Rectangle CurrentFrame => CurrentAnimation.Frames[CurrentFrameIndex];
 
         private float timer;
 
         public AnimatedSprite() { }
 
-        public AnimatedSprite(TextureAtlas textureAtlas, Animation startingAnimation)
+        public AnimatedSprite(Texture2D spriteSheet, Animation startingAnimation)
         {
-            CurrentTextureAtlas = textureAtlas;
+            SpriteSheet = spriteSheet;
             CurrentAnimation = startingAnimation;
             timer = CurrentAnimation.Delay;
         }
@@ -65,15 +64,15 @@ namespace QURO.AnimationLibrary
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color tint)
         {
-            spriteBatch.Draw(CurrentTextureAtlas.Texture, position, CurrentFrame.Bounds, tint);
+            spriteBatch.Draw(SpriteSheet, position, CurrentFrame, tint);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteOffset, Color tint)
         {
-            Rectangle sourceRect = CurrentFrame.Bounds;
+            Rectangle sourceRect = CurrentFrame;
             sourceRect.Offset(spriteOffset);
 
-            spriteBatch.Draw(CurrentTextureAtlas.Texture, position, sourceRect, tint);
+            spriteBatch.Draw(SpriteSheet, position, sourceRect, tint);
         }
     }
 }
