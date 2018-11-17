@@ -17,7 +17,7 @@ namespace QURO.AnimationLibrary
             }
         }
         public int CurrentFrameIndex { get; set; }
-        public Rectangle CurrentFrame => CurrentAnimation.Frames[CurrentFrameIndex];
+        public Frame CurrentFrame => CurrentAnimation.Frames[CurrentFrameIndex];
 
         private float timer;
 
@@ -27,13 +27,13 @@ namespace QURO.AnimationLibrary
         {
             SpriteSheet = spriteSheet;
             CurrentAnimation = startingAnimation;
-            timer = CurrentAnimation.Delay;
+            timer = CurrentFrame.Delay;
         }
 
         public void Reset()
         {
             CurrentFrameIndex = 0;
-            timer = CurrentAnimation.Delay;
+            timer = CurrentFrame.Delay;
         }
 
         public void Update(GameTime gameTime)
@@ -53,7 +53,7 @@ namespace QURO.AnimationLibrary
                             CurrentFrameIndex = 0;
                         }
                     }
-                    timer = CurrentAnimation.Delay;
+                    timer = CurrentFrame.Delay;
                 }
                 else
                 {
@@ -64,12 +64,12 @@ namespace QURO.AnimationLibrary
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color tint)
         {
-            spriteBatch.Draw(SpriteSheet, position, CurrentFrame, tint);
+            spriteBatch.Draw(SpriteSheet, position, CurrentFrame.SourceRect, tint);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteOffset, Color tint)
         {
-            Rectangle sourceRect = CurrentFrame;
+            Rectangle sourceRect = CurrentFrame.SourceRect;
             sourceRect.Offset(spriteOffset);
 
             spriteBatch.Draw(SpriteSheet, position, sourceRect, tint);
