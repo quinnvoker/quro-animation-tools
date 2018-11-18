@@ -56,9 +56,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AnimationLibrary\QURO.AnimationLibrary.csproj">
+    <ProjectReference Include="..\QURO.AnimationLibrary\QURO.AnimationLibrary.csproj">
       <Project>{69dadc27-fbeb-4625-9212-6eb5bed5102a}</Project>
       <Name>QURO.AnimationLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QURO\QURO.csproj">
+      <Project>{4581e0c8-b14a-454d-9a7b-52d37535e7e9}</Project>
+      <Name>QURO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

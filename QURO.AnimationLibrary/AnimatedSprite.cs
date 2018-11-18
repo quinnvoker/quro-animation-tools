@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using QURO;
 
 namespace QURO.AnimationLibrary
 {
@@ -13,13 +14,16 @@ namespace QURO.AnimationLibrary
             set
             {
                 currentAnimation = value;
+                finishedPlaying = false;
                 CurrentFrameIndex = 0;
+                timer = CurrentFrame.Delay;
             }
         }
         public int CurrentFrameIndex { get; set; }
         public Frame CurrentFrame => CurrentAnimation.Frames[CurrentFrameIndex];
 
         private float timer;
+        private bool finishedPlaying;
 
         public AnimatedSprite() { }
 
@@ -28,17 +32,19 @@ namespace QURO.AnimationLibrary
             SpriteSheet = spriteSheet;
             CurrentAnimation = startingAnimation;
             timer = CurrentFrame.Delay;
+            finishedPlaying = false;
         }
 
         public void Reset()
         {
             CurrentFrameIndex = 0;
+            finishedPlaying = false;
             timer = CurrentFrame.Delay;
         }
 
         public void Update(GameTime gameTime)
         {
-            if (!CurrentAnimation.IsStillImage)
+            if (!CurrentAnimation.IsStillImage && !finishedPlaying)
             {
                 if (timer <= 0)
                 {
@@ -51,6 +57,10 @@ namespace QURO.AnimationLibrary
                         if (CurrentAnimation.IsLooping)
                         {
                             CurrentFrameIndex = 0;
+                        }
+                        else
+                        {
+                            finishedPlaying = true;
                         }
                     }
                     timer = CurrentFrame.Delay;

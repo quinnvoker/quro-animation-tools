@@ -51,5 +51,11 @@
     <Compile Include="Frame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QURO\QURO.csproj">
+      <Project>{4581e0c8-b14a-454d-9a7b-52d37535e7e9}</Project>
+      <Name>QURO</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

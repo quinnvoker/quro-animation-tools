@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using QURO;
 using QURO.AnimationLibrary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
@@ -26,15 +27,15 @@ namespace AnimationGenerator
 
             Frame[] soloCursor_pulse_frames = new Frame[]
             {
-                new Frame(loadedFrames["soloCursor"], 20f / 60f),
-                new Frame(loadedFrames["soloCursor_pulse"], 20f / 60f),
+                new Frame(loadedFrames["soloCursor"], FrameTime.FramesToSeconds(20)),
+                new Frame(loadedFrames["soloCursor_pulse"], FrameTime.FramesToSeconds(20)),
             };
             output.Add(new Animation("soloCursor_pulse", soloCursor_pulse_frames, true));
 
             Frame[] twinCursor_pulse_frames = new Frame[]
             {
-                new Frame(loadedFrames["twinCursor"], 20f / 60f),
-                new Frame(loadedFrames["twinCursor_pulse"], 20f / 60f),
+                new Frame(loadedFrames["twinCursor"], FrameTime.FramesToSeconds(20)),
+                new Frame(loadedFrames["twinCursor_pulse"], FrameTime.FramesToSeconds(20)),
             };
             output.Add(new Animation("twinCursor_pulse", twinCursor_pulse_frames, true));
 
@@ -73,12 +74,12 @@ namespace AnimationGenerator
 
             Frame[] block_bounce_frames = new Frame[]
             {
-                new Frame(loadedFrames["block0_bounce2"], 1f / 60f),
-                new Frame(loadedFrames["block0"], 1f / 60f),
-                new Frame(loadedFrames["block0_squish"], 1f / 60f),
-                new Frame(loadedFrames["block0"], 1f / 60f),
-                new Frame(loadedFrames["block0_bounce1"], 2f / 60f),
-                new Frame(loadedFrames["block0"], 1f / 60f),
+                new Frame(loadedFrames["block0_bounce2"], FrameTime.FramesToSeconds(1)),
+                new Frame(loadedFrames["block0"], FrameTime.FramesToSeconds(1)),
+                new Frame(loadedFrames["block0_squish"], FrameTime.FramesToSeconds(1)),
+                new Frame(loadedFrames["block0"], FrameTime.FramesToSeconds(1)),
+                new Frame(loadedFrames["block0_bounce1"], FrameTime.FramesToSeconds(2)),
+                new Frame(loadedFrames["block0"], FrameTime.FramesToSeconds(0)),
             };
             output.Add(new Animation("block_bounce", block_bounce_frames, false));
 
