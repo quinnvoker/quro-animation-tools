@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QURO", "QURO\QURO.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteMapEditor", "SpriteMapEditor\SpriteMapEditor.csproj", "{2AF6999F-93F0-4096-9BC1-863CEE5E7791}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimationEditor", "AnimationEditor\AnimationEditor.csproj", "{01280C24-6439-4186-ABA3-5686A2B66C45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2AF6999F-93F0-4096-9BC1-863CEE5E7791}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AF6999F-93F0-4096-9BC1-863CEE5E7791}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AF6999F-93F0-4096-9BC1-863CEE5E7791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01280C24-6439-4186-ABA3-5686A2B66C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01280C24-6439-4186-ABA3-5686A2B66C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01280C24-6439-4186-ABA3-5686A2B66C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01280C24-6439-4186-ABA3-5686A2B66C45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

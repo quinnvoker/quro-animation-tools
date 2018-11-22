@@ -172,6 +172,7 @@ namespace SpriteMapEditor
         private void zoomInButton_Click(object sender, EventArgs e)
         {
             zoomLevel++;
+            zoomLabel.Text = "Zoom: " + zoomLevel + "X";
             spriteSheetViewer.Refresh();
         }
 
@@ -180,6 +181,7 @@ namespace SpriteMapEditor
             if (zoomLevel > 1)
             {
                 zoomLevel--;
+                zoomLabel.Text = "Zoom: " + zoomLevel + "X";
                 spriteSheetViewer.Refresh();
             }
         }

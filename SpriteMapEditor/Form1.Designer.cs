@@ -57,6 +57,7 @@
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
+            this.zoomLabel = new System.Windows.Forms.Label();
             this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.filePanel.SuspendLayout();
             this.spriteListPanel.SuspendLayout();
@@ -318,7 +319,7 @@
             // 
             // fillButton
             // 
-            this.fillButton.Location = new System.Drawing.Point(496, 5);
+            this.fillButton.Location = new System.Drawing.Point(454, 5);
             this.fillButton.Name = "fillButton";
             this.fillButton.Size = new System.Drawing.Size(86, 23);
             this.fillButton.TabIndex = 12;
@@ -350,13 +351,22 @@
             // 
             // zoomOutButton
             // 
-            this.zoomOutButton.Location = new System.Drawing.Point(618, 5);
+            this.zoomOutButton.Location = new System.Drawing.Point(559, 5);
             this.zoomOutButton.Name = "zoomOutButton";
             this.zoomOutButton.Size = new System.Drawing.Size(28, 23);
             this.zoomOutButton.TabIndex = 6;
             this.zoomOutButton.Text = "-";
             this.zoomOutButton.UseVisualStyleBackColor = true;
             this.zoomOutButton.Click += new System.EventHandler(this.zoomOutButton_Click);
+            // 
+            // zoomLabel
+            // 
+            this.zoomLabel.AutoSize = true;
+            this.zoomLabel.Location = new System.Drawing.Point(593, 10);
+            this.zoomLabel.Name = "zoomLabel";
+            this.zoomLabel.Size = new System.Drawing.Size(53, 13);
+            this.zoomLabel.TabIndex = 15;
+            this.zoomLabel.Text = "Zoom: 3X";
             // 
             // spriteSheetViewer
             // 
@@ -381,6 +391,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(691, 465);
+            this.Controls.Add(this.zoomLabel);
             this.Controls.Add(this.zoomInButton);
             this.Controls.Add(this.spriteViewerPanel);
             this.Controls.Add(this.zoomOutButton);
@@ -389,7 +400,7 @@
             this.Controls.Add(this.spriteListPanel);
             this.Controls.Add(this.filePanel);
             this.Name = "Form1";
-            this.Text = "Sprite Map Editor";
+            this.Text = "QUROGames Sprite Map Editor";
             this.filePanel.ResumeLayout(false);
             this.spriteListPanel.ResumeLayout(false);
             this.spriteListPanel.PerformLayout();
@@ -437,6 +448,7 @@
         private System.Windows.Forms.NumericUpDown spriteWidthBox;
         private System.Windows.Forms.NumericUpDown spriteYPosBox;
         private System.Windows.Forms.NumericUpDown spriteXPosBox;
+        private System.Windows.Forms.Label zoomLabel;
     }
 }
 
