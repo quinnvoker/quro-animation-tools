@@ -59,6 +59,7 @@
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
             this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
+            this.rearrangeCheckBox = new System.Windows.Forms.CheckBox();
             this.filePanel.SuspendLayout();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
@@ -72,15 +73,19 @@
             // 
             // spriteList
             // 
+            this.spriteList.AllowDrop = true;
             this.spriteList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spriteList.FormattingEnabled = true;
             this.spriteList.Location = new System.Drawing.Point(3, 32);
             this.spriteList.Name = "spriteList";
-            this.spriteList.Size = new System.Drawing.Size(185, 251);
+            this.spriteList.Size = new System.Drawing.Size(185, 225);
             this.spriteList.TabIndex = 0;
             this.spriteList.SelectedValueChanged += new System.EventHandler(this.spriteList_SelectedValueChanged);
+            this.spriteList.DragDrop += new System.Windows.Forms.DragEventHandler(this.spriteList_DragDrop);
+            this.spriteList.DragOver += new System.Windows.Forms.DragEventHandler(this.spriteList_DragOver);
+            this.spriteList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteList_MouseDown);
             // 
             // addSpriteButton
             // 
@@ -149,13 +154,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spriteListPanel.AutoSize = true;
             this.spriteListPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.spriteListPanel.Controls.Add(this.rearrangeCheckBox);
             this.spriteListPanel.Controls.Add(this.spritesLabel);
             this.spriteListPanel.Controls.Add(this.spriteList);
             this.spriteListPanel.Controls.Add(this.addSpriteButton);
             this.spriteListPanel.Controls.Add(this.removeSpriteButton);
             this.spriteListPanel.Location = new System.Drawing.Point(2, 63);
             this.spriteListPanel.Name = "spriteListPanel";
-            this.spriteListPanel.Size = new System.Drawing.Size(191, 286);
+            this.spriteListPanel.Size = new System.Drawing.Size(224, 286);
             this.spriteListPanel.TabIndex = 8;
             // 
             // spritesLabel
@@ -385,6 +391,18 @@
             this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
             this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
             // 
+            // rearrangeCheckBox
+            // 
+            this.rearrangeCheckBox.AutoSize = true;
+            this.rearrangeCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.rearrangeCheckBox.Location = new System.Drawing.Point(82, 263);
+            this.rearrangeCheckBox.Name = "rearrangeCheckBox";
+            this.rearrangeCheckBox.Size = new System.Drawing.Size(106, 17);
+            this.rearrangeCheckBox.TabIndex = 5;
+            this.rearrangeCheckBox.Text = "Rearrange Mode";
+            this.rearrangeCheckBox.UseVisualStyleBackColor = true;
+            this.rearrangeCheckBox.CheckedChanged += new System.EventHandler(this.rearrangeCheckBox_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -449,6 +467,7 @@
         private System.Windows.Forms.NumericUpDown spriteYPosBox;
         private System.Windows.Forms.NumericUpDown spriteXPosBox;
         private System.Windows.Forms.Label zoomLabel;
+        private System.Windows.Forms.CheckBox rearrangeCheckBox;
     }
 }
 

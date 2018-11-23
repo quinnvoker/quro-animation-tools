@@ -23,6 +23,7 @@ namespace SpriteMapEditor
 
         private bool loadingSprite = false;
         private bool movingWithMouse = false;
+        private bool rearrangingSprites = false;
 
         private Point newPosition;
         private Point oldPosition;
@@ -50,15 +51,11 @@ namespace SpriteMapEditor
 
             currentSprite = sprites[0];
 
-            Console.WriteLine(currentSprite.Bounds);
-
             spriteList.DataSource = sprites;
             spriteList.DisplayMember = "Name";
             spriteList.ValueMember = "Bounds";
 
             LoadSpriteEditorValues();
-
-            Console.WriteLine(currentSprite.Bounds);
         }
 
         private void loadSpriteSheetButton_Click(object sender, EventArgs e)
@@ -338,6 +335,38 @@ namespace SpriteMapEditor
         private void spriteSheetViewer_MouseUp(object sender, MouseEventArgs e)
         {
             movingWithMouse = false;
+        }
+
+        private void spriteList_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (rearrangingSprites)
+            {
+                if (spriteList.SelectedItem == null)
+                    return;
+                spriteList.DoDragDrop(spriteList.SelectedItem, DragDropEffects.Move);
+            }
+        }
+
+        private void spriteList_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void spriteList_DragDrop(object sender, DragEventArgs e)
+        {
+            Point point = spriteList.PointToClient(new Point(e.X, e.Y));
+            int index = spriteList.IndexFromPoint(point);
+            if (index < 0)
+                index = spriteList.Items.Count - 1;
+            Sprite data = (Sprite)spriteList.SelectedItem;
+            sprites.Remove(data);
+            sprites.Insert(index, data);
+        }
+
+        private void rearrangeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            rearrangingSprites = rearrangeCheckBox.Checked;
+            spriteList.AllowDrop = rearrangeCheckBox.Checked;
         }
     }
 }
