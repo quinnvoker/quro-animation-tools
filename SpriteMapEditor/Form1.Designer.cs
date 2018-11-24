@@ -39,6 +39,10 @@
             this.spriteListPanel = new System.Windows.Forms.Panel();
             this.spritesLabel = new System.Windows.Forms.Label();
             this.spritePanel = new System.Windows.Forms.Panel();
+            this.originYPosBox = new System.Windows.Forms.NumericUpDown();
+            this.originXPosBox = new System.Windows.Forms.NumericUpDown();
+            this.originYPosLabel = new System.Windows.Forms.Label();
+            this.originXPosLabel = new System.Windows.Forms.Label();
             this.spriteHeightBox = new System.Windows.Forms.NumericUpDown();
             this.spriteWidthBox = new System.Windows.Forms.NumericUpDown();
             this.spriteYPosBox = new System.Windows.Forms.NumericUpDown();
@@ -55,14 +59,17 @@
             this.saveMapDialogue = new System.Windows.Forms.SaveFileDialog();
             this.fillButton = new System.Windows.Forms.Button();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
+            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
-            this.rearrangeCheckBox = new System.Windows.Forms.CheckBox();
+            this.moveDownButton = new System.Windows.Forms.Button();
+            this.moveUpButton = new System.Windows.Forms.Button();
             this.filePanel.SuspendLayout();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteWidthBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
@@ -74,18 +81,12 @@
             // spriteList
             // 
             this.spriteList.AllowDrop = true;
-            this.spriteList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.spriteList.FormattingEnabled = true;
             this.spriteList.Location = new System.Drawing.Point(3, 32);
             this.spriteList.Name = "spriteList";
-            this.spriteList.Size = new System.Drawing.Size(185, 225);
+            this.spriteList.Size = new System.Drawing.Size(183, 199);
             this.spriteList.TabIndex = 0;
             this.spriteList.SelectedValueChanged += new System.EventHandler(this.spriteList_SelectedValueChanged);
-            this.spriteList.DragDrop += new System.Windows.Forms.DragEventHandler(this.spriteList_DragDrop);
-            this.spriteList.DragOver += new System.Windows.Forms.DragEventHandler(this.spriteList_DragOver);
-            this.spriteList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteList_MouseDown);
             // 
             // addSpriteButton
             // 
@@ -144,7 +145,7 @@
             this.filePanel.Controls.Add(this.loadMapButton);
             this.filePanel.Location = new System.Drawing.Point(2, 2);
             this.filePanel.Name = "filePanel";
-            this.filePanel.Size = new System.Drawing.Size(191, 62);
+            this.filePanel.Size = new System.Drawing.Size(190, 62);
             this.filePanel.TabIndex = 7;
             // 
             // spriteListPanel
@@ -152,16 +153,16 @@
             this.spriteListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.spriteListPanel.AutoSize = true;
             this.spriteListPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.spriteListPanel.Controls.Add(this.rearrangeCheckBox);
+            this.spriteListPanel.Controls.Add(this.moveDownButton);
+            this.spriteListPanel.Controls.Add(this.moveUpButton);
             this.spriteListPanel.Controls.Add(this.spritesLabel);
             this.spriteListPanel.Controls.Add(this.spriteList);
             this.spriteListPanel.Controls.Add(this.addSpriteButton);
             this.spriteListPanel.Controls.Add(this.removeSpriteButton);
             this.spriteListPanel.Location = new System.Drawing.Point(2, 63);
             this.spriteListPanel.Name = "spriteListPanel";
-            this.spriteListPanel.Size = new System.Drawing.Size(224, 286);
+            this.spriteListPanel.Size = new System.Drawing.Size(190, 254);
             this.spriteListPanel.TabIndex = 8;
             // 
             // spritesLabel
@@ -177,6 +178,10 @@
             // spritePanel
             // 
             this.spritePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spritePanel.Controls.Add(this.originYPosBox);
+            this.spritePanel.Controls.Add(this.originXPosBox);
+            this.spritePanel.Controls.Add(this.originYPosLabel);
+            this.spritePanel.Controls.Add(this.originXPosLabel);
             this.spritePanel.Controls.Add(this.spriteHeightBox);
             this.spritePanel.Controls.Add(this.spriteWidthBox);
             this.spritePanel.Controls.Add(this.spriteYPosBox);
@@ -188,10 +193,58 @@
             this.spritePanel.Controls.Add(this.label2);
             this.spritePanel.Controls.Add(this.spriteSettingsLabel);
             this.spritePanel.Controls.Add(this.spriteNameBox);
-            this.spritePanel.Location = new System.Drawing.Point(2, 353);
+            this.spritePanel.Location = new System.Drawing.Point(2, 323);
             this.spritePanel.Name = "spritePanel";
-            this.spritePanel.Size = new System.Drawing.Size(191, 110);
+            this.spritePanel.Size = new System.Drawing.Size(190, 140);
             this.spritePanel.TabIndex = 9;
+            // 
+            // originYPosBox
+            // 
+            this.originYPosBox.Enabled = false;
+            this.originYPosBox.Location = new System.Drawing.Point(143, 108);
+            this.originYPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.originYPosBox.Name = "originYPosBox";
+            this.originYPosBox.Size = new System.Drawing.Size(45, 20);
+            this.originYPosBox.TabIndex = 22;
+            this.originYPosBox.ValueChanged += new System.EventHandler(this.originYPosBox_ValueChanged);
+            // 
+            // originXPosBox
+            // 
+            this.originXPosBox.Enabled = false;
+            this.originXPosBox.Location = new System.Drawing.Point(51, 108);
+            this.originXPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.originXPosBox.Name = "originXPosBox";
+            this.originXPosBox.Size = new System.Drawing.Size(45, 20);
+            this.originXPosBox.TabIndex = 21;
+            this.originXPosBox.ValueChanged += new System.EventHandler(this.originXPosBox_ValueChanged);
+            // 
+            // originYPosLabel
+            // 
+            this.originYPosLabel.AutoSize = true;
+            this.originYPosLabel.Enabled = false;
+            this.originYPosLabel.Location = new System.Drawing.Point(98, 111);
+            this.originYPosLabel.Name = "originYPosLabel";
+            this.originYPosLabel.Size = new System.Drawing.Size(44, 13);
+            this.originYPosLabel.TabIndex = 20;
+            this.originYPosLabel.Text = "Origin Y";
+            // 
+            // originXPosLabel
+            // 
+            this.originXPosLabel.AutoSize = true;
+            this.originXPosLabel.Enabled = false;
+            this.originXPosLabel.Location = new System.Drawing.Point(6, 111);
+            this.originXPosLabel.Name = "originXPosLabel";
+            this.originXPosLabel.Size = new System.Drawing.Size(44, 13);
+            this.originXPosLabel.TabIndex = 19;
+            this.originXPosLabel.Text = "Origin X";
             // 
             // spriteHeightBox
             // 
@@ -345,6 +398,23 @@
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
             // 
+            // spriteSheetViewer
+            // 
+            this.spriteSheetViewer.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("spriteSheetViewer.BackgroundImage")));
+            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
+            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.spriteSheetViewer.Name = "spriteSheetViewer";
+            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
+            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.spriteSheetViewer.TabIndex = 13;
+            this.spriteSheetViewer.TabStop = false;
+            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
+            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
+            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
+            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
+            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
+            // 
             // zoomInButton
             // 
             this.zoomInButton.Location = new System.Drawing.Point(652, 5);
@@ -374,34 +444,25 @@
             this.zoomLabel.TabIndex = 15;
             this.zoomLabel.Text = "Zoom: 3X";
             // 
-            // spriteSheetViewer
+            // moveDownButton
             // 
-            this.spriteSheetViewer.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("spriteSheetViewer.BackgroundImage")));
-            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
-            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
-            this.spriteSheetViewer.Name = "spriteSheetViewer";
-            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
-            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.spriteSheetViewer.TabIndex = 13;
-            this.spriteSheetViewer.TabStop = false;
-            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
-            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
-            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
-            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
-            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
+            this.moveDownButton.Location = new System.Drawing.Point(39, 233);
+            this.moveDownButton.Name = "moveDownButton";
+            this.moveDownButton.Size = new System.Drawing.Size(70, 18);
+            this.moveDownButton.TabIndex = 5;
+            this.moveDownButton.Text = "▼";
+            this.moveDownButton.UseVisualStyleBackColor = true;
+            this.moveDownButton.Click += new System.EventHandler(this.moveDownButton_Click);
             // 
-            // rearrangeCheckBox
+            // moveUpButton
             // 
-            this.rearrangeCheckBox.AutoSize = true;
-            this.rearrangeCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.rearrangeCheckBox.Location = new System.Drawing.Point(82, 263);
-            this.rearrangeCheckBox.Name = "rearrangeCheckBox";
-            this.rearrangeCheckBox.Size = new System.Drawing.Size(106, 17);
-            this.rearrangeCheckBox.TabIndex = 5;
-            this.rearrangeCheckBox.Text = "Rearrange Mode";
-            this.rearrangeCheckBox.UseVisualStyleBackColor = true;
-            this.rearrangeCheckBox.CheckedChanged += new System.EventHandler(this.rearrangeCheckBox_CheckedChanged);
+            this.moveUpButton.Location = new System.Drawing.Point(115, 233);
+            this.moveUpButton.Name = "moveUpButton";
+            this.moveUpButton.Size = new System.Drawing.Size(71, 18);
+            this.moveUpButton.TabIndex = 6;
+            this.moveUpButton.Text = "▲";
+            this.moveUpButton.UseVisualStyleBackColor = true;
+            this.moveUpButton.Click += new System.EventHandler(this.moveUpButton_Click);
             // 
             // Form1
             // 
@@ -424,6 +485,8 @@
             this.spriteListPanel.PerformLayout();
             this.spritePanel.ResumeLayout(false);
             this.spritePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteWidthBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
@@ -467,7 +530,12 @@
         private System.Windows.Forms.NumericUpDown spriteYPosBox;
         private System.Windows.Forms.NumericUpDown spriteXPosBox;
         private System.Windows.Forms.Label zoomLabel;
-        private System.Windows.Forms.CheckBox rearrangeCheckBox;
+        private System.Windows.Forms.NumericUpDown originYPosBox;
+        private System.Windows.Forms.NumericUpDown originXPosBox;
+        private System.Windows.Forms.Label originYPosLabel;
+        private System.Windows.Forms.Label originXPosLabel;
+        private System.Windows.Forms.Button moveDownButton;
+        private System.Windows.Forms.Button moveUpButton;
     }
 }
 

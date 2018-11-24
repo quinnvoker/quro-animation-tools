@@ -74,12 +74,12 @@ namespace QURO.AnimationLibrary
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color tint)
         {
-            spriteBatch.Draw(SpriteSheet, position, CurrentFrame.SourceRect, tint);
+            spriteBatch.Draw(SpriteSheet, position, CurrentFrame.Bounds, tint);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteOffset, Color tint)
         {
-            Rectangle sourceRect = CurrentFrame.SourceRect;
+            Rectangle sourceRect = CurrentFrame.Bounds;
             sourceRect.Offset(spriteOffset);
 
             spriteBatch.Draw(SpriteSheet, position, sourceRect, tint);

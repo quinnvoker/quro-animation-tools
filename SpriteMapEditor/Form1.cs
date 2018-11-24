@@ -7,18 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Serialization;
+using Microsoft.Xna;
 using System.IO;
+using QURO;
+using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
 
 
 namespace SpriteMapEditor
 {
     public partial class Form1 : Form
     {
-        private BindingList<Sprite> sprites;
+        private BindingList<SpriteMapRegion> sprites;
 
         private bool highlight = false;
-        private Sprite currentSprite;
+        private SpriteMapRegion currentSprite;
         private int zoomLevel = 3;
 
         private bool loadingSprite = false;
@@ -47,7 +51,7 @@ namespace SpriteMapEditor
             spriteSheetViewer.Width = 1;
             spriteSheetViewer.Height = 1;
 
-            sprites = new BindingList<Sprite> { new Sprite() };
+            sprites = new BindingList<SpriteMapRegion> { new SpriteMapRegion() };
 
             currentSprite = sprites[0];
 
@@ -76,6 +80,14 @@ namespace SpriteMapEditor
                 if (highlight)
                     SurroundWithTranslucentRects(GetDrawingRect(currentSprite.Bounds, false), Color.Gray, e.Graphics);
                 DrawHighContrastOutline(GetDrawingRect(currentSprite.Bounds), e.Graphics);
+                /*
+                 * Origin display code, uncomment when ready to implement
+                 * 
+                using (Brush magentaBrush = new SolidBrush(Color.Magenta))
+                {
+                    e.Graphics.FillRectangle(magentaBrush, GetOriginDrawingRect(currentSprite));
+                }
+                */
             }
             
             base.OnPaint(e);
@@ -89,17 +101,24 @@ namespace SpriteMapEditor
             spriteYPosBox.Value = currentSprite.Bounds.Y;
             spriteWidthBox.Value = currentSprite.Bounds.Width;
             spriteHeightBox.Value = currentSprite.Bounds.Height;
+            originXPosBox.Value = (int)currentSprite.Origin.X;
+            originYPosBox.Value = (int)currentSprite.Origin.Y;
             loadingSprite = false;
         }
 
         private void UpdateSpriteBounds()
         {
-            currentSprite.Bounds = new Rectangle((int)spriteXPosBox.Value, (int)spriteYPosBox.Value, (int)spriteWidthBox.Value, (int)spriteHeightBox.Value);
+            currentSprite.Bounds = new Microsoft.Xna.Framework.Rectangle((int)spriteXPosBox.Value, (int)spriteYPosBox.Value, (int)spriteWidthBox.Value, (int)spriteHeightBox.Value);
         }
 
-        private Rectangle GetDrawingRect(Rectangle baseRect, bool outline = true)
+        private void UpdateSpriteOrigin()
         {
-            var drawingRect = baseRect;
+            currentSprite.Origin = new Microsoft.Xna.Framework.Vector2((int)originXPosBox.Value, (int)originYPosBox.Value);
+        }
+
+        private Rectangle GetDrawingRect(Microsoft.Xna.Framework.Rectangle baseRect, bool outline = true)
+        {
+            var drawingRect = new Rectangle(baseRect.X, baseRect.Y, baseRect.Width, baseRect.Height);
             drawingRect.X = drawingRect.X * zoomLevel - (zoomLevel - 1);
             drawingRect.Y = drawingRect.Y * zoomLevel - (zoomLevel - 1);
             drawingRect.X += drawingRectangleOffset;
@@ -115,6 +134,18 @@ namespace SpriteMapEditor
                 drawingRect.Height++;
             }
 
+            return drawingRect;
+        }
+
+        private Rectangle GetOriginDrawingRect(SpriteMapRegion sprite)
+        {
+            var drawingRect = new Rectangle(sprite.Bounds.X, sprite.Bounds.Y, 2, 2);
+            drawingRect.X = drawingRect.X * zoomLevel - (zoomLevel - 1);
+            drawingRect.Y = drawingRect.Y * zoomLevel - (zoomLevel - 1);
+            drawingRect.X += drawingRectangleOffset;
+            drawingRect.Y += drawingRectangleOffset;
+            drawingRect.X += (int)sprite.Origin.X * zoomLevel;
+            drawingRect.Y += (int)sprite.Origin.Y * zoomLevel;
             return drawingRect;
         }
 
@@ -230,7 +261,7 @@ namespace SpriteMapEditor
 
         private void addSpriteButton_Click(object sender, EventArgs e)
         {
-            sprites.Add(new Sprite(currentSprite.Name, currentSprite.Bounds));
+            sprites.Add(new SpriteMapRegion(currentSprite.Name, currentSprite.Bounds));
         }
 
         private void removeSpriteButton_Click(object sender, EventArgs e)
@@ -253,13 +284,24 @@ namespace SpriteMapEditor
         {
             if (saveMapDialogue.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                XmlSerializer mapSerializer = new XmlSerializer(typeof(List<Sprite>));
-                TextWriter mapWriter = new StreamWriter(saveMapDialogue.FileName);
+                var exportDict = new Dictionary<string, SpriteMapRegion>();
+                foreach(SpriteMapRegion sprite in sprites)
+                {
+                    if (exportDict.ContainsKey(sprite.Name))
+                    {
+                        string errorMessage = "Duplicate names found! Please ensure all sprites have unique names.";
+                        string caption = "Save Aborted";
+                        MessageBoxButtons saveError = MessageBoxButtons.OK;
 
-                var exportList = sprites.ToList();
-
-                mapSerializer.Serialize(mapWriter, exportList);
-                mapWriter.Close();
+                        MessageBox.Show(errorMessage, caption, saveError);
+                    }
+                    else
+                        exportDict.Add(sprite.Name, sprite);
+                }
+                using (XmlWriter writer = XmlWriter.Create(saveMapDialogue.FileName))
+                {
+                    IntermediateSerializer.Serialize(writer, exportDict, null);
+                }
             }
         }
 
@@ -267,11 +309,17 @@ namespace SpriteMapEditor
         {
             if(loadMapDialogue.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                XmlSerializer mapSerializer = new XmlSerializer(typeof(List<Sprite>));
-                TextReader mapReader = new StreamReader(loadMapDialogue.FileName);
+                Dictionary<string, SpriteMapRegion> loadedSpriteMap;
+                using (XmlReader xmlRead = XmlReader.Create(loadMapDialogue.FileName))
+                {
+                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+                }
 
-                sprites = new BindingList<Sprite>((List<Sprite>)mapSerializer.Deserialize(mapReader));
-                mapReader.Close();
+                sprites = new BindingList<SpriteMapRegion>();
+                foreach(KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
+                {
+                    sprites.Add(sprite.Value);
+                }
 
                 spriteList.DataSource = sprites;
             }
@@ -337,36 +385,42 @@ namespace SpriteMapEditor
             movingWithMouse = false;
         }
 
-        private void spriteList_MouseDown(object sender, MouseEventArgs e)
+        private void originXPosBox_ValueChanged(object sender, EventArgs e)
         {
-            if (rearrangingSprites)
+            if (loadingSprite)
+                return;
+            UpdateSpriteOrigin();
+            spriteSheetViewer.Refresh();
+        }
+
+        private void originYPosBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingSprite)
+                return;
+            UpdateSpriteOrigin();
+            spriteSheetViewer.Refresh();
+        }
+
+        private void moveDownButton_Click(object sender, EventArgs e)
+        {
+            if(spriteList.SelectedIndex < sprites.Count - 1)
             {
-                if (spriteList.SelectedItem == null)
-                    return;
-                spriteList.DoDragDrop(spriteList.SelectedItem, DragDropEffects.Move);
+                var spriteBelow = sprites[spriteList.SelectedIndex + 1];
+                sprites[spriteList.SelectedIndex + 1] = currentSprite;
+                sprites[spriteList.SelectedIndex] = spriteBelow;
+                spriteList.SelectedIndex++;
             }
         }
 
-        private void spriteList_DragOver(object sender, DragEventArgs e)
+        private void moveUpButton_Click(object sender, EventArgs e)
         {
-            e.Effect = DragDropEffects.Move;
-        }
-
-        private void spriteList_DragDrop(object sender, DragEventArgs e)
-        {
-            Point point = spriteList.PointToClient(new Point(e.X, e.Y));
-            int index = spriteList.IndexFromPoint(point);
-            if (index < 0)
-                index = spriteList.Items.Count - 1;
-            Sprite data = (Sprite)spriteList.SelectedItem;
-            sprites.Remove(data);
-            sprites.Insert(index, data);
-        }
-
-        private void rearrangeCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            rearrangingSprites = rearrangeCheckBox.Checked;
-            spriteList.AllowDrop = rearrangeCheckBox.Checked;
+            if(spriteList.SelectedIndex > 0)
+            {
+                var spriteAbove = sprites[spriteList.SelectedIndex - 1];
+                sprites[spriteList.SelectedIndex - 1] = currentSprite;
+                sprites[spriteList.SelectedIndex] = spriteAbove;
+                spriteList.SelectedIndex--;
+            }
         }
     }
 }

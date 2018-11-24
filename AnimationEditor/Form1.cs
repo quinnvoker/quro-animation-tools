@@ -12,12 +12,14 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using QURO.AnimationLibrary;
+using QURO;
 
 namespace AnimationEditor
 {
     public partial class Form1 : Form
     {
-        public BindingList<Sprite> Sprites { get; set; }
+        private SpriteMapRegion draggedSprite;
+        public BindingList<SpriteMapRegion> Sprites { get; set; }
 
         public Form1()
         {
@@ -39,18 +41,26 @@ namespace AnimationEditor
             if (loadSpriteMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
 
-                XmlSerializer mapSerializer = new XmlSerializer(typeof(List<Sprite>));
+                XmlSerializer mapSerializer = new XmlSerializer(typeof(List<SpriteMapRegion>));
                 TextReader mapReader = new StreamReader(loadSpriteMapDialog.FileName);
 
-                Sprites = new BindingList<Sprite>((List<Sprite>)mapSerializer.Deserialize(mapReader));
-                spritesListBox.DataSource = Sprites;
-                spritesListBox.DisplayMember = "Name";
-                spritesListBox.ValueMember = "Bounds";
+                Sprites = new BindingList<SpriteMapRegion>((List<SpriteMapRegion>)mapSerializer.Deserialize(mapReader));
+                spriteListBox.DataSource = Sprites;
+                spriteListBox.DisplayMember = "Name";
+                spriteListBox.ValueMember = "Bounds";
                 Rectangle[] frames = new Rectangle[] { Sprites[0].Bounds, Sprites[1].Bounds, Sprites[2].Bounds };
                 animationPreview.CurrentAnimation = new Animation("Test", frames, 1f / 60f, true);
                 animationPreview.PreviewSprite = new AnimatedSprite(animationPreview.SpriteSheet, animationPreview.CurrentAnimation);
                 mapReader.Close();
             }
+        }
+
+        private void spriteListBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (spriteListBox.SelectedItem == null)
+                return;
+            spriteListBox.DoDragDrop(spriteListBox.SelectedItem, DragDropEffects.Copy);
+            draggedSprite = (SpriteMapRegion)spriteListBox.SelectedItem;
         }
     }
 }

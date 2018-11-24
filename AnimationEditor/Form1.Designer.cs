@@ -32,9 +32,9 @@
             this.loadSpriteSheetDialog = new System.Windows.Forms.OpenFileDialog();
             this.loadSpriteMapButton = new System.Windows.Forms.Button();
             this.loadSpriteMapDialog = new System.Windows.Forms.OpenFileDialog();
-            this.spritesListBox = new System.Windows.Forms.ListBox();
+            this.spriteListBox = new System.Windows.Forms.ListBox();
             this.animationPreview = new AnimationEditor.AnimationPreview();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.frameListBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // loadSpriteSheetButton
@@ -70,41 +70,40 @@
             this.loadSpriteMapDialog.FileName = "openFileDialog1";
             this.loadSpriteMapDialog.Filter = "Xml Files|*.xml";
             // 
-            // spritesListBox
+            // spriteListBox
             // 
-            this.spritesListBox.FormattingEnabled = true;
-            this.spritesListBox.Location = new System.Drawing.Point(28, 104);
-            this.spritesListBox.Name = "spritesListBox";
-            this.spritesListBox.Size = new System.Drawing.Size(119, 264);
-            this.spritesListBox.TabIndex = 3;
+            this.spriteListBox.FormattingEnabled = true;
+            this.spriteListBox.Location = new System.Drawing.Point(28, 104);
+            this.spriteListBox.Name = "spriteListBox";
+            this.spriteListBox.Size = new System.Drawing.Size(119, 264);
+            this.spriteListBox.TabIndex = 3;
+            this.spriteListBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteListBox_MouseDown);
             // 
             // animationPreview
             // 
-            this.animationPreview.CurrentAnimation = null;
-            this.animationPreview.Location = new System.Drawing.Point(351, 73);
+            this.animationPreview.Location = new System.Drawing.Point(413, 74);
             this.animationPreview.Name = "animationPreview";
-            this.animationPreview.PreviewSprite = null;
             this.animationPreview.Size = new System.Drawing.Size(253, 198);
             this.animationPreview.SpriteSheet = null;
             this.animationPreview.TabIndex = 0;
             this.animationPreview.Text = "animationPreview1";
             // 
-            // listBox1
+            // frameListBox
             // 
-            this.listBox1.AllowDrop = true;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(166, 104);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 264);
-            this.listBox1.TabIndex = 4;
+            this.frameListBox.AllowDrop = true;
+            this.frameListBox.FormattingEnabled = true;
+            this.frameListBox.Location = new System.Drawing.Point(166, 104);
+            this.frameListBox.Name = "frameListBox";
+            this.frameListBox.Size = new System.Drawing.Size(120, 264);
+            this.frameListBox.TabIndex = 4;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.spritesListBox);
+            this.Controls.Add(this.frameListBox);
+            this.Controls.Add(this.spriteListBox);
             this.Controls.Add(this.loadSpriteMapButton);
             this.Controls.Add(this.loadSpriteSheetButton);
             this.Controls.Add(this.animationPreview);
@@ -121,8 +120,8 @@
         private System.Windows.Forms.OpenFileDialog loadSpriteSheetDialog;
         private System.Windows.Forms.Button loadSpriteMapButton;
         private System.Windows.Forms.OpenFileDialog loadSpriteMapDialog;
-        private System.Windows.Forms.ListBox spritesListBox;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox spriteListBox;
+        private System.Windows.Forms.ListBox frameListBox;
     }
 }
 
