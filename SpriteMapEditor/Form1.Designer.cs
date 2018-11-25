@@ -37,6 +37,8 @@
             this.saveMapButton = new System.Windows.Forms.Button();
             this.filePanel = new System.Windows.Forms.Panel();
             this.spriteListPanel = new System.Windows.Forms.Panel();
+            this.moveDownButton = new System.Windows.Forms.Button();
+            this.moveUpButton = new System.Windows.Forms.Button();
             this.spritesLabel = new System.Windows.Forms.Label();
             this.spritePanel = new System.Windows.Forms.Panel();
             this.originYPosBox = new System.Windows.Forms.NumericUpDown();
@@ -54,17 +56,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.spriteSettingsLabel = new System.Windows.Forms.Label();
             this.spriteNameBox = new System.Windows.Forms.TextBox();
-            this.loadSpriteSheetDialogue = new System.Windows.Forms.OpenFileDialog();
-            this.loadMapDialogue = new System.Windows.Forms.OpenFileDialog();
-            this.saveMapDialogue = new System.Windows.Forms.SaveFileDialog();
+            this.loadSpriteSheetDialog = new System.Windows.Forms.OpenFileDialog();
+            this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveMapDialog = new System.Windows.Forms.SaveFileDialog();
             this.fillButton = new System.Windows.Forms.Button();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
             this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
-            this.moveDownButton = new System.Windows.Forms.Button();
-            this.moveUpButton = new System.Windows.Forms.Button();
             this.filePanel.SuspendLayout();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
@@ -164,6 +164,26 @@
             this.spriteListPanel.Name = "spriteListPanel";
             this.spriteListPanel.Size = new System.Drawing.Size(190, 254);
             this.spriteListPanel.TabIndex = 8;
+            // 
+            // moveDownButton
+            // 
+            this.moveDownButton.Location = new System.Drawing.Point(39, 233);
+            this.moveDownButton.Name = "moveDownButton";
+            this.moveDownButton.Size = new System.Drawing.Size(70, 18);
+            this.moveDownButton.TabIndex = 5;
+            this.moveDownButton.Text = "▼";
+            this.moveDownButton.UseVisualStyleBackColor = true;
+            this.moveDownButton.Click += new System.EventHandler(this.moveDownButton_Click);
+            // 
+            // moveUpButton
+            // 
+            this.moveUpButton.Location = new System.Drawing.Point(115, 233);
+            this.moveUpButton.Name = "moveUpButton";
+            this.moveUpButton.Size = new System.Drawing.Size(71, 18);
+            this.moveUpButton.TabIndex = 6;
+            this.moveUpButton.Text = "▲";
+            this.moveUpButton.UseVisualStyleBackColor = true;
+            this.moveUpButton.Click += new System.EventHandler(this.moveUpButton_Click);
             // 
             // spritesLabel
             // 
@@ -361,20 +381,20 @@
             this.spriteNameBox.TabIndex = 0;
             this.spriteNameBox.TextChanged += new System.EventHandler(this.spriteNameBox_TextChanged);
             // 
-            // loadSpriteSheetDialogue
+            // loadSpriteSheetDialog
             // 
-            this.loadSpriteSheetDialogue.FileName = "openFileDialog1";
-            this.loadSpriteSheetDialogue.Filter = "PNG files|*.png";
+            this.loadSpriteSheetDialog.FileName = "openFileDialog1";
+            this.loadSpriteSheetDialog.Filter = "PNG files|*.png";
             // 
-            // loadMapDialogue
+            // loadMapDialog
             // 
-            this.loadMapDialogue.FileName = "openFileDialog1";
-            this.loadMapDialogue.Filter = "Xml files|*.xml";
+            this.loadMapDialog.FileName = "openFileDialog1";
+            this.loadMapDialog.Filter = "Xml files|*.xml";
             // 
-            // saveMapDialogue
+            // saveMapDialog
             // 
-            this.saveMapDialogue.DefaultExt = "xml";
-            this.saveMapDialogue.Filter = "Xml files|*.xml";
+            this.saveMapDialog.DefaultExt = "xml";
+            this.saveMapDialog.Filter = "Xml files|*.xml";
             // 
             // fillButton
             // 
@@ -444,26 +464,6 @@
             this.zoomLabel.TabIndex = 15;
             this.zoomLabel.Text = "Zoom: 3X";
             // 
-            // moveDownButton
-            // 
-            this.moveDownButton.Location = new System.Drawing.Point(39, 233);
-            this.moveDownButton.Name = "moveDownButton";
-            this.moveDownButton.Size = new System.Drawing.Size(70, 18);
-            this.moveDownButton.TabIndex = 5;
-            this.moveDownButton.Text = "▼";
-            this.moveDownButton.UseVisualStyleBackColor = true;
-            this.moveDownButton.Click += new System.EventHandler(this.moveDownButton_Click);
-            // 
-            // moveUpButton
-            // 
-            this.moveUpButton.Location = new System.Drawing.Point(115, 233);
-            this.moveUpButton.Name = "moveUpButton";
-            this.moveUpButton.Size = new System.Drawing.Size(71, 18);
-            this.moveUpButton.TabIndex = 6;
-            this.moveUpButton.Text = "▲";
-            this.moveUpButton.UseVisualStyleBackColor = true;
-            this.moveUpButton.Click += new System.EventHandler(this.moveUpButton_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -517,9 +517,9 @@
         private System.Windows.Forms.Label heightLabel;
         private System.Windows.Forms.Label widthLabel;
         private System.Windows.Forms.Label yPosLabel;
-        private System.Windows.Forms.OpenFileDialog loadSpriteSheetDialogue;
-        private System.Windows.Forms.OpenFileDialog loadMapDialogue;
-        private System.Windows.Forms.SaveFileDialog saveMapDialogue;
+        private System.Windows.Forms.OpenFileDialog loadSpriteSheetDialog;
+        private System.Windows.Forms.OpenFileDialog loadMapDialog;
+        private System.Windows.Forms.SaveFileDialog saveMapDialog;
         private System.Windows.Forms.Button fillButton;
         private PictureBoxWithInterpolationMode spriteSheetViewer;
         private System.Windows.Forms.Panel spriteViewerPanel;

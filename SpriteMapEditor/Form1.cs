@@ -64,9 +64,9 @@ namespace SpriteMapEditor
 
         private void loadSpriteSheetButton_Click(object sender, EventArgs e)
         {
-            if(loadSpriteSheetDialogue.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if(loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                spriteSheetViewer.Image = Image.FromFile(loadSpriteSheetDialogue.FileName);
+                spriteSheetViewer.Image = Image.FromFile(loadSpriteSheetDialog.FileName);
             }
         }
 
@@ -282,23 +282,24 @@ namespace SpriteMapEditor
 
         private void saveMapButton_Click(object sender, EventArgs e)
         {
-            if (saveMapDialogue.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var exportDict = new Dictionary<string, SpriteMapRegion>();
+            foreach (SpriteMapRegion sprite in sprites)
             {
-                var exportDict = new Dictionary<string, SpriteMapRegion>();
-                foreach(SpriteMapRegion sprite in sprites)
+                if (exportDict.ContainsKey(sprite.Name))
                 {
-                    if (exportDict.ContainsKey(sprite.Name))
-                    {
-                        string errorMessage = "Duplicate names found! Please ensure all sprites have unique names.";
-                        string caption = "Save Aborted";
-                        MessageBoxButtons saveError = MessageBoxButtons.OK;
+                    string errorMessage = "Duplicate names found! Please ensure all sprites have unique names.";
+                    string caption = "Save Aborted";
+                    MessageBoxButtons saveError = MessageBoxButtons.OK;
 
-                        MessageBox.Show(errorMessage, caption, saveError);
-                    }
-                    else
-                        exportDict.Add(sprite.Name, sprite);
+                    MessageBox.Show(errorMessage, caption, saveError);
+                    return;
                 }
-                using (XmlWriter writer = XmlWriter.Create(saveMapDialogue.FileName))
+                exportDict.Add(sprite.Name, sprite);
+            }
+
+            if (saveMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                using (XmlWriter writer = XmlWriter.Create(saveMapDialog.FileName))
                 {
                     IntermediateSerializer.Serialize(writer, exportDict, null);
                 }
@@ -307,10 +308,10 @@ namespace SpriteMapEditor
 
         private void loadMapButton_Click(object sender, EventArgs e)
         {
-            if(loadMapDialogue.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if(loadMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 Dictionary<string, SpriteMapRegion> loadedSpriteMap;
-                using (XmlReader xmlRead = XmlReader.Create(loadMapDialogue.FileName))
+                using (XmlReader xmlRead = XmlReader.Create(loadMapDialog.FileName))
                 {
                     loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
                 }
