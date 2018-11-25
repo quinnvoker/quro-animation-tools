@@ -9,8 +9,8 @@ namespace QURO.AnimationLibrary
 
         public Frame()
         {
-            Name = "unnamed";
-            Bounds = new Rectangle(0, 0, 8, 8);
+            Name = "empty";
+            Bounds = Rectangle.Empty;
             Origin = Vector2.Zero;
             Delay = 0;
         }
