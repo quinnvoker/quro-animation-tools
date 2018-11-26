@@ -88,9 +88,9 @@
             // 
             // loadSpriteMapDialog
             // 
-            this.loadSpriteMapDialog.DefaultExt = "xml";
+            this.loadSpriteMapDialog.DefaultExt = "smap";
             this.loadSpriteMapDialog.FileName = "openFileDialog1";
-            this.loadSpriteMapDialog.Filter = "Xml Files|*.xml";
+            this.loadSpriteMapDialog.Filter = "QUROGames SpriteMap|*smap";
             // 
             // spriteListBox
             // 
@@ -321,17 +321,19 @@
             // 
             // saveAnimationDialog
             // 
-            this.saveAnimationDialog.DefaultExt = "xml";
-            this.saveAnimationDialog.Filter = "Xml Files|*.xml";
+            this.saveAnimationDialog.DefaultExt = "anim";
+            this.saveAnimationDialog.Filter = "QUROGames Animation|*.anim";
             // 
             // saveAnimationSetDialog
             // 
-            this.saveAnimationSetDialog.DefaultExt = "xml";
-            this.saveAnimationSetDialog.Filter = "Xml files|*.xml";
+            this.saveAnimationSetDialog.DefaultExt = "animset";
+            this.saveAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
             // 
             // loadAnimationDialog
             // 
+            this.loadAnimationDialog.DefaultExt = "anim";
             this.loadAnimationDialog.FileName = "openFileDialog1";
+            this.loadAnimationDialog.Filter = "QUROGames Animation|*.anim";
             // 
             // addAnimationButton
             // 
@@ -497,7 +499,9 @@
             // 
             // loadAnimationSetDialog
             // 
+            this.loadAnimationSetDialog.DefaultExt = "animset";
             this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
             // 
             // Form1
             // 

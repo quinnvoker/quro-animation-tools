@@ -11,30 +11,14 @@ namespace QURO.AnimationLibrary
 
         public bool IsStillImage => Frames.Length <= 1;
 
-        public Animation()
+        public Animation() : this("unnamed", new Frame[] { new Frame() }, false)
         {
-            Name = "unnamed";
-            Frames = new Frame[] { new Frame() };
-            IsLooping = false;
         }
 
         public Animation(string name, Frame[] frames, bool loop)
         {
             Name = name;
             Frames = frames;
-            IsLooping = loop;
-        }
-
-        public Animation(string name, Rectangle[] sourceRects, float delay, bool loop)
-        {
-            Name = name;
-
-            Frames = new Frame[sourceRects.Length];
-            for(int index = 0; index < sourceRects.Length; index++)
-            {
-                Frames[index] = new Frame(sourceRects[index], delay);
-            }
-
             IsLooping = loop;
         }
     }

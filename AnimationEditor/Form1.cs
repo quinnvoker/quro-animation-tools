@@ -85,9 +85,12 @@ namespace AnimationEditor
             animationPreview.Enabled = true;
         }
 
-        private void InitiateAnimationList()
+        private void InitiateAnimationList(bool newAnimation = true)
         {
-            Animations = new BindingList<Animation>();
+            if (newAnimation)
+                Animations = new BindingList<Animation>() { new Animation() };
+            else
+                Animations = new BindingList<Animation>();
             animationBox.DataSource = Animations;
             animationBox.DisplayMember = "Name";
         }
@@ -210,6 +213,7 @@ namespace AnimationEditor
                 FileStream fileStream = new FileStream(loadSpriteSheetDialog.FileName, FileMode.Open);
                 SpriteSheet = Texture2D.FromStream(animationPreview.Editor.graphics, fileStream);
                 EnableMapAndAnimationLoadingControls();
+                fileStream.Close();
             }
         }
 
@@ -238,6 +242,7 @@ namespace AnimationEditor
                     Frames = new BindingList<Frame>();
                     frameListBox.DataSource = Frames;
                     frameListBox.DisplayMember = "Name";
+                    InitiateAnimationList();
                 }
 
                 EnableSpriteMapControls();
@@ -420,10 +425,10 @@ namespace AnimationEditor
 
         private void saveAnimationSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var animSet = new Dictionary<string, Animation>();
+            var animSet = new AnimationSet();
             foreach(Animation anim in Animations)
             {
-                if (animSet.ContainsKey(anim.Name))
+                if (animSet.Anims.ContainsKey(anim.Name))
                 {
                     string errorMessage = "Duplicate names found! Please ensure all animations have unique names.";
                     string caption = "Save Aborted";
@@ -434,7 +439,7 @@ namespace AnimationEditor
                 }
                 else
                 {
-                    animSet.Add(anim.Name, anim);
+                    animSet.Add(anim);
                 }
             }
 
@@ -451,19 +456,19 @@ namespace AnimationEditor
         {
             if (loadAnimationSetDialog.ShowDialog() == DialogResult.OK)
             {
-                Dictionary<string, Animation> loadedAnimSet;
+                AnimationSet loadedAnimSet;
 
                 using (XmlReader xmlRead = XmlReader.Create(loadAnimationSetDialog.FileName))
                 {
-                    loadedAnimSet = IntermediateSerializer.Deserialize<Dictionary<string, Animation>>(xmlRead, null);
+                    loadedAnimSet = IntermediateSerializer.Deserialize<AnimationSet>(xmlRead, null);
                 }
 
                 if (animationBox.Enabled == false)
                 {
                     EnableAnimationEditingControls();
                 }
-                InitiateAnimationList();
-                foreach(KeyValuePair<string,Animation> currentEntry in loadedAnimSet)
+                InitiateAnimationList(newAnimation: false);
+                foreach(KeyValuePair<string,Animation> currentEntry in loadedAnimSet.Anims)
                 {
                     Animations.Add(currentEntry.Value);
                 }

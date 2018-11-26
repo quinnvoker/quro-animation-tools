@@ -3,47 +3,22 @@ using Microsoft.Xna.Framework;
 
 namespace QURO.AnimationLibrary
 {
-    public class Frame : SpriteMapRegion
+    public class Frame
     {
+        public SpriteMapRegion Sprite { get; set; }
         public float Delay { get; set; }
 
-        public Frame()
+        public string Name { get { return Sprite.Name; } }
+        public Rectangle Bounds { get { return Sprite.Bounds; } }
+        public Vector2 Origin { get { return Sprite.Origin; } }
+
+        public Frame() : this(new SpriteMapRegion(), 0)
         {
-            Name = "empty";
-            Bounds = Rectangle.Empty;
-            Origin = Vector2.Zero;
-            Delay = 0;
         }
 
         public Frame(SpriteMapRegion sprite, float delay)
         {
-            Name = sprite.Name;
-            Bounds = sprite.Bounds;
-            Origin = sprite.Origin;
-            Delay = delay;
-        }
-
-        public Frame(string name, Rectangle bounds, float delay, Vector2 origin)
-        {
-            Name = name;
-            Bounds = bounds;
-            Origin = origin;
-            Delay = delay;
-        }
-
-        public Frame(Rectangle bounds, float delay, Vector2 origin)
-        {
-            Name = "unnamed";
-            Bounds = bounds;
-            Origin = origin;
-            Delay = delay;
-        }
-
-        public Frame(Rectangle bounds, float delay)
-        {
-            Name = "unnamed";
-            Bounds = bounds;
-            Origin = Vector2.Zero;
+            Sprite = sprite;
             Delay = delay;
         }
     }

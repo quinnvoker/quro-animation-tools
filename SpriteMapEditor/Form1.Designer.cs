@@ -388,13 +388,14 @@
             // 
             // loadMapDialog
             // 
+            this.loadMapDialog.DefaultExt = "smap";
             this.loadMapDialog.FileName = "openFileDialog1";
-            this.loadMapDialog.Filter = "Xml files|*.xml";
+            this.loadMapDialog.Filter = "QUROGame SpriteMap|*.smap";
             // 
             // saveMapDialog
             // 
-            this.saveMapDialog.DefaultExt = "xml";
-            this.saveMapDialog.Filter = "Xml files|*.xml";
+            this.saveMapDialog.DefaultExt = "smap";
+            this.saveMapDialog.Filter = "QUROGame SpriteMap|*.smap";
             // 
             // fillButton
             // 
