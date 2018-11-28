@@ -83,6 +83,9 @@ namespace AnimationEditor
             frameTrackBar.Enabled = true;
             playAnimationButton.Enabled = true;
             animationPreview.Enabled = true;
+
+            editToolStripMenuItem.Enabled = true;
+            updateAnimationSpritesFromSpriteMapToolStripMenuItem.Enabled = true;
         }
 
         private void InitiateAnimationList(bool newAnimation = true)
@@ -219,6 +222,11 @@ namespace AnimationEditor
 
         private void loadSpriteMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            LoadSpriteMapFromFile();
+        }
+
+        private Dictionary<string, SpriteMapRegion> LoadSpriteMapFromFile()
+        {
             if (loadSpriteMapDialog.ShowDialog() == DialogResult.OK)
             {
                 Dictionary<string, SpriteMapRegion> loadedSpriteMap;
@@ -247,7 +255,9 @@ namespace AnimationEditor
 
                 EnableSpriteMapControls();
                 EnableAnimationEditingControls();
+                return loadedSpriteMap;
             }
+            return null;
         }
 
         private void animationPreview_FrameChanged(object sender, EventArgs e)
@@ -477,6 +487,32 @@ namespace AnimationEditor
                 ReadAnimationInfo();
                 UpdateAnimation();
             }
+        }
+
+        private void updateAnimationSpritesFromSpriteMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var loadedSpriteMap = LoadSpriteMapFromFile();
+
+            using(XmlReader xmlRead = XmlReader.Create(loadSpriteMapDialog.FileName))
+            {
+                loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+            }
+
+            int updateCounter = 0;
+
+            foreach(Animation anim in Animations)
+            {
+                foreach(Frame frame in anim.Frames)
+                {
+                    if (loadedSpriteMap.ContainsKey(frame.Name))
+                    {
+                        frame.Sprite = loadedSpriteMap[frame.Name];
+                        updateCounter++;
+                    }
+                }
+            }
+
+            MessageBox.Show("Updated " + updateCounter + " sprites!");
         }
     }
 }
