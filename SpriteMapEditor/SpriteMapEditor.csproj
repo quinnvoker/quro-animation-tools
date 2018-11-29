@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectBitmap.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,16 +90,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\transparentUI.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="transparentUI.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\QURO\QURO.csproj">
       <Project>{4581e0c8-b14a-454d-9a7b-52d37535e7e9}</Project>
       <Name>QURO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\originPointer_black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\originPointer_white.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\transparentUI.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -27,7 +27,25 @@ namespace SpriteMapEditor
 
         private bool loadingSprite = false;
         private bool movingWithMouse = false;
-        private bool rearrangingSprites = false;
+        private bool editingOrigin = false;
+
+        const string TITLE = "QUROGames Sprite Map Editor";
+        private string currentSpriteMapFileLocation;
+        private string CurrentSpriteMapFileLocation
+        {
+            get { return currentSpriteMapFileLocation; }
+            set
+            {
+                currentSpriteMapFileLocation = value;
+                Text = TITLE + " - " + Path.GetFileName(currentSpriteMapFileLocation);
+            }
+        }
+
+        Image originPointer_black;
+        Image originPointer_white;
+
+        DirectBitmap baseMask;
+        DirectBitmap highlightMask;
 
         private Point newPosition;
         private Point oldPosition;
@@ -59,15 +77,20 @@ namespace SpriteMapEditor
             spriteList.DisplayMember = "Name";
             spriteList.ValueMember = "Bounds";
 
+            originPointer_black = Properties.Resources.originPointer_black;
+            originPointer_white = Properties.Resources.originPointer_white;
+
             LoadSpriteEditorValues();
         }
 
-        private void loadSpriteSheetButton_Click(object sender, EventArgs e)
+        private void loadSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 spriteSheetViewer.Image = Image.FromFile(loadSpriteSheetDialog.FileName);
             }
+
+            InitializeMask();
         }
 
         private void spriteSheetViewer_Paint(object sender, PaintEventArgs e)
@@ -78,18 +101,35 @@ namespace SpriteMapEditor
                 spriteSheetViewer.Height = spriteSheetViewer.Image.Height * zoomLevel;
 
                 if (highlight)
-                    SurroundWithTranslucentRects(GetDrawingRect(currentSprite.Bounds, false), Color.Gray, e.Graphics);
-                DrawHighContrastOutline(GetDrawingRect(currentSprite.Bounds), e.Graphics);
-                /*
-                 * Origin display code, uncomment when ready to implement
-                 * 
-                using (Brush magentaBrush = new SolidBrush(Color.Magenta))
                 {
-                    e.Graphics.FillRectangle(magentaBrush, GetOriginDrawingRect(currentSprite));
+                    //SurroundWithTranslucentRects(GetDrawingRect(currentSprite.Bounds, false), Color.Gray, e.Graphics);
+                    //e.Graphics.DrawImage(highlightMask.Bitmap, Point.Empty);
+                    Rectangle highlightBounds = new Rectangle(0,0, spriteSheetViewer.Bounds.Width + 1, spriteSheetViewer.Bounds.Height + 1);
+                    e.Graphics.DrawImage(highlightMask.Bitmap, highlightBounds);
                 }
-                */
+                    
+                DrawHighContrastOutline(GetDrawingRect(currentSprite.Bounds), e.Graphics);
+
+                //origin drawing code
+                if (editingOrigin)
+                {
+                    var spriteSheet = (Bitmap)spriteSheetViewer.Image;
+                    var colorAtOrigin = spriteSheet.GetPixel((int)(currentSprite.Bounds.X + currentSprite.Origin.X), 
+                        (int)(currentSprite.Bounds.Y + currentSprite.Origin.Y));
+
+                    var highContrastPointer = originPointer_black;
+                    if (colorAtOrigin.GetBrightness() < 0.5f)
+                    {
+                        highContrastPointer = originPointer_white;
+                    }
+
+                    var drawPoint = GetOriginDrawingPoint(currentSprite);
+                    drawPoint.X -= 5;
+                    drawPoint.Y -= 5;
+
+                    e.Graphics.DrawImage(highContrastPointer, drawPoint);
+                }
             }
-            
             base.OnPaint(e);
         }
 
@@ -137,16 +177,51 @@ namespace SpriteMapEditor
             return drawingRect;
         }
 
-        private Rectangle GetOriginDrawingRect(SpriteMapRegion sprite)
+        private Point GetOriginDrawingPoint(SpriteMapRegion sprite)
         {
-            var drawingRect = new Rectangle(sprite.Bounds.X, sprite.Bounds.Y, 2, 2);
-            drawingRect.X = drawingRect.X * zoomLevel - (zoomLevel - 1);
-            drawingRect.Y = drawingRect.Y * zoomLevel - (zoomLevel - 1);
-            drawingRect.X += drawingRectangleOffset;
-            drawingRect.Y += drawingRectangleOffset;
-            drawingRect.X += (int)sprite.Origin.X * zoomLevel;
-            drawingRect.Y += (int)sprite.Origin.Y * zoomLevel;
-            return drawingRect;
+            var drawingPoint = new Point(sprite.Bounds.X, sprite.Bounds.Y);
+            drawingPoint.X = drawingPoint.X * zoomLevel - (zoomLevel - 1);
+            drawingPoint.Y = drawingPoint.Y * zoomLevel - (zoomLevel - 1);
+            drawingPoint.X += drawingRectangleOffset;
+            drawingPoint.Y += drawingRectangleOffset;
+            drawingPoint.X += (int)sprite.Origin.X * zoomLevel;
+            drawingPoint.Y += (int)sprite.Origin.Y * zoomLevel;
+            return drawingPoint;
+        }
+
+        private void UpdateHighlightMask()
+        {
+            if (highlight)
+            {
+                InitializeMask();
+                for (int currentY = 0; currentY < currentSprite.Bounds.Height; currentY++)
+                {
+                    for (int currentX = 0; currentX < currentSprite.Bounds.Width; currentX++)
+                    {
+                        highlightMask.SetPixel(currentX + currentSprite.Bounds.X, currentY + currentSprite.Bounds.Y, Color.Transparent);
+                    }
+                }
+            }
+        }
+
+        private void InitializeMask()
+        {
+            if (baseMask == null)
+            {
+                highlightMask = new DirectBitmap(spriteSheetViewer.Image.Width, spriteSheetViewer.Image.Height);
+                for (int currentY = 0; currentY < highlightMask.Height; currentY++)
+                {
+                    for (int currentX = 0; currentX < highlightMask.Width; currentX++)
+                    {
+                        highlightMask.SetPixel(currentX, currentY, Color.Gray);
+                    }
+                }
+                baseMask = new DirectBitmap(highlightMask);
+            }
+            else
+            {
+                highlightMask.CopyBitmap(baseMask);
+            }
         }
 
         private void SurroundWithTranslucentRects(Rectangle rect, Color color, Graphics graphics)
@@ -191,7 +266,10 @@ namespace SpriteMapEditor
         {
             highlight = !highlight;
             if (highlight)
+            {
                 fillButton.Text = "No Highlight";
+                UpdateHighlightMask();
+            }
             else
                 fillButton.Text = "Highlight";
             spriteSheetViewer.Refresh();
@@ -224,6 +302,7 @@ namespace SpriteMapEditor
             if (loadingSprite)
                 return;
             UpdateSpriteBounds();
+            UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
 
@@ -232,6 +311,7 @@ namespace SpriteMapEditor
             if (loadingSprite)
                 return;
             UpdateSpriteBounds();
+            UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
 
@@ -240,6 +320,7 @@ namespace SpriteMapEditor
             if (loadingSprite)
                 return;
             UpdateSpriteBounds();
+            UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
 
@@ -248,6 +329,7 @@ namespace SpriteMapEditor
             if (loadingSprite)
                 return;
             UpdateSpriteBounds();
+            UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
 
@@ -276,11 +358,12 @@ namespace SpriteMapEditor
             {
                 currentSprite = sprites[spriteList.SelectedIndex];
                 LoadSpriteEditorValues();
+                UpdateHighlightMask();
                 spriteSheetViewer.Refresh();
             }
         }
 
-        private void saveMapButton_Click(object sender, EventArgs e)
+        private void saveMapAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var exportDict = new Dictionary<string, SpriteMapRegion>();
             foreach (SpriteMapRegion sprite in sprites)
@@ -299,19 +382,51 @@ namespace SpriteMapEditor
 
             if (saveMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                using (XmlWriter writer = XmlWriter.Create(saveMapDialog.FileName))
+                CurrentSpriteMapFileLocation = saveMapDialog.FileName;
+
+                using (XmlWriter writer = XmlWriter.Create(CurrentSpriteMapFileLocation))
+                {
+                    IntermediateSerializer.Serialize(writer, exportDict, null);
+                }
+            }
+
+            saveSpriteMapToolStripMenuItem.Enabled = true;
+        }
+
+        private void saveSpriteMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentSpriteMapFileLocation != null)
+            {
+                var exportDict = new Dictionary<string, SpriteMapRegion>();
+                foreach (SpriteMapRegion sprite in sprites)
+                {
+                    if (exportDict.ContainsKey(sprite.Name))
+                    {
+                        string errorMessage = "Duplicate names found! Please ensure all sprites have unique names.";
+                        string caption = "Save Aborted";
+                        MessageBoxButtons saveError = MessageBoxButtons.OK;
+
+                        MessageBox.Show(errorMessage, caption, saveError);
+                        return;
+                    }
+                    exportDict.Add(sprite.Name, sprite);
+                }
+
+                using (XmlWriter writer = XmlWriter.Create(CurrentSpriteMapFileLocation))
                 {
                     IntermediateSerializer.Serialize(writer, exportDict, null);
                 }
             }
         }
 
-        private void loadMapButton_Click(object sender, EventArgs e)
+        private void loadMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(loadMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                CurrentSpriteMapFileLocation = loadMapDialog.FileName;
+
                 Dictionary<string, SpriteMapRegion> loadedSpriteMap;
-                using (XmlReader xmlRead = XmlReader.Create(loadMapDialog.FileName))
+                using (XmlReader xmlRead = XmlReader.Create(CurrentSpriteMapFileLocation))
                 {
                     loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
                 }
@@ -343,13 +458,13 @@ namespace SpriteMapEditor
                     newPosition.Y /= zoomLevel;
                     int differenceX = newPosition.X - oldPosition.X;
                     int differenceY = newPosition.Y - oldPosition.Y;
-                    Console.WriteLine(differenceX + ", " + differenceY);
                     var newBounds = currentSprite.Bounds;
                     newBounds.X += differenceX;
                     newBounds.Y += differenceY;
 
                     currentSprite.Bounds = newBounds;
                     oldPosition = newPosition;
+                    UpdateHighlightMask();
                     spriteSheetViewer.Refresh();
                     LoadSpriteEditorValues();
                 }
@@ -422,6 +537,28 @@ namespace SpriteMapEditor
                 sprites[spriteList.SelectedIndex] = spriteAbove;
                 spriteList.SelectedIndex--;
             }
+        }
+
+        private void editingOriginCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            editingOrigin = editingOriginCheckBox.Checked;
+
+            if (editingOrigin)
+            {
+                originXPosLabel.Enabled = true;
+                originXPosBox.Enabled = true;
+                originYPosLabel.Enabled = true;
+                originYPosBox.Enabled = true;
+            }
+            else
+            {
+                originXPosLabel.Enabled = false;
+                originXPosBox.Enabled = false;
+                originYPosLabel.Enabled = false;
+                originYPosBox.Enabled = false;
+            }
+
+            spriteViewerPanel.Refresh();
         }
     }
 }

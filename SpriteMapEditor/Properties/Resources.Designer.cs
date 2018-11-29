@@ -63,6 +63,26 @@ namespace SpriteMapEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap originPointer_black {
+            get {
+                object obj = ResourceManager.GetObject("originPointer_black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap originPointer_white {
+            get {
+                object obj = ResourceManager.GetObject("originPointer_white", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap transparentUI {
             get {
                 object obj = ResourceManager.GetObject("transparentUI", resourceCulture);
