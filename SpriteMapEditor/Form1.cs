@@ -22,7 +22,7 @@ namespace SpriteMapEditor
         private BindingList<SpriteMapRegion> sprites;
 
         private bool highlight = false;
-        private SpriteMapRegion currentSprite;
+        private SpriteMapRegion currentSprite { get { return sprites[spriteList.SelectedIndices[0]]; } }
         private int zoomLevel = 3;
 
         private bool loadingSprite = false;
@@ -71,14 +71,14 @@ namespace SpriteMapEditor
 
             sprites = new BindingList<SpriteMapRegion> { new SpriteMapRegion() };
 
-            currentSprite = sprites[0];
-
             spriteList.DataSource = sprites;
             spriteList.DisplayMember = "Name";
             spriteList.ValueMember = "Bounds";
 
             originPointer_black = Properties.Resources.originPointer_black;
             originPointer_white = Properties.Resources.originPointer_white;
+
+            highlight = highlightCheckBox.Checked;
 
             LoadSpriteEditorValues();
         }
@@ -104,7 +104,7 @@ namespace SpriteMapEditor
                 {
                     //SurroundWithTranslucentRects(GetDrawingRect(currentSprite.Bounds, false), Color.Gray, e.Graphics);
                     //e.Graphics.DrawImage(highlightMask.Bitmap, Point.Empty);
-                    Rectangle highlightBounds = new Rectangle(0,0, spriteSheetViewer.Bounds.Width + 1, spriteSheetViewer.Bounds.Height + 1);
+                    Rectangle highlightBounds = new Rectangle(0,0, highlightMask.Width * zoomLevel, highlightMask.Height * zoomLevel);
                     e.Graphics.DrawImage(highlightMask.Bitmap, highlightBounds);
                 }
                     
@@ -166,13 +166,8 @@ namespace SpriteMapEditor
             drawingRect.Width *= zoomLevel;
             drawingRect.Height *= zoomLevel;
 
-            if (outline)
-            {
-                drawingRect.X--;
-                drawingRect.Y--;
-                drawingRect.Width++;
-                drawingRect.Height++;
-            }
+            drawingRect.Width--;
+            drawingRect.Height--;
 
             return drawingRect;
         }
@@ -208,12 +203,14 @@ namespace SpriteMapEditor
         {
             if (baseMask == null)
             {
+                Color maskColor = Color.FromArgb(128, 32, 32, 32);
+
                 highlightMask = new DirectBitmap(spriteSheetViewer.Image.Width, spriteSheetViewer.Image.Height);
                 for (int currentY = 0; currentY < highlightMask.Height; currentY++)
                 {
                     for (int currentX = 0; currentX < highlightMask.Width; currentX++)
                     {
-                        highlightMask.SetPixel(currentX, currentY, Color.Gray);
+                        highlightMask.SetPixel(currentX, currentY, maskColor);
                     }
                 }
                 baseMask = new DirectBitmap(highlightMask);
@@ -221,31 +218,6 @@ namespace SpriteMapEditor
             else
             {
                 highlightMask.CopyBitmap(baseMask);
-            }
-        }
-
-        private void SurroundWithTranslucentRects(Rectangle rect, Color color, Graphics graphics)
-        {
-            Rectangle topBorder = new Rectangle(0, 0, spriteSheetViewer.Width, rect.Y);
-            Rectangle leftBorder = new Rectangle(0, rect.Y, rect.X, rect.Height);
-            Rectangle rightBorder = new Rectangle(rect.X + rect.Width, rect.Y, spriteSheetViewer.Width - rect.X + rect.Width, rect.Height);
-            Rectangle bottomBorder = new Rectangle(0, rect.Y + rect.Height, spriteSheetViewer.Width, spriteSheetViewer.Height - rect.Y + rect.Height);
-            FillTranslucentRects(new Rectangle[] { topBorder, leftBorder, rightBorder, bottomBorder }, color, graphics);
-        }
-
-        private void FillTranslucentRect(Rectangle rect, Color color, Graphics graphics)
-        {
-            using (Brush whiteBrush = new SolidBrush(Color.FromArgb(128, color)))
-            {
-                graphics.FillRectangle(whiteBrush, rect);
-            }
-        }
-
-        private void FillTranslucentRects(Rectangle[] rects, Color color, Graphics graphics)
-        {
-            using (Brush whiteBrush = new SolidBrush(Color.FromArgb(128, color)))
-            {
-                graphics.FillRectangles(whiteBrush, rects);
             }
         }
 
@@ -260,19 +232,6 @@ namespace SpriteMapEditor
                 whitePen.DashPattern = new float[] { 4, 4 };
                 graphics.DrawRectangle(whitePen, rect);
             }
-        }
-
-        private void highlightButton_Click(object sender, EventArgs e)
-        {
-            highlight = !highlight;
-            if (highlight)
-            {
-                fillButton.Text = "No Highlight";
-                UpdateHighlightMask();
-            }
-            else
-                fillButton.Text = "Highlight";
-            spriteSheetViewer.Refresh();
         }
 
         private void zoomInButton_Click(object sender, EventArgs e)
@@ -356,7 +315,7 @@ namespace SpriteMapEditor
         {
             if (spriteList.SelectedIndex > -1 && spriteList.SelectedIndex < sprites.Count)
             {
-                currentSprite = sprites[spriteList.SelectedIndex];
+                //currentSprite = sprites[spriteList.SelectedIndex];
                 LoadSpriteEditorValues();
                 UpdateHighlightMask();
                 spriteSheetViewer.Refresh();
@@ -462,6 +421,8 @@ namespace SpriteMapEditor
                     newBounds.X += differenceX;
                     newBounds.Y += differenceY;
 
+                    newBounds = ClampRectangleToSheet(newBounds);
+
                     currentSprite.Bounds = newBounds;
                     oldPosition = newPosition;
                     UpdateHighlightMask();
@@ -471,6 +432,24 @@ namespace SpriteMapEditor
             }
             else
                 Cursor = Cursors.Default;
+        }
+
+        private Microsoft.Xna.Framework.Rectangle ClampRectangleToSheet(Microsoft.Xna.Framework.Rectangle rect)
+        {
+            var clampedRect = rect;
+
+            //clamp X value
+            if (clampedRect.X < 0)
+                clampedRect.X = 0;
+            else if (clampedRect.X + clampedRect.Width > spriteSheetViewer.Image.Width)
+                clampedRect.X = spriteSheetViewer.Image.Width - clampedRect.Width;
+            //clamp Y value
+            if (clampedRect.Y < 0)
+                clampedRect.Y = 0;
+            else if (clampedRect.Y + clampedRect.Height > spriteSheetViewer.Image.Height)
+                clampedRect.Y = spriteSheetViewer.Image.Height - clampedRect.Height;
+
+            return clampedRect;
         }
 
         private void spriteSheetViewer_MouseDown(object sender, MouseEventArgs e)
@@ -524,7 +503,9 @@ namespace SpriteMapEditor
                 var spriteBelow = sprites[spriteList.SelectedIndex + 1];
                 sprites[spriteList.SelectedIndex + 1] = currentSprite;
                 sprites[spriteList.SelectedIndex] = spriteBelow;
-                spriteList.SelectedIndex++;
+                int newPosition = spriteList.SelectedIndex + 1;
+                spriteList.SelectedIndices.Clear();
+                spriteList.SelectedIndex = newPosition;
             }
         }
 
@@ -535,7 +516,9 @@ namespace SpriteMapEditor
                 var spriteAbove = sprites[spriteList.SelectedIndex - 1];
                 sprites[spriteList.SelectedIndex - 1] = currentSprite;
                 sprites[spriteList.SelectedIndex] = spriteAbove;
-                spriteList.SelectedIndex--;
+                int newPosition = spriteList.SelectedIndex - 1;
+                spriteList.SelectedIndices.Clear();
+                spriteList.SelectedIndex = newPosition;
             }
         }
 
@@ -559,6 +542,16 @@ namespace SpriteMapEditor
             }
 
             spriteViewerPanel.Refresh();
+        }
+
+        private void highlightCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            highlight = highlightCheckBox.Checked;
+            if (highlight)
+            {
+                UpdateHighlightMask();
+            }
+            spriteSheetViewer.Refresh();
         }
     }
 }

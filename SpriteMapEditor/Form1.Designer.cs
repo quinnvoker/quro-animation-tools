@@ -36,6 +36,7 @@
             this.moveUpButton = new System.Windows.Forms.Button();
             this.spritesLabel = new System.Windows.Forms.Label();
             this.spritePanel = new System.Windows.Forms.Panel();
+            this.editingOriginCheckBox = new System.Windows.Forms.CheckBox();
             this.originYPosBox = new System.Windows.Forms.NumericUpDown();
             this.originXPosBox = new System.Windows.Forms.NumericUpDown();
             this.originYPosLabel = new System.Windows.Forms.Label();
@@ -54,8 +55,8 @@
             this.loadSpriteSheetDialog = new System.Windows.Forms.OpenFileDialog();
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMapDialog = new System.Windows.Forms.SaveFileDialog();
-            this.fillButton = new System.Windows.Forms.Button();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
+            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
@@ -66,8 +67,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpriteMapAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editingOriginCheckBox = new System.Windows.Forms.CheckBox();
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
+            this.highlightCheckBox = new System.Windows.Forms.CheckBox();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
@@ -77,8 +77,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             this.spriteViewerPanel.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // spriteList
@@ -87,6 +87,7 @@
             this.spriteList.FormattingEnabled = true;
             this.spriteList.Location = new System.Drawing.Point(3, 32);
             this.spriteList.Name = "spriteList";
+            this.spriteList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.spriteList.Size = new System.Drawing.Size(183, 199);
             this.spriteList.TabIndex = 0;
             this.spriteList.SelectedValueChanged += new System.EventHandler(this.spriteList_SelectedValueChanged);
@@ -182,6 +183,17 @@
             this.spritePanel.Size = new System.Drawing.Size(190, 172);
             this.spritePanel.TabIndex = 9;
             // 
+            // editingOriginCheckBox
+            // 
+            this.editingOriginCheckBox.AutoSize = true;
+            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 108);
+            this.editingOriginCheckBox.Name = "editingOriginCheckBox";
+            this.editingOriginCheckBox.Size = new System.Drawing.Size(107, 17);
+            this.editingOriginCheckBox.TabIndex = 23;
+            this.editingOriginCheckBox.Text = "Edit Origin Point?";
+            this.editingOriginCheckBox.UseVisualStyleBackColor = true;
+            this.editingOriginCheckBox.CheckedChanged += new System.EventHandler(this.editingOriginCheckBox_CheckedChanged);
+            // 
             // originYPosBox
             // 
             this.originYPosBox.Enabled = false;
@@ -191,6 +203,11 @@
             0,
             0,
             0});
+            this.originYPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
             this.originYPosBox.Name = "originYPosBox";
             this.originYPosBox.Size = new System.Drawing.Size(45, 20);
             this.originYPosBox.TabIndex = 22;
@@ -205,6 +222,11 @@
             0,
             0,
             0});
+            this.originXPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
             this.originXPosBox.Name = "originXPosBox";
             this.originXPosBox.Size = new System.Drawing.Size(45, 20);
             this.originXPosBox.TabIndex = 21;
@@ -361,16 +383,6 @@
             this.saveMapDialog.DefaultExt = "smap";
             this.saveMapDialog.Filter = "QUROGame SpriteMap|*.smap";
             // 
-            // fillButton
-            // 
-            this.fillButton.Location = new System.Drawing.Point(461, 30);
-            this.fillButton.Name = "fillButton";
-            this.fillButton.Size = new System.Drawing.Size(86, 23);
-            this.fillButton.TabIndex = 12;
-            this.fillButton.Text = "Highight";
-            this.fillButton.UseVisualStyleBackColor = true;
-            this.fillButton.Click += new System.EventHandler(this.highlightButton_Click);
-            // 
             // spriteViewerPanel
             // 
             this.spriteViewerPanel.AutoScroll = true;
@@ -382,6 +394,23 @@
             this.spriteViewerPanel.Size = new System.Drawing.Size(488, 404);
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
+            // 
+            // spriteSheetViewer
+            // 
+            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
+            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
+            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.spriteSheetViewer.Name = "spriteSheetViewer";
+            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
+            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.spriteSheetViewer.TabIndex = 13;
+            this.spriteSheetViewer.TabStop = false;
+            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
+            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
+            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
+            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
+            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
             // 
             // zoomInButton
             // 
@@ -467,33 +496,18 @@
             this.saveSpriteMapAsToolStripMenuItem.Text = "Save Sprite Map As...";
             this.saveSpriteMapAsToolStripMenuItem.Click += new System.EventHandler(this.saveMapAsToolStripMenuItem_Click);
             // 
-            // editingOriginCheckBox
+            // highlightCheckBox
             // 
-            this.editingOriginCheckBox.AutoSize = true;
-            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 108);
-            this.editingOriginCheckBox.Name = "editingOriginCheckBox";
-            this.editingOriginCheckBox.Size = new System.Drawing.Size(107, 17);
-            this.editingOriginCheckBox.TabIndex = 23;
-            this.editingOriginCheckBox.Text = "Edit Origin Point?";
-            this.editingOriginCheckBox.UseVisualStyleBackColor = true;
-            this.editingOriginCheckBox.CheckedChanged += new System.EventHandler(this.editingOriginCheckBox_CheckedChanged);
-            // 
-            // spriteSheetViewer
-            // 
-            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
-            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
-            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
-            this.spriteSheetViewer.Name = "spriteSheetViewer";
-            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
-            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.spriteSheetViewer.TabIndex = 13;
-            this.spriteSheetViewer.TabStop = false;
-            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
-            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
-            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
-            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
-            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
+            this.highlightCheckBox.AutoSize = true;
+            this.highlightCheckBox.Checked = true;
+            this.highlightCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.highlightCheckBox.Location = new System.Drawing.Point(446, 34);
+            this.highlightCheckBox.Name = "highlightCheckBox";
+            this.highlightCheckBox.Size = new System.Drawing.Size(114, 17);
+            this.highlightCheckBox.TabIndex = 17;
+            this.highlightCheckBox.Text = "Highlight Selection";
+            this.highlightCheckBox.UseVisualStyleBackColor = true;
+            this.highlightCheckBox.CheckedChanged += new System.EventHandler(this.highlightCheckBox_CheckedChanged);
             // 
             // Form1
             // 
@@ -501,11 +515,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(691, 465);
+            this.Controls.Add(this.highlightCheckBox);
             this.Controls.Add(this.zoomLabel);
             this.Controls.Add(this.zoomInButton);
             this.Controls.Add(this.spriteViewerPanel);
             this.Controls.Add(this.zoomOutButton);
-            this.Controls.Add(this.fillButton);
             this.Controls.Add(this.spritePanel);
             this.Controls.Add(this.spriteListPanel);
             this.Controls.Add(this.menuStrip1);
@@ -522,9 +536,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).EndInit();
             this.spriteViewerPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -548,7 +562,6 @@
         private System.Windows.Forms.OpenFileDialog loadSpriteSheetDialog;
         private System.Windows.Forms.OpenFileDialog loadMapDialog;
         private System.Windows.Forms.SaveFileDialog saveMapDialog;
-        private System.Windows.Forms.Button fillButton;
         private PictureBoxWithInterpolationMode spriteSheetViewer;
         private System.Windows.Forms.Panel spriteViewerPanel;
         private System.Windows.Forms.Button zoomInButton;
@@ -572,6 +585,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveSpriteMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveSpriteMapAsToolStripMenuItem;
         private System.Windows.Forms.CheckBox editingOriginCheckBox;
+        private System.Windows.Forms.CheckBox highlightCheckBox;
     }
 }
 
