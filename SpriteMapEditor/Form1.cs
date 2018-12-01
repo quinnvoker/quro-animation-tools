@@ -13,6 +13,7 @@ using Microsoft.Xna;
 using System.IO;
 using QURO;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
+using SpriteMapEditor.SpriteMapModifications;
 
 
 namespace SpriteMapEditor
@@ -23,7 +24,6 @@ namespace SpriteMapEditor
         private List<SpriteMapRegion> selectedSprites;
 
         private bool highlight = false;
-        //private SpriteMapRegion currentSprite { get { return sprites[spriteList.SelectedIndices[0]]; } }
         private int zoomLevel = 3;
 
         private bool loadingSprite = false;
