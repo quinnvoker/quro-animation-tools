@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.spriteList = new System.Windows.Forms.ListBox();
             this.addSpriteButton = new System.Windows.Forms.Button();
             this.removeSpriteButton = new System.Windows.Forms.Button();
@@ -49,14 +50,13 @@
             this.widthLabel = new System.Windows.Forms.Label();
             this.yPosLabel = new System.Windows.Forms.Label();
             this.xPosLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.spriteNameLabel = new System.Windows.Forms.Label();
             this.spriteSettingsLabel = new System.Windows.Forms.Label();
             this.spriteNameBox = new System.Windows.Forms.TextBox();
             this.loadSpriteSheetDialog = new System.Windows.Forms.OpenFileDialog();
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMapDialog = new System.Windows.Forms.SaveFileDialog();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
@@ -68,6 +68,8 @@
             this.saveSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpriteMapAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.highlightCheckBox = new System.Windows.Forms.CheckBox();
+            this.outlineTimer = new System.Windows.Forms.Timer(this.components);
+            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
@@ -77,8 +79,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             this.spriteViewerPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.SuspendLayout();
             // 
             // spriteList
@@ -175,7 +177,7 @@
             this.spritePanel.Controls.Add(this.widthLabel);
             this.spritePanel.Controls.Add(this.yPosLabel);
             this.spritePanel.Controls.Add(this.xPosLabel);
-            this.spritePanel.Controls.Add(this.label2);
+            this.spritePanel.Controls.Add(this.spriteNameLabel);
             this.spritePanel.Controls.Add(this.spriteSettingsLabel);
             this.spritePanel.Controls.Add(this.spriteNameBox);
             this.spritePanel.Location = new System.Drawing.Point(2, 291);
@@ -340,14 +342,14 @@
             this.xPosLabel.TabIndex = 8;
             this.xPosLabel.Text = "X Pos.";
             // 
-            // label2
+            // spriteNameLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Name:";
+            this.spriteNameLabel.AutoSize = true;
+            this.spriteNameLabel.Location = new System.Drawing.Point(6, 30);
+            this.spriteNameLabel.Name = "spriteNameLabel";
+            this.spriteNameLabel.Size = new System.Drawing.Size(38, 13);
+            this.spriteNameLabel.TabIndex = 6;
+            this.spriteNameLabel.Text = "Name:";
             // 
             // spriteSettingsLabel
             // 
@@ -394,23 +396,6 @@
             this.spriteViewerPanel.Size = new System.Drawing.Size(488, 404);
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
-            // 
-            // spriteSheetViewer
-            // 
-            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
-            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
-            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
-            this.spriteSheetViewer.Name = "spriteSheetViewer";
-            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
-            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.spriteSheetViewer.TabIndex = 13;
-            this.spriteSheetViewer.TabStop = false;
-            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
-            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
-            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
-            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
-            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
             // 
             // zoomInButton
             // 
@@ -509,6 +494,29 @@
             this.highlightCheckBox.UseVisualStyleBackColor = true;
             this.highlightCheckBox.CheckedChanged += new System.EventHandler(this.highlightCheckBox_CheckedChanged);
             // 
+            // outlineTimer
+            // 
+            this.outlineTimer.Enabled = true;
+            this.outlineTimer.Interval = 66;
+            this.outlineTimer.Tick += new System.EventHandler(this.outlineTimer_Tick);
+            // 
+            // spriteSheetViewer
+            // 
+            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
+            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
+            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.spriteSheetViewer.Name = "spriteSheetViewer";
+            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
+            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.spriteSheetViewer.TabIndex = 13;
+            this.spriteSheetViewer.TabStop = false;
+            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
+            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
+            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
+            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
+            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -536,9 +544,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).EndInit();
             this.spriteViewerPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -554,7 +562,7 @@
         private System.Windows.Forms.Panel spritePanel;
         private System.Windows.Forms.Label spriteSettingsLabel;
         private System.Windows.Forms.TextBox spriteNameBox;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label spriteNameLabel;
         private System.Windows.Forms.Label xPosLabel;
         private System.Windows.Forms.Label heightLabel;
         private System.Windows.Forms.Label widthLabel;
@@ -586,6 +594,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveSpriteMapAsToolStripMenuItem;
         private System.Windows.Forms.CheckBox editingOriginCheckBox;
         private System.Windows.Forms.CheckBox highlightCheckBox;
+        private System.Windows.Forms.Timer outlineTimer;
     }
 }
 
