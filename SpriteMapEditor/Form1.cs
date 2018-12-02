@@ -56,8 +56,8 @@ namespace SpriteMapEditor
 
         private Point newPosition;
         private Point oldPosition;
-        private int totalDragX;
-        private int totalDragY;
+
+        private List<Microsoft.Xna.Framework.Rectangle> preDragBounds;
 
         private int drawingRectangleOffset
         {
@@ -513,63 +513,40 @@ namespace SpriteMapEditor
                 {
                     hovering = true;
                     Cursor = Cursors.SizeAll;
-                    if (movingWithMouse)
-                    {
-                        newPosition = mousePosition;
-                        newPosition.X /= zoomLevel;
-                        newPosition.Y /= zoomLevel;
-                        int differenceX = newPosition.X - oldPosition.X;
-                        int differenceY = newPosition.Y - oldPosition.Y;
-
-                        var groupRect = GetSelectedGroupRectangle();
-                        if (groupRect.X + differenceX < 0 ||
-                            groupRect.X + groupRect.Width + differenceX > spriteSheet.Width)
-                            differenceX = 0;
-                        if (groupRect.Y + differenceY < 0 ||
-                            groupRect.Y + groupRect.Height + differenceY > spriteSheet.Height)
-                            differenceY = 0;
-
-                        totalDragX += differenceX;
-                        totalDragY += differenceY;
-
-                        foreach (SpriteMapRegion spriteToMove in selectedSprites)
-                        {
-                            var newBounds = spriteToMove.Bounds;
-                            newBounds.X += differenceX;
-                            newBounds.Y += differenceY;
-
-                            newBounds = ClampRectangleToSheet(newBounds);
-
-                            spriteToMove.Bounds = newBounds;
-                        }
-                        oldPosition = newPosition;
-                        UpdateHighlightMask();
-                        spriteSheetViewer.Refresh();
-                        LoadSpriteEditorValues();
-                        break;
-                    }
                 }
             }
-            if(!hovering)
+
+            if (movingWithMouse)
+            {
+                newPosition = mousePosition;
+                newPosition.X /= zoomLevel;
+                newPosition.Y /= zoomLevel;
+                int differenceX = newPosition.X - oldPosition.X;
+                int differenceY = newPosition.Y - oldPosition.Y;
+
+                var groupRect = GetSelectedGroupRectangle();
+                if (groupRect.X + differenceX < 0 ||
+                    groupRect.X + groupRect.Width + differenceX > spriteSheet.Width)
+                    differenceX = 0;
+                if (groupRect.Y + differenceY < 0 ||
+                    groupRect.Y + groupRect.Height + differenceY > spriteSheet.Height)
+                    differenceY = 0;
+
+                foreach (SpriteMapRegion spriteToMove in selectedSprites)
+                {
+                    var newBounds = spriteToMove.Bounds;
+                    newBounds.X += differenceX;
+                    newBounds.Y += differenceY;
+                    spriteToMove.Bounds = newBounds;
+                }
+                oldPosition = newPosition;
+                UpdateHighlightMask();
+                spriteSheetViewer.Refresh();
+                LoadSpriteEditorValues();
+            }
+
+            if (!hovering)
                 Cursor = Cursors.Default;
-        }
-
-        private Microsoft.Xna.Framework.Rectangle ClampRectangleToSheet(Microsoft.Xna.Framework.Rectangle rect)
-        {
-            var clampedRect = rect;
-
-            //clamp X value
-            if (clampedRect.X < 0)
-                clampedRect.X = 0;
-            else if (clampedRect.X + clampedRect.Width > spriteSheet.Width)
-                clampedRect.X = spriteSheet.Width - clampedRect.Width;
-            //clamp Y value
-            if (clampedRect.Y < 0)
-                clampedRect.Y = 0;
-            else if (clampedRect.Y + clampedRect.Height > spriteSheet.Height)
-                clampedRect.Y = spriteSheet.Height - clampedRect.Height;
-
-            return clampedRect;
         }
 
         private void spriteSheetViewer_MouseDown(object sender, MouseEventArgs e)
@@ -584,8 +561,11 @@ namespace SpriteMapEditor
                 if (GetDrawingRect(currentSprite.Bounds).Contains(mousePosition))
                 {
                     movingWithMouse = true;
-                    totalDragX = 0;
-                    totalDragY = 0;
+                    preDragBounds = new List<Microsoft.Xna.Framework.Rectangle>();
+                    foreach (SpriteMapRegion sprite in selectedSprites)
+                    {
+                        preDragBounds.Add(sprite.Bounds);
+                    }
                     newPosition = mousePosition;
                     newPosition.X /= zoomLevel;
                     newPosition.Y /= zoomLevel;
@@ -602,14 +582,18 @@ namespace SpriteMapEditor
 
         private void spriteSheetViewer_MouseUp(object sender, MouseEventArgs e)
         {
-            movingWithMouse = false;
-            if(totalDragX != 0 || totalDragY != 0)
+            if (movingWithMouse)
             {
-                var modification = new SpriteMapModifications.MoveBounds(selectedSprites, totalDragX, totalDragY);
-                var selection = SpriteMapModifications.ModHelper.GetSelectionList(spriteList);
-                modification.SetPreChangeSelection(selection);
-                modification.SetPostChangeSelection(selection);
-                undoHistory.Add(modification);
+                movingWithMouse = false;
+                var totalDragX = selectedSprites[0].Bounds.X - preDragBounds[0].X;
+                var totalDragY = selectedSprites[0].Bounds.Y - preDragBounds[0].Y;
+                if (totalDragX != 0 || totalDragY != 0)
+                {
+                    var modification = new SpriteMapModifications.MoveBounds(selectedSprites, totalDragX, totalDragY, preDragBounds);
+                    modification.Undo();
+                    SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                    undoHistory.Add(modification);
+                }
             }
         }
 

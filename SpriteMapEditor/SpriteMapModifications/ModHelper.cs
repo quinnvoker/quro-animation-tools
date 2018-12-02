@@ -16,18 +16,21 @@ namespace SpriteMapEditor.SpriteMapModifications
             mod.SetPreChangeSelection(GetSelectionList(listBox));
             mod.Do();
             mod.SetPostChangeSelection(GetSelectionList(listBox));
+            Console.WriteLine("Perform: " + mod);
         }
 
         public static void UndoAndRestoreSelection(SpriteMapModifications.ISpriteMapModification mod, ListBox listBox)
         {
             mod.Undo();
             SelectFromList(listBox, mod.GetPreChangeSelection());
+            Console.WriteLine("Undo: " + mod);
         }
 
         public static void RedoAndRestoreSelection(SpriteMapModifications.ISpriteMapModification mod, ListBox listBox)
         {
             mod.Do();
             SelectFromList(listBox, mod.GetPostChangeSelection());
+            Console.WriteLine("Redo: " + mod);
         }
 
         public static List<int> GetSelectionList(ListBox listBox)

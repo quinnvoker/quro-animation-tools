@@ -35,7 +35,6 @@ namespace SpriteMapEditor.SpriteMapModifications
             }
             changes.Add(change);
             position = changes.Count - 1;
-            //Console.WriteLine("Available Undo Steps: " + changes.Count + "; Current Undo Position: " + position);
         }
 
         public void Undo()
@@ -51,6 +50,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         {
             if (CanUndo)
             {
+                Console.Write("Hist.Pos(" + position + "): ");
                 ModHelper.UndoAndRestoreSelection(changes[position], listBox);
                 position--;
             }
@@ -69,6 +69,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         {
             if (CanRedo)
             {
+                Console.Write("Hist.Pos(" + position + "): ");
                 ModHelper.RedoAndRestoreSelection(changes[position + 1], listBox);
                 position++;
             }

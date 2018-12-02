@@ -71,6 +71,7 @@
     <Compile Include="SpriteMapModifications\ModifyOrigin.cs" />
     <Compile Include="SpriteMapModifications\MoveBounds.cs" />
     <Compile Include="SpriteMapModifications\MoveSpriteListEntry.cs" />
+    <Compile Include="SpriteMapModifications\OriginPreset.cs" />
     <Compile Include="SpriteMapModifications\RemoveSprite.cs" />
     <Compile Include="SpriteMapModifications\RenameSprite.cs" />
     <EmbeddedResource Include="Form1.resx">
