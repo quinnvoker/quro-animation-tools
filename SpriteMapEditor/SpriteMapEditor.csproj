@@ -58,7 +58,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpriteMapModifications\ModHelper.cs" />
     <Compile Include="SpriteMapModifications\AddSprite.cs" />
+    <Compile Include="SpriteMapModifications\History.cs" />
     <Compile Include="SpriteMapModifications\ISpriteModification.cs" />
     <Compile Include="SpriteMapModifications\ModifyBounds.cs" />
     <Compile Include="PictureBoxWithInterpolationMode.cs">
@@ -70,6 +72,7 @@
     <Compile Include="SpriteMapModifications\MoveBounds.cs" />
     <Compile Include="SpriteMapModifications\MoveSpriteListEntry.cs" />
     <Compile Include="SpriteMapModifications\RemoveSprite.cs" />
+    <Compile Include="SpriteMapModifications\RenameSprite.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

@@ -17,9 +17,12 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         private readonly List<Vector2> oldOrigins;
 
-        public ModifyOrigin(List<SpriteMapRegion> spritesToEditOrigin, int x = -1, int y = -1)
+        private List<int> preChangeSelection;
+        private List<int> postChangeSelection;
+
+        public ModifyOrigin(List<SpriteMapRegion> spritesToEditOrigin,  int x = -1, int y = -1)
         {
-            sprites = spritesToEditOrigin;
+            sprites = spritesToEditOrigin.ToList();
             newOriginX = x;
             newOriginY = y;
 
@@ -51,6 +54,28 @@ namespace SpriteMapEditor.SpriteMapModifications
             {
                 sprites[index].Origin = oldOrigins[index];
             }
+        }
+
+        public List<int> GetPreChangeSelection()
+        {
+            return preChangeSelection;
+        }
+        public void SetPreChangeSelection(List<int> currentSelection)
+        {
+            preChangeSelection = currentSelection;
+        }
+        public List<int> GetPostChangeSelection()
+        {
+            return postChangeSelection;
+        }
+        public void SetPostChangeSelection(List<int> currentSelection)
+        {
+            postChangeSelection = currentSelection;
+        }
+
+        public override string ToString()
+        {
+            return "Modify Sprite Origin";
         }
     }
 }

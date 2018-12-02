@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using QURO;
 using Microsoft.Xna.Framework;
+using System.Windows.Forms;
 
 namespace SpriteMapEditor.SpriteMapModifications
 {
@@ -19,9 +20,12 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         private readonly List<Rectangle> oldBounds;
 
+        private List<int> preChangeSelection;
+        private List<int> postChangeSelection;
+
         public ModifyBounds(List<SpriteMapRegion> spritesToModify, int x = -1, int y = -1, int width = -1, int height = -1)
         {
-            sprites = spritesToModify;
+            sprites = spritesToModify.ToList();
             newXPosition = x;
             newYPosition = y;
             newWidth = width;
@@ -60,6 +64,28 @@ namespace SpriteMapEditor.SpriteMapModifications
             {
                 sprites[index].Bounds = oldBounds[index];
             }
+        }
+
+        public List<int> GetPreChangeSelection()
+        {
+            return preChangeSelection;
+        }
+        public void SetPreChangeSelection(List<int> currentSelection)
+        {
+            preChangeSelection = currentSelection;
+        }
+        public List<int> GetPostChangeSelection()
+        {
+            return postChangeSelection;
+        }
+        public void SetPostChangeSelection(List<int> currentSelection)
+        {
+            postChangeSelection = currentSelection;
+        }
+
+        public override string ToString()
+        {
+            return "Modify Sprite Bounds";
         }
     }
 }

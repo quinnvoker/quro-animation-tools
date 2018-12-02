@@ -13,13 +13,14 @@ using Microsoft.Xna;
 using System.IO;
 using QURO;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
-using SpriteMapEditor.SpriteMapModifications;
 
 
 namespace SpriteMapEditor
 {
     public partial class Form1 : Form
     {
+        private SpriteMapModifications.History undoHistory;
+
         private BindingList<SpriteMapRegion> sprites;
         private List<SpriteMapRegion> selectedSprites;
 
@@ -45,6 +46,8 @@ namespace SpriteMapEditor
         Image originPointer_black;
         Image originPointer_white;
 
+        Image spriteSheet;
+
         Pen blackPen;
         Pen whitePen;
 
@@ -53,6 +56,8 @@ namespace SpriteMapEditor
 
         private Point newPosition;
         private Point oldPosition;
+        private int totalDragX;
+        private int totalDragY;
 
         private int drawingRectangleOffset
         {
@@ -69,6 +74,8 @@ namespace SpriteMapEditor
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            undoHistory = new SpriteMapModifications.History();
 
             spriteSheetViewer.Width = 1;
             spriteSheetViewer.Height = 1;
@@ -96,18 +103,26 @@ namespace SpriteMapEditor
         {
             if(loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                spriteSheetViewer.Image = Image.FromFile(loadSpriteSheetDialog.FileName);
+                spriteSheet = Image.FromFile(loadSpriteSheetDialog.FileName);
+                spriteSheetViewer.Image = spriteSheet;
             }
 
+            EnableLoadAndSaveAsSpriteMap();
             InitializeMask();
+        }
+
+        private void EnableLoadAndSaveAsSpriteMap()
+        {
+            loadSpriteMapToolStripMenuItem.Enabled = true;
+            saveSpriteMapAsToolStripMenuItem.Enabled = true;
         }
 
         private void spriteSheetViewer_Paint(object sender, PaintEventArgs e)
         {
-            if (spriteSheetViewer.Image != null)
+            if (spriteSheet != null)
             {
-                spriteSheetViewer.Width = spriteSheetViewer.Image.Width * zoomLevel;
-                spriteSheetViewer.Height = spriteSheetViewer.Image.Height * zoomLevel;
+                spriteSheetViewer.Width = spriteSheet.Width * zoomLevel;
+                spriteSheetViewer.Height = spriteSheet.Height * zoomLevel;
 
                 if (highlight)
                 {
@@ -190,8 +205,8 @@ namespace SpriteMapEditor
         {
             if (editingOrigin)
             {
-                var spriteSheet = (Bitmap)spriteSheetViewer.Image;
-                var colorAtOrigin = spriteSheet.GetPixel((int)(sprite.Bounds.X + sprite.Origin.X),
+                var spriteSheetBitmap = (Bitmap)spriteSheet;
+                var colorAtOrigin = spriteSheetBitmap.GetPixel((int)(sprite.Bounds.X + sprite.Origin.X),
                     (int)(sprite.Bounds.Y + sprite.Origin.Y));
 
                 var highContrastPointer = originPointer_black;
@@ -232,7 +247,7 @@ namespace SpriteMapEditor
             {
                 Color maskColor = Color.FromArgb(128, 32, 32, 32);
 
-                highlightMask = new DirectBitmap(spriteSheetViewer.Image.Width, spriteSheetViewer.Image.Height);
+                highlightMask = new DirectBitmap(spriteSheet.Width, spriteSheet.Height);
                 for (int currentY = 0; currentY < highlightMask.Height; currentY++)
                 {
                     for (int currentX = 0; currentX < highlightMask.Width; currentX++)
@@ -244,7 +259,8 @@ namespace SpriteMapEditor
             }
             else
             {
-                highlightMask.CopyBitmap(baseMask);
+                highlightMask.Dispose();
+                highlightMask = new DirectBitmap(baseMask);
             }
         }
 
@@ -280,12 +296,9 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newBounds = currentSprite.Bounds;
-                newBounds.X = (int)spriteXPosBox.Value;
-                currentSprite.Bounds = newBounds;
-            }
+            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, x: (int)spriteXPosBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
@@ -294,12 +307,9 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newBounds = currentSprite.Bounds;
-                newBounds.Y = (int)spriteYPosBox.Value;
-                currentSprite.Bounds = newBounds;
-            }
+            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, y: (int)spriteYPosBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
@@ -308,12 +318,9 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newBounds = currentSprite.Bounds;
-                newBounds.Width = (int)spriteWidthBox.Value;
-                currentSprite.Bounds = newBounds;
-            }
+            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, width: (int)spriteWidthBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
@@ -322,33 +329,35 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newBounds = currentSprite.Bounds;
-                newBounds.Height = (int)spriteHeightBox.Value;
-                currentSprite.Bounds = newBounds;
-            }
+            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, height: (int)spriteHeightBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
         }
 
-        private void spriteNameBox_TextChanged(object sender, EventArgs e)
-        {
-            if (loadingSprite)
-                return;
-            selectedSprites[0].Name = spriteNameBox.Text;
-            sprites.ResetBindings();
-        }
-
         private void addSpriteButton_Click(object sender, EventArgs e)
         {
-            sprites.Add(new SpriteMapRegion(selectedSprites[0].Name, selectedSprites[0].Bounds));
+            var modification = new SpriteMapModifications.AddSprite(sprites, selectedSprites[0]);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
         }
 
         private void removeSpriteButton_Click(object sender, EventArgs e)
         {
-            if (spriteList.SelectedIndex > -1 && spriteList.SelectedIndex < sprites.Count)
-                sprites.RemoveAt(spriteList.SelectedIndex);
+            int indexToRemove = spriteList.SelectedIndex;
+            if (indexToRemove == sprites.Count - 1)
+            {
+                spriteList.SelectedIndices.Clear();
+                spriteList.SelectedIndex = indexToRemove - 1;
+            }
+
+            if (indexToRemove > -1 && indexToRemove < sprites.Count)
+            {
+                var modification = new SpriteMapModifications.RemoveSprite(sprites, indexToRemove);
+                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                undoHistory.Add(modification);
+            }
         }
 
         private void spriteList_SelectedValueChanged(object sender, EventArgs e)
@@ -484,12 +493,14 @@ namespace SpriteMapEditor
                 }
 
                 spriteList.DataSource = sprites;
+
+                saveSpriteMapToolStripMenuItem.Enabled = true;
             }
         }
 
         private void spriteSheetViewer_MouseMove(object sender, MouseEventArgs e)
         {
-            if(spriteSheetViewer.Image == null)
+            if(spriteSheet == null)
                 return;
             
             Point mousePosition = new Point(e.X, e.Y);
@@ -512,11 +523,14 @@ namespace SpriteMapEditor
 
                         var groupRect = GetSelectedGroupRectangle();
                         if (groupRect.X + differenceX < 0 ||
-                            groupRect.X + groupRect.Width + differenceX > spriteSheetViewer.Image.Width)
+                            groupRect.X + groupRect.Width + differenceX > spriteSheet.Width)
                             differenceX = 0;
                         if (groupRect.Y + differenceY < 0 ||
-                            groupRect.Y + groupRect.Height + differenceY > spriteSheetViewer.Image.Height)
+                            groupRect.Y + groupRect.Height + differenceY > spriteSheet.Height)
                             differenceY = 0;
+
+                        totalDragX += differenceX;
+                        totalDragY += differenceY;
 
                         foreach (SpriteMapRegion spriteToMove in selectedSprites)
                         {
@@ -547,20 +561,20 @@ namespace SpriteMapEditor
             //clamp X value
             if (clampedRect.X < 0)
                 clampedRect.X = 0;
-            else if (clampedRect.X + clampedRect.Width > spriteSheetViewer.Image.Width)
-                clampedRect.X = spriteSheetViewer.Image.Width - clampedRect.Width;
+            else if (clampedRect.X + clampedRect.Width > spriteSheet.Width)
+                clampedRect.X = spriteSheet.Width - clampedRect.Width;
             //clamp Y value
             if (clampedRect.Y < 0)
                 clampedRect.Y = 0;
-            else if (clampedRect.Y + clampedRect.Height > spriteSheetViewer.Image.Height)
-                clampedRect.Y = spriteSheetViewer.Image.Height - clampedRect.Height;
+            else if (clampedRect.Y + clampedRect.Height > spriteSheet.Height)
+                clampedRect.Y = spriteSheet.Height - clampedRect.Height;
 
             return clampedRect;
         }
 
         private void spriteSheetViewer_MouseDown(object sender, MouseEventArgs e)
         {
-            if (spriteSheetViewer.Image == null)
+            if (spriteSheet == null)
                 return;
 
             Point mousePosition = new Point(e.X, e.Y);
@@ -570,6 +584,8 @@ namespace SpriteMapEditor
                 if (GetDrawingRect(currentSprite.Bounds).Contains(mousePosition))
                 {
                     movingWithMouse = true;
+                    totalDragX = 0;
+                    totalDragY = 0;
                     newPosition = mousePosition;
                     newPosition.X /= zoomLevel;
                     newPosition.Y /= zoomLevel;
@@ -587,18 +603,23 @@ namespace SpriteMapEditor
         private void spriteSheetViewer_MouseUp(object sender, MouseEventArgs e)
         {
             movingWithMouse = false;
+            if(totalDragX != 0 || totalDragY != 0)
+            {
+                var modification = new SpriteMapModifications.MoveBounds(selectedSprites, totalDragX, totalDragY);
+                var selection = SpriteMapModifications.ModHelper.GetSelectionList(spriteList);
+                modification.SetPreChangeSelection(selection);
+                modification.SetPostChangeSelection(selection);
+                undoHistory.Add(modification);
+            }
         }
 
         private void originXPosBox_ValueChanged(object sender, EventArgs e)
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newOrigin = currentSprite.Origin;
-                newOrigin.X = (int)originXPosBox.Value;
-                currentSprite.Origin = newOrigin;
-            }
+            var modification = new SpriteMapModifications.ModifyOrigin(selectedSprites, x: (int)originXPosBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             spriteSheetViewer.Refresh();
         }
 
@@ -606,12 +627,9 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
-            {
-                var newOrigin = currentSprite.Origin;
-                newOrigin.Y = (int)originYPosBox.Value;
-                currentSprite.Origin = newOrigin;
-            }
+            var modification = new SpriteMapModifications.ModifyOrigin(selectedSprites, y: (int)originYPosBox.Value);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
             spriteSheetViewer.Refresh();
         }
 
@@ -619,9 +637,9 @@ namespace SpriteMapEditor
         {
             if(spriteList.SelectedIndex < sprites.Count - 1)
             {
-                var spriteBelow = sprites[spriteList.SelectedIndex + 1];
-                sprites[spriteList.SelectedIndex + 1] = selectedSprites[0];
-                sprites[spriteList.SelectedIndex] = spriteBelow;
+                var modification = new SpriteMapModifications.MoveSpriteListEntry(sprites, spriteList.SelectedIndex, 1);
+                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                undoHistory.Add(modification);
                 int newPosition = spriteList.SelectedIndex + 1;
                 spriteList.SelectedIndices.Clear();
                 spriteList.SelectedIndex = newPosition;
@@ -632,9 +650,9 @@ namespace SpriteMapEditor
         {
             if(spriteList.SelectedIndex > 0)
             {
-                var spriteAbove = sprites[spriteList.SelectedIndex - 1];
-                sprites[spriteList.SelectedIndex - 1] = selectedSprites[0];
-                sprites[spriteList.SelectedIndex] = spriteAbove;
+                var modification = new SpriteMapModifications.MoveSpriteListEntry(sprites, spriteList.SelectedIndex, -1);
+                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                undoHistory.Add(modification);
                 int newPosition = spriteList.SelectedIndex - 1;
                 spriteList.SelectedIndices.Clear();
                 spriteList.SelectedIndex = newPosition;
@@ -680,6 +698,65 @@ namespace SpriteMapEditor
             else
                 whitePen.DashOffset = 0;
             spriteSheetViewer.Refresh();
+        }
+
+        private void UpdateSpriteName()
+        {
+            var modification = new SpriteMapModifications.RenameSprite(selectedSprites[0], spriteNameBox.Text);
+            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
+            sprites.ResetBindings();
+        }
+
+        private void spriteNameBox_Leave(object sender, EventArgs e)
+        {
+            if (selectedSprites[0].Name != spriteNameBox.Text)
+            {
+                UpdateSpriteName();
+            }
+        }
+
+        private void spriteNameBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return && selectedSprites[0].Name != spriteNameBox.Text)
+            {
+                UpdateSpriteName();
+            }
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+            if (selectedSprites[0].Name != spriteNameBox.Text)
+            {
+                UpdateSpriteName();
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                if (e.KeyCode == Keys.Z)
+                {
+                    //Console.WriteLine("Undo Keypress");
+                    undoHistory.Undo(spriteList);
+                }
+                else if (e.KeyCode == Keys.Y)
+                {
+                    //Console.WriteLine("Redo Keypress");
+                    undoHistory.Redo(spriteList);
+                }
+            }
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            undoHistory.Undo(spriteList);
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            undoHistory.Redo(spriteList);
         }
     }
 }

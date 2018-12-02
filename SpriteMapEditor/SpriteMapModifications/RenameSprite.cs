@@ -4,36 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QURO;
-using System.ComponentModel;
 
 namespace SpriteMapEditor.SpriteMapModifications
 {
-    class RemoveSprite : ISpriteMapModification
+    class RenameSprite : ISpriteMapModification
     {
-        private readonly BindingList<SpriteMapRegion> allSprites;
+        private readonly SpriteMapRegion sprite;
 
-        private readonly int index;
-
-        private readonly SpriteMapRegion removedSprite;
+        private readonly string newName;
+        private readonly string oldName;
 
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public RemoveSprite(BindingList<SpriteMapRegion> spriteList, int indexToRemove)
+        public RenameSprite(SpriteMapRegion spriteToRename, string name)
         {
-            allSprites = spriteList;
-            index = indexToRemove;
-            removedSprite = allSprites[index];
+            sprite = spriteToRename;
+            newName = name;
+            oldName = sprite.Name;
         }
 
         public void Do()
         {
-            allSprites.RemoveAt(index);
+            sprite.Name = newName;
         }
 
         public void Undo()
         {
-            allSprites.Insert(index, removedSprite);
+            sprite.Name = oldName;
         }
 
         public List<int> GetPreChangeSelection()
@@ -55,7 +53,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         public override string ToString()
         {
-            return "Remove Sprite";
+            return "Rename Sprite";
         }
     }
 }

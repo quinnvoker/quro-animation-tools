@@ -70,6 +70,9 @@
             this.highlightCheckBox = new System.Windows.Forms.CheckBox();
             this.outlineTimer = new System.Windows.Forms.Timer(this.components);
             this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spriteListPanel.SuspendLayout();
             this.spritePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
@@ -367,7 +370,8 @@
             this.spriteNameBox.Name = "spriteNameBox";
             this.spriteNameBox.Size = new System.Drawing.Size(144, 20);
             this.spriteNameBox.TabIndex = 0;
-            this.spriteNameBox.TextChanged += new System.EventHandler(this.spriteNameBox_TextChanged);
+            this.spriteNameBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.spriteNameBox_KeyPress);
+            this.spriteNameBox.Leave += new System.EventHandler(this.spriteNameBox_Leave);
             // 
             // loadSpriteSheetDialog
             // 
@@ -429,7 +433,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(691, 24);
@@ -457,6 +462,7 @@
             // 
             // loadSpriteMapToolStripMenuItem
             // 
+            this.loadSpriteMapToolStripMenuItem.Enabled = false;
             this.loadSpriteMapToolStripMenuItem.Name = "loadSpriteMapToolStripMenuItem";
             this.loadSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.loadSpriteMapToolStripMenuItem.Text = "Load Sprite Map...";
@@ -469,6 +475,7 @@
             // 
             // saveSpriteMapToolStripMenuItem
             // 
+            this.saveSpriteMapToolStripMenuItem.Enabled = false;
             this.saveSpriteMapToolStripMenuItem.Name = "saveSpriteMapToolStripMenuItem";
             this.saveSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.saveSpriteMapToolStripMenuItem.Text = "Save Sprite Map";
@@ -476,6 +483,7 @@
             // 
             // saveSpriteMapAsToolStripMenuItem
             // 
+            this.saveSpriteMapAsToolStripMenuItem.Enabled = false;
             this.saveSpriteMapAsToolStripMenuItem.Name = "saveSpriteMapAsToolStripMenuItem";
             this.saveSpriteMapAsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.saveSpriteMapAsToolStripMenuItem.Text = "Save Sprite Map As...";
@@ -517,6 +525,29 @@
             this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
             this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoToolStripMenuItem,
+            this.redoToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -531,8 +562,11 @@
             this.Controls.Add(this.spritePanel);
             this.Controls.Add(this.spriteListPanel);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "QUROGames Sprite Map Editor";
+            this.Click += new System.EventHandler(this.Form1_Click);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.spriteListPanel.ResumeLayout(false);
             this.spriteListPanel.PerformLayout();
             this.spritePanel.ResumeLayout(false);
@@ -595,6 +629,9 @@
         private System.Windows.Forms.CheckBox editingOriginCheckBox;
         private System.Windows.Forms.CheckBox highlightCheckBox;
         private System.Windows.Forms.Timer outlineTimer;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
     }
 }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using QURO;
+using System.Windows.Forms;
 
 namespace SpriteMapEditor.SpriteMapModifications
 {
@@ -14,9 +15,13 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         private readonly SpriteMapRegion selectedSprite;
 
+        private List<int> preChangeSelection;
+        private List<int> postChangeSelection;
+
         public AddSprite(BindingList<SpriteMapRegion> spriteList, SpriteMapRegion selected = null)
         {
             allSprites = spriteList;
+
             selectedSprite = selected;
         }
 
@@ -31,6 +36,29 @@ namespace SpriteMapEditor.SpriteMapModifications
         public void Undo()
         {
             allSprites.RemoveAt(allSprites.Count - 1);
+        }
+
+        public List<int> GetPreChangeSelection()
+        {
+            return preChangeSelection;
+        }
+        public void SetPreChangeSelection(List<int> currentSelection)
+        {
+            preChangeSelection = currentSelection;
+        }
+        public List<int> GetPostChangeSelection()
+        {
+            return postChangeSelection;
+        }
+        public void SetPostChangeSelection(List<int> currentSelection)
+        {
+            postChangeSelection = currentSelection;
+        }
+
+
+        public override string ToString()
+        {
+            return "Add Sprite";
         }
     }
 }
