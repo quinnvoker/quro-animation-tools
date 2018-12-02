@@ -74,7 +74,7 @@ namespace QURO.AnimationLibrary
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color tint)
         {
-            spriteBatch.Draw(SpriteSheet, position, CurrentFrame.Bounds, tint);
+            spriteBatch.Draw(SpriteSheet, position - CurrentFrame.Origin, CurrentFrame.Bounds, tint);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteOffset, Color tint)
