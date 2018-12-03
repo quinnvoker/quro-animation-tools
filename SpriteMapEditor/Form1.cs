@@ -128,6 +128,8 @@ namespace SpriteMapEditor
 
         private void newProjectMenuItem_Click(object sender, EventArgs e)
         {
+            undoHistory = new History();
+
             CurrentProjectFileLocation = null;
             CurrentSpriteMapFileLocation = null;
             CurrentSpriteSheetFileLocation = null;
@@ -192,6 +194,8 @@ namespace SpriteMapEditor
 
         private void LoadProject()
         {
+            undoHistory = new History();
+
             SpriteMapProject loadedProject;
 
             using (XmlReader xmlRead = XmlReader.Create(CurrentProjectFileLocation))
