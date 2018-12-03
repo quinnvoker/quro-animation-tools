@@ -37,11 +37,14 @@
             this.moveUpButton = new System.Windows.Forms.Button();
             this.spritesLabel = new System.Windows.Forms.Label();
             this.spriteEditPanel = new System.Windows.Forms.Panel();
-            this.editingOriginCheckBox = new System.Windows.Forms.CheckBox();
+            this.originEditPanel = new System.Windows.Forms.Panel();
+            this.originPresetLabel = new System.Windows.Forms.Label();
+            this.originPresetBox = new System.Windows.Forms.ComboBox();
+            this.originXPosLabel = new System.Windows.Forms.Label();
+            this.originYPosLabel = new System.Windows.Forms.Label();
             this.originYPosBox = new System.Windows.Forms.NumericUpDown();
             this.originXPosBox = new System.Windows.Forms.NumericUpDown();
-            this.originYPosLabel = new System.Windows.Forms.Label();
-            this.originXPosLabel = new System.Windows.Forms.Label();
+            this.editingOriginCheckBox = new System.Windows.Forms.CheckBox();
             this.spriteHeightBox = new System.Windows.Forms.NumericUpDown();
             this.spriteWidthBox = new System.Windows.Forms.NumericUpDown();
             this.spriteYPosBox = new System.Windows.Forms.NumericUpDown();
@@ -62,23 +65,27 @@
             this.zoomLabel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadSpriteSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveSpriteMapAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveProjectAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.importSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.highlightCheckBox = new System.Windows.Forms.CheckBox();
             this.outlineTimer = new System.Windows.Forms.Timer(this.components);
-            this.originPresetBox = new System.Windows.Forms.ComboBox();
-            this.originPresetLabel = new System.Windows.Forms.Label();
-            this.originEditPanel = new System.Windows.Forms.Panel();
             this.viewEditPanel = new System.Windows.Forms.Panel();
+            this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
+            this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
+            this.importSpriteSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.spriteListEditPanel.SuspendLayout();
             this.spriteEditPanel.SuspendLayout();
+            this.originEditPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).BeginInit();
@@ -87,7 +94,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             this.spriteViewerPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.originEditPanel.SuspendLayout();
             this.viewEditPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.SuspendLayout();
@@ -103,7 +109,7 @@
             this.spriteList.MinimumSize = new System.Drawing.Size(4, 4);
             this.spriteList.Name = "spriteList";
             this.spriteList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.spriteList.Size = new System.Drawing.Size(182, 121);
+            this.spriteList.Size = new System.Drawing.Size(182, 251);
             this.spriteList.TabIndex = 0;
             this.spriteList.SelectedValueChanged += new System.EventHandler(this.spriteList_SelectedValueChanged);
             // 
@@ -143,13 +149,13 @@
             this.spriteListEditPanel.Enabled = false;
             this.spriteListEditPanel.Location = new System.Drawing.Point(2, 27);
             this.spriteListEditPanel.Name = "spriteListEditPanel";
-            this.spriteListEditPanel.Size = new System.Drawing.Size(191, 215);
+            this.spriteListEditPanel.Size = new System.Drawing.Size(191, 321);
             this.spriteListEditPanel.TabIndex = 8;
             // 
             // moveDownButton
             // 
             this.moveDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.moveDownButton.Location = new System.Drawing.Point(41, 183);
+            this.moveDownButton.Location = new System.Drawing.Point(41, 289);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Size = new System.Drawing.Size(70, 20);
             this.moveDownButton.TabIndex = 5;
@@ -160,7 +166,7 @@
             // moveUpButton
             // 
             this.moveUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.moveUpButton.Location = new System.Drawing.Point(117, 183);
+            this.moveUpButton.Location = new System.Drawing.Point(117, 289);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Size = new System.Drawing.Size(71, 20);
             this.moveUpButton.TabIndex = 6;
@@ -195,21 +201,61 @@
             this.spriteEditPanel.Controls.Add(this.spriteSettingsLabel);
             this.spriteEditPanel.Controls.Add(this.spriteNameBox);
             this.spriteEditPanel.Enabled = false;
-            this.spriteEditPanel.Location = new System.Drawing.Point(2, 241);
+            this.spriteEditPanel.Location = new System.Drawing.Point(2, 347);
             this.spriteEditPanel.Name = "spriteEditPanel";
             this.spriteEditPanel.Size = new System.Drawing.Size(191, 180);
             this.spriteEditPanel.TabIndex = 9;
             // 
-            // editingOriginCheckBox
+            // originEditPanel
             // 
-            this.editingOriginCheckBox.AutoSize = true;
-            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 103);
-            this.editingOriginCheckBox.Name = "editingOriginCheckBox";
-            this.editingOriginCheckBox.Size = new System.Drawing.Size(107, 17);
-            this.editingOriginCheckBox.TabIndex = 23;
-            this.editingOriginCheckBox.Text = "Edit Origin Point?";
-            this.editingOriginCheckBox.UseVisualStyleBackColor = true;
-            this.editingOriginCheckBox.CheckedChanged += new System.EventHandler(this.editingOriginCheckBox_CheckedChanged);
+            this.originEditPanel.Controls.Add(this.originPresetLabel);
+            this.originEditPanel.Controls.Add(this.originPresetBox);
+            this.originEditPanel.Controls.Add(this.originXPosLabel);
+            this.originEditPanel.Controls.Add(this.originYPosLabel);
+            this.originEditPanel.Controls.Add(this.originYPosBox);
+            this.originEditPanel.Controls.Add(this.originXPosBox);
+            this.originEditPanel.Enabled = false;
+            this.originEditPanel.Location = new System.Drawing.Point(0, 123);
+            this.originEditPanel.Name = "originEditPanel";
+            this.originEditPanel.Size = new System.Drawing.Size(191, 54);
+            this.originEditPanel.TabIndex = 18;
+            // 
+            // originPresetLabel
+            // 
+            this.originPresetLabel.AutoSize = true;
+            this.originPresetLabel.Location = new System.Drawing.Point(6, 33);
+            this.originPresetLabel.Name = "originPresetLabel";
+            this.originPresetLabel.Size = new System.Drawing.Size(70, 13);
+            this.originPresetLabel.TabIndex = 25;
+            this.originPresetLabel.Text = "Origin Preset:";
+            // 
+            // originPresetBox
+            // 
+            this.originPresetBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.originPresetBox.FormattingEnabled = true;
+            this.originPresetBox.Location = new System.Drawing.Point(78, 30);
+            this.originPresetBox.Name = "originPresetBox";
+            this.originPresetBox.Size = new System.Drawing.Size(110, 21);
+            this.originPresetBox.TabIndex = 24;
+            this.originPresetBox.SelectedIndexChanged += new System.EventHandler(this.originPresetBox_SelectedIndexChanged);
+            // 
+            // originXPosLabel
+            // 
+            this.originXPosLabel.AutoSize = true;
+            this.originXPosLabel.Location = new System.Drawing.Point(6, 7);
+            this.originXPosLabel.Name = "originXPosLabel";
+            this.originXPosLabel.Size = new System.Drawing.Size(44, 13);
+            this.originXPosLabel.TabIndex = 19;
+            this.originXPosLabel.Text = "Origin X";
+            // 
+            // originYPosLabel
+            // 
+            this.originYPosLabel.AutoSize = true;
+            this.originYPosLabel.Location = new System.Drawing.Point(98, 7);
+            this.originYPosLabel.Name = "originYPosLabel";
+            this.originYPosLabel.Size = new System.Drawing.Size(44, 13);
+            this.originYPosLabel.TabIndex = 20;
+            this.originYPosLabel.Text = "Origin Y";
             // 
             // originYPosBox
             // 
@@ -247,23 +293,16 @@
             this.originXPosBox.TabIndex = 21;
             this.originXPosBox.ValueChanged += new System.EventHandler(this.originXPosBox_ValueChanged);
             // 
-            // originYPosLabel
+            // editingOriginCheckBox
             // 
-            this.originYPosLabel.AutoSize = true;
-            this.originYPosLabel.Location = new System.Drawing.Point(98, 7);
-            this.originYPosLabel.Name = "originYPosLabel";
-            this.originYPosLabel.Size = new System.Drawing.Size(44, 13);
-            this.originYPosLabel.TabIndex = 20;
-            this.originYPosLabel.Text = "Origin Y";
-            // 
-            // originXPosLabel
-            // 
-            this.originXPosLabel.AutoSize = true;
-            this.originXPosLabel.Location = new System.Drawing.Point(6, 7);
-            this.originXPosLabel.Name = "originXPosLabel";
-            this.originXPosLabel.Size = new System.Drawing.Size(44, 13);
-            this.originXPosLabel.TabIndex = 19;
-            this.originXPosLabel.Text = "Origin X";
+            this.editingOriginCheckBox.AutoSize = true;
+            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 103);
+            this.editingOriginCheckBox.Name = "editingOriginCheckBox";
+            this.editingOriginCheckBox.Size = new System.Drawing.Size(107, 17);
+            this.editingOriginCheckBox.TabIndex = 23;
+            this.editingOriginCheckBox.Text = "Edit Origin Point?";
+            this.editingOriginCheckBox.UseVisualStyleBackColor = true;
+            this.editingOriginCheckBox.CheckedChanged += new System.EventHandler(this.editingOriginCheckBox_CheckedChanged);
             // 
             // spriteHeightBox
             // 
@@ -383,19 +422,23 @@
             // 
             // loadSpriteSheetDialog
             // 
-            this.loadSpriteSheetDialog.FileName = "openFileDialog1";
+            this.loadSpriteSheetDialog.FileName = " ";
             this.loadSpriteSheetDialog.Filter = "PNG files|*.png";
+            this.loadSpriteSheetDialog.Title = "Import Sprite Sheet Image";
             // 
             // loadMapDialog
             // 
             this.loadMapDialog.DefaultExt = "smap";
-            this.loadMapDialog.FileName = "openFileDialog1";
+            this.loadMapDialog.FileName = " ";
             this.loadMapDialog.Filter = "QUROGame SpriteMap|*.smap";
+            this.loadMapDialog.Title = "Import Sprite Map";
             // 
             // saveMapDialog
             // 
             this.saveMapDialog.DefaultExt = "smap";
+            this.saveMapDialog.FileName = " ";
             this.saveMapDialog.Filter = "QUROGame SpriteMap|*.smap";
+            this.saveMapDialog.Title = "Export Sprite Map";
             // 
             // spriteViewerPanel
             // 
@@ -409,7 +452,7 @@
             this.spriteViewerPanel.Enabled = false;
             this.spriteViewerPanel.Location = new System.Drawing.Point(198, 59);
             this.spriteViewerPanel.Name = "spriteViewerPanel";
-            this.spriteViewerPanel.Size = new System.Drawing.Size(599, 362);
+            this.spriteViewerPanel.Size = new System.Drawing.Size(599, 468);
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
             // 
@@ -459,50 +502,74 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadSpriteSheetToolStripMenuItem,
-            this.loadSpriteMapToolStripMenuItem,
+            this.newProjectToolStripMenuItem,
+            this.openProjectToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.saveSpriteMapToolStripMenuItem,
-            this.saveSpriteMapAsToolStripMenuItem});
+            this.saveProjectToolStripMenuItem,
+            this.saveProjectAsToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.importSpriteSheetToolStripMenuItem,
+            this.importSpriteMapToolStripMenuItem,
+            this.exportSpriteMapToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadSpriteSheetToolStripMenuItem
+            // newProjectToolStripMenuItem
             // 
-            this.loadSpriteSheetToolStripMenuItem.Name = "loadSpriteSheetToolStripMenuItem";
-            this.loadSpriteSheetToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.loadSpriteSheetToolStripMenuItem.Text = "Load Sprite Sheet...";
-            this.loadSpriteSheetToolStripMenuItem.Click += new System.EventHandler(this.loadSpriteSheetToolStripMenuItem_Click);
+            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.newProjectToolStripMenuItem.Text = "New Project...";
+            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectMenuItem_Click);
             // 
-            // loadSpriteMapToolStripMenuItem
+            // openProjectToolStripMenuItem
             // 
-            this.loadSpriteMapToolStripMenuItem.Enabled = false;
-            this.loadSpriteMapToolStripMenuItem.Name = "loadSpriteMapToolStripMenuItem";
-            this.loadSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.loadSpriteMapToolStripMenuItem.Text = "Load Sprite Map...";
-            this.loadSpriteMapToolStripMenuItem.Click += new System.EventHandler(this.loadMapToolStripMenuItem_Click);
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.openProjectToolStripMenuItem.Text = "Open Project...";
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(181, 6);
             // 
-            // saveSpriteMapToolStripMenuItem
+            // saveProjectToolStripMenuItem
             // 
-            this.saveSpriteMapToolStripMenuItem.Enabled = false;
-            this.saveSpriteMapToolStripMenuItem.Name = "saveSpriteMapToolStripMenuItem";
-            this.saveSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.saveSpriteMapToolStripMenuItem.Text = "Save Sprite Map";
-            this.saveSpriteMapToolStripMenuItem.Click += new System.EventHandler(this.saveSpriteMapToolStripMenuItem_Click);
+            this.saveProjectToolStripMenuItem.Enabled = false;
+            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
+            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.saveProjectToolStripMenuItem.Text = "Save Project";
+            this.saveProjectToolStripMenuItem.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
-            // saveSpriteMapAsToolStripMenuItem
+            // saveProjectAsToolStripMenuItem
             // 
-            this.saveSpriteMapAsToolStripMenuItem.Enabled = false;
-            this.saveSpriteMapAsToolStripMenuItem.Name = "saveSpriteMapAsToolStripMenuItem";
-            this.saveSpriteMapAsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.saveSpriteMapAsToolStripMenuItem.Text = "Save Sprite Map As...";
-            this.saveSpriteMapAsToolStripMenuItem.Click += new System.EventHandler(this.saveMapAsToolStripMenuItem_Click);
+            this.saveProjectAsToolStripMenuItem.Enabled = false;
+            this.saveProjectAsToolStripMenuItem.Name = "saveProjectAsToolStripMenuItem";
+            this.saveProjectAsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.saveProjectAsToolStripMenuItem.Text = "Save Project As...";
+            this.saveProjectAsToolStripMenuItem.Click += new System.EventHandler(this.saveProjectAsToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(181, 6);
+            // 
+            // importSpriteMapToolStripMenuItem
+            // 
+            this.importSpriteMapToolStripMenuItem.Enabled = false;
+            this.importSpriteMapToolStripMenuItem.Name = "importSpriteMapToolStripMenuItem";
+            this.importSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.importSpriteMapToolStripMenuItem.Text = "Import Sprite Map...";
+            this.importSpriteMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
+            // 
+            // exportSpriteMapToolStripMenuItem
+            // 
+            this.exportSpriteMapToolStripMenuItem.Enabled = false;
+            this.exportSpriteMapToolStripMenuItem.Name = "exportSpriteMapToolStripMenuItem";
+            this.exportSpriteMapToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.exportSpriteMapToolStripMenuItem.Text = "Export Sprite Map...";
+            this.exportSpriteMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -547,39 +614,6 @@
             this.outlineTimer.Interval = 66;
             this.outlineTimer.Tick += new System.EventHandler(this.outlineTimer_Tick);
             // 
-            // originPresetBox
-            // 
-            this.originPresetBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.originPresetBox.FormattingEnabled = true;
-            this.originPresetBox.Location = new System.Drawing.Point(78, 30);
-            this.originPresetBox.Name = "originPresetBox";
-            this.originPresetBox.Size = new System.Drawing.Size(110, 21);
-            this.originPresetBox.TabIndex = 24;
-            this.originPresetBox.SelectedIndexChanged += new System.EventHandler(this.originPresetBox_SelectedIndexChanged);
-            // 
-            // originPresetLabel
-            // 
-            this.originPresetLabel.AutoSize = true;
-            this.originPresetLabel.Location = new System.Drawing.Point(6, 33);
-            this.originPresetLabel.Name = "originPresetLabel";
-            this.originPresetLabel.Size = new System.Drawing.Size(70, 13);
-            this.originPresetLabel.TabIndex = 25;
-            this.originPresetLabel.Text = "Origin Preset:";
-            // 
-            // originEditPanel
-            // 
-            this.originEditPanel.Controls.Add(this.originPresetLabel);
-            this.originEditPanel.Controls.Add(this.originPresetBox);
-            this.originEditPanel.Controls.Add(this.originXPosLabel);
-            this.originEditPanel.Controls.Add(this.originYPosLabel);
-            this.originEditPanel.Controls.Add(this.originYPosBox);
-            this.originEditPanel.Controls.Add(this.originXPosBox);
-            this.originEditPanel.Enabled = false;
-            this.originEditPanel.Location = new System.Drawing.Point(0, 123);
-            this.originEditPanel.Name = "originEditPanel";
-            this.originEditPanel.Size = new System.Drawing.Size(191, 54);
-            this.originEditPanel.TabIndex = 18;
-            // 
             // viewEditPanel
             // 
             this.viewEditPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -592,6 +626,27 @@
             this.viewEditPanel.Name = "viewEditPanel";
             this.viewEditPanel.Size = new System.Drawing.Size(246, 29);
             this.viewEditPanel.TabIndex = 18;
+            // 
+            // saveProjectDialog
+            // 
+            this.saveProjectDialog.DefaultExt = "smappr";
+            this.saveProjectDialog.FileName = " ";
+            this.saveProjectDialog.Filter = "QUROGames Sprite Map Editor Project|*.smappr";
+            this.saveProjectDialog.Title = "Save Project As";
+            // 
+            // openProjectDialog
+            // 
+            this.openProjectDialog.DefaultExt = "smappr";
+            this.openProjectDialog.FileName = " ";
+            this.openProjectDialog.Filter = "QUROGames Sprite Map Editor Project|*.smappr";
+            this.openProjectDialog.Title = "Open Project";
+            // 
+            // importSpriteSheetToolStripMenuItem
+            // 
+            this.importSpriteSheetToolStripMenuItem.Name = "importSpriteSheetToolStripMenuItem";
+            this.importSpriteSheetToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.importSpriteSheetToolStripMenuItem.Text = "Import Sprite Sheet...";
+            this.importSpriteSheetToolStripMenuItem.Click += new System.EventHandler(this.importSpriteSheetToolStripMenuItem_Click);
             // 
             // spriteSheetViewer
             // 
@@ -615,7 +670,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(800, 424);
+            this.ClientSize = new System.Drawing.Size(800, 530);
             this.Controls.Add(this.viewEditPanel);
             this.Controls.Add(this.spriteViewerPanel);
             this.Controls.Add(this.spriteEditPanel);
@@ -631,6 +686,8 @@
             this.spriteListEditPanel.PerformLayout();
             this.spriteEditPanel.ResumeLayout(false);
             this.spriteEditPanel.PerformLayout();
+            this.originEditPanel.ResumeLayout(false);
+            this.originEditPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).EndInit();
@@ -640,8 +697,6 @@
             this.spriteViewerPanel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.originEditPanel.ResumeLayout(false);
-            this.originEditPanel.PerformLayout();
             this.viewEditPanel.ResumeLayout(false);
             this.viewEditPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
@@ -685,11 +740,10 @@
         private System.Windows.Forms.Button moveUpButton;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadSpriteSheetToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadSpriteMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importSpriteMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem saveSpriteMapToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveSpriteMapAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportSpriteMapToolStripMenuItem;
         private System.Windows.Forms.CheckBox editingOriginCheckBox;
         private System.Windows.Forms.CheckBox highlightCheckBox;
         private System.Windows.Forms.Timer outlineTimer;
@@ -700,6 +754,13 @@
         private System.Windows.Forms.ComboBox originPresetBox;
         private System.Windows.Forms.Panel originEditPanel;
         private System.Windows.Forms.Panel viewEditPanel;
+        private System.Windows.Forms.ToolStripMenuItem saveProjectAsToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveProjectDialog;
+        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openProjectDialog;
+        private System.Windows.Forms.ToolStripMenuItem saveProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem importSpriteSheetToolStripMenuItem;
     }
 }
 

@@ -6,11 +6,18 @@ namespace SpriteMapEditor
 {
     public class SpriteMapProject
     {
-        public Image SpriteSheet { get; set; }
+        public string SpriteSheetFileLocation { get; set; }
         public List<SpriteMapRegion> SpriteMap { get; set; }
 
         public SpriteMapProject()
         {
+
+        }
+
+        public SpriteMapProject(string spriteSheetLocation, List<SpriteMapRegion> spriteMap)
+        {
+            SpriteSheetFileLocation = spriteSheetLocation;
+            SpriteMap = spriteMap;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,14 +34,37 @@ namespace SpriteMapEditor
         private bool editingOrigin = false;
 
         const string TITLE = "QUROGames Sprite Map Editor";
-        private string currentSpriteMapFileLocation;
+        private string _currentSpriteMapFileLocation;
         private string CurrentSpriteMapFileLocation
         {
-            get { return currentSpriteMapFileLocation; }
+            get { return _currentSpriteMapFileLocation; }
             set
             {
-                currentSpriteMapFileLocation = value;
-                Text = TITLE + " - " + Path.GetFileName(currentSpriteMapFileLocation);
+                _currentSpriteMapFileLocation = value;
+                loadMapDialog.FileName = _currentSpriteMapFileLocation;
+                saveMapDialog.FileName = _currentSpriteMapFileLocation;
+            }
+        }
+        private string _currentSpriteSheetFileLocation;
+        private string CurrentSpriteSheetFileLocation
+        {
+            get { return _currentSpriteSheetFileLocation; }
+            set
+            {
+                _currentSpriteSheetFileLocation = value;
+                loadSpriteSheetDialog.FileName = _currentSpriteSheetFileLocation;
+            }
+        }
+        private string _currentProjectFileLocation;
+        private string CurrentProjectFileLocation
+        {
+            get { return _currentProjectFileLocation; }
+            set
+            {
+                _currentProjectFileLocation = value;
+                Text = TITLE + " - " + Path.GetFileName(_currentProjectFileLocation);
+                openProjectDialog.FileName = _currentProjectFileLocation;
+                saveProjectDialog.FileName = _currentProjectFileLocation;
             }
         }
 
@@ -76,7 +100,7 @@ namespace SpriteMapEditor
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.Sizable;
 
-            undoHistory = new SpriteMapModifications.History();
+            undoHistory = new History();
 
             originPresetBox.DataSource = Enum.GetValues(typeof(OriginPreset));
 
@@ -102,21 +126,108 @@ namespace SpriteMapEditor
             LoadSpriteEditorValues();
         }
 
-        private void loadSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
+        private void newProjectMenuItem_Click(object sender, EventArgs e)
         {
-            if(loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            CurrentProjectFileLocation = null;
+            CurrentSpriteMapFileLocation = null;
+            CurrentSpriteSheetFileLocation = null;
+
+            sprites = new BindingList<SpriteMapRegion>() { new SpriteMapRegion() };
+            LoadSpriteSheet();
+            if (spriteSheet == null)
+                return;
+            spriteList.DataSource = sprites;
+        }
+
+        private void LoadSpriteSheet()
+        {
+            if (loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                spriteSheet = Image.FromFile(loadSpriteSheetDialog.FileName);
+                CurrentSpriteSheetFileLocation = loadSpriteSheetDialog.FileName;
+
+                spriteSheet = Image.FromFile(CurrentSpriteSheetFileLocation);
                 spriteSheetViewer.Image = spriteSheet;
+                if (spriteSheet == null)
+                    return;
+                importSpriteSheetToolStripMenuItem.Text = "Replace Sprite Sheet...";
                 InitializeMask();
                 EnableEditing();
             }
         }
 
+        private void LoadSpriteMap()
+        {
+            if (loadMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                CurrentSpriteMapFileLocation = loadMapDialog.FileName;
+
+                Dictionary<string, SpriteMapRegion> loadedSpriteMap;
+                using (XmlReader xmlRead = XmlReader.Create(CurrentSpriteMapFileLocation))
+                {
+                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+                }
+
+                sprites = new BindingList<SpriteMapRegion>();
+                foreach (KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
+                {
+                    sprites.Add(sprite.Value);
+                }
+
+                spriteList.DataSource = sprites;
+            }
+        }
+
+        private void SaveProject()
+        {
+            if (CurrentProjectFileLocation != null)
+            {
+                SpriteMapProject project = new SpriteMapProject(CurrentSpriteSheetFileLocation, sprites.ToList());
+
+                using (XmlWriter writer = XmlWriter.Create(CurrentProjectFileLocation))
+                {
+                    IntermediateSerializer.Serialize(writer, project, null);
+                }
+            }
+        }
+
+        private void LoadProject()
+        {
+            SpriteMapProject loadedProject;
+
+            using (XmlReader xmlRead = XmlReader.Create(CurrentProjectFileLocation))
+            {
+                loadedProject = IntermediateSerializer.Deserialize<SpriteMapProject>(xmlRead, null);
+            }
+
+            if (File.Exists(loadedProject.SpriteSheetFileLocation))
+            {
+                CurrentSpriteSheetFileLocation = loadedProject.SpriteSheetFileLocation;
+                spriteSheet = Image.FromFile(loadedProject.SpriteSheetFileLocation);
+                spriteSheetViewer.Image = spriteSheet;
+                InitializeMask();
+                EnableEditing();
+            }
+            else
+            {
+                MessageBox.Show("Image referenced by project not found!\nPlease locate a new Sprite Sheet image...");
+                LoadSpriteSheet();
+            }
+            if (spriteSheet == null)
+                return;
+
+            importSpriteSheetToolStripMenuItem.Text = "Replace Sprite Sheet...";
+
+            sprites = new BindingList<SpriteMapRegion>(loadedProject.SpriteMap);
+            spriteList.DataSource = sprites;
+
+            saveProjectToolStripMenuItem.Enabled = true;
+        }
+
         private void EnableEditing()
         {
-            loadSpriteMapToolStripMenuItem.Enabled = true;
-            saveSpriteMapAsToolStripMenuItem.Enabled = true;
+            importSpriteMapToolStripMenuItem.Enabled = true;
+            exportSpriteMapToolStripMenuItem.Enabled = true;
+            saveProjectAsToolStripMenuItem.Enabled = true;
             spriteListEditPanel.Enabled = true;
             spriteEditPanel.Enabled = true;
             viewEditPanel.Enabled = true;
@@ -425,7 +536,7 @@ namespace SpriteMapEditor
                 bottomMost.Y + bottomMost.Height - topMost.Y);
         }
 
-        private void saveMapAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var exportDict = new Dictionary<string, SpriteMapRegion>();
             foreach (SpriteMapRegion sprite in sprites)
@@ -451,58 +562,11 @@ namespace SpriteMapEditor
                     IntermediateSerializer.Serialize(writer, exportDict, null);
                 }
             }
-
-            saveSpriteMapToolStripMenuItem.Enabled = true;
         }
 
-        private void saveSpriteMapToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentSpriteMapFileLocation != null)
-            {
-                var exportDict = new Dictionary<string, SpriteMapRegion>();
-                foreach (SpriteMapRegion sprite in sprites)
-                {
-                    if (exportDict.ContainsKey(sprite.Name))
-                    {
-                        string errorMessage = "Duplicate names found! Please ensure all sprites have unique names.";
-                        string caption = "Save Aborted";
-                        MessageBoxButtons saveError = MessageBoxButtons.OK;
-
-                        MessageBox.Show(errorMessage, caption, saveError);
-                        return;
-                    }
-                    exportDict.Add(sprite.Name, sprite);
-                }
-
-                using (XmlWriter writer = XmlWriter.Create(CurrentSpriteMapFileLocation))
-                {
-                    IntermediateSerializer.Serialize(writer, exportDict, null);
-                }
-            }
-        }
-
-        private void loadMapToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if(loadMapDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                CurrentSpriteMapFileLocation = loadMapDialog.FileName;
-
-                Dictionary<string, SpriteMapRegion> loadedSpriteMap;
-                using (XmlReader xmlRead = XmlReader.Create(CurrentSpriteMapFileLocation))
-                {
-                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
-                }
-
-                sprites = new BindingList<SpriteMapRegion>();
-                foreach(KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
-                {
-                    sprites.Add(sprite.Value);
-                }
-
-                spriteList.DataSource = sprites;
-
-                saveSpriteMapToolStripMenuItem.Enabled = true;
-            }
+            LoadSpriteMap();
         }
 
         private void spriteSheetViewer_MouseMove(object sender, MouseEventArgs e)
@@ -746,6 +810,38 @@ namespace SpriteMapEditor
             ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             spriteSheetViewer.Refresh();
+        }
+
+        private void saveProjectAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveProjectDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                CurrentProjectFileLocation = saveProjectDialog.FileName;
+
+                SaveProject();
+            }
+
+            saveProjectToolStripMenuItem.Enabled = true;
+        }
+
+        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openProjectDialog.ShowDialog() == DialogResult.OK)
+            {
+                CurrentProjectFileLocation = openProjectDialog.FileName;
+
+                LoadProject();
+            }
+        }
+
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveProject();
+        }
+
+        private void importSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadSpriteSheet();
         }
     }
 }
