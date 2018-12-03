@@ -8,6 +8,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     public enum OriginPreset
     {
+        None,
         TopLeft,
         Top,
         TopRight,
@@ -16,6 +17,6 @@ namespace SpriteMapEditor.SpriteMapModifications
         Right,
         BottomLeft,
         Bottom,
-        BottomRight
+        BottomRight,
     }
 }

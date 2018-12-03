@@ -58,6 +58,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="SpriteMapModifications\ApplyOriginPreset.cs" />
     <Compile Include="SpriteMapModifications\ModHelper.cs" />
     <Compile Include="SpriteMapModifications\AddSprite.cs" />
     <Compile Include="SpriteMapModifications\History.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="SpriteMapModifications\OriginPreset.cs" />
     <Compile Include="SpriteMapModifications\RemoveSprite.cs" />
     <Compile Include="SpriteMapModifications\RenameSprite.cs" />
+    <Compile Include="SpriteMapProject.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

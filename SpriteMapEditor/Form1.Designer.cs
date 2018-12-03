@@ -32,11 +32,11 @@
             this.spriteList = new System.Windows.Forms.ListBox();
             this.addSpriteButton = new System.Windows.Forms.Button();
             this.removeSpriteButton = new System.Windows.Forms.Button();
-            this.spriteListPanel = new System.Windows.Forms.Panel();
+            this.spriteListEditPanel = new System.Windows.Forms.Panel();
             this.moveDownButton = new System.Windows.Forms.Button();
             this.moveUpButton = new System.Windows.Forms.Button();
             this.spritesLabel = new System.Windows.Forms.Label();
-            this.spritePanel = new System.Windows.Forms.Panel();
+            this.spriteEditPanel = new System.Windows.Forms.Panel();
             this.editingOriginCheckBox = new System.Windows.Forms.CheckBox();
             this.originYPosBox = new System.Windows.Forms.NumericUpDown();
             this.originXPosBox = new System.Windows.Forms.NumericUpDown();
@@ -67,14 +67,18 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpriteMapAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.highlightCheckBox = new System.Windows.Forms.CheckBox();
-            this.outlineTimer = new System.Windows.Forms.Timer(this.components);
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spriteListPanel.SuspendLayout();
-            this.spritePanel.SuspendLayout();
+            this.highlightCheckBox = new System.Windows.Forms.CheckBox();
+            this.outlineTimer = new System.Windows.Forms.Timer(this.components);
+            this.originPresetBox = new System.Windows.Forms.ComboBox();
+            this.originPresetLabel = new System.Windows.Forms.Label();
+            this.originEditPanel = new System.Windows.Forms.Panel();
+            this.viewEditPanel = new System.Windows.Forms.Panel();
+            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
+            this.spriteListEditPanel.SuspendLayout();
+            this.spriteEditPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).BeginInit();
@@ -83,23 +87,30 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             this.spriteViewerPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.originEditPanel.SuspendLayout();
+            this.viewEditPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.SuspendLayout();
             // 
             // spriteList
             // 
             this.spriteList.AllowDrop = true;
+            this.spriteList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.spriteList.FormattingEnabled = true;
-            this.spriteList.Location = new System.Drawing.Point(3, 32);
+            this.spriteList.Location = new System.Drawing.Point(6, 32);
+            this.spriteList.MaximumSize = new System.Drawing.Size(185, 4000);
+            this.spriteList.MinimumSize = new System.Drawing.Size(4, 4);
             this.spriteList.Name = "spriteList";
             this.spriteList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.spriteList.Size = new System.Drawing.Size(183, 199);
+            this.spriteList.Size = new System.Drawing.Size(182, 121);
             this.spriteList.TabIndex = 0;
             this.spriteList.SelectedValueChanged += new System.EventHandler(this.spriteList_SelectedValueChanged);
             // 
             // addSpriteButton
             // 
-            this.addSpriteButton.Location = new System.Drawing.Point(126, 3);
+            this.addSpriteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.addSpriteButton.Location = new System.Drawing.Point(127, 3);
             this.addSpriteButton.Name = "addSpriteButton";
             this.addSpriteButton.Size = new System.Drawing.Size(27, 23);
             this.addSpriteButton.TabIndex = 2;
@@ -109,7 +120,8 @@
             // 
             // removeSpriteButton
             // 
-            this.removeSpriteButton.Location = new System.Drawing.Point(159, 3);
+            this.removeSpriteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.removeSpriteButton.Location = new System.Drawing.Point(160, 3);
             this.removeSpriteButton.Name = "removeSpriteButton";
             this.removeSpriteButton.Size = new System.Drawing.Size(28, 23);
             this.removeSpriteButton.TabIndex = 3;
@@ -117,28 +129,29 @@
             this.removeSpriteButton.UseVisualStyleBackColor = true;
             this.removeSpriteButton.Click += new System.EventHandler(this.removeSpriteButton_Click);
             // 
-            // spriteListPanel
+            // spriteListEditPanel
             // 
-            this.spriteListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.spriteListPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.spriteListPanel.Controls.Add(this.moveDownButton);
-            this.spriteListPanel.Controls.Add(this.moveUpButton);
-            this.spriteListPanel.Controls.Add(this.spritesLabel);
-            this.spriteListPanel.Controls.Add(this.spriteList);
-            this.spriteListPanel.Controls.Add(this.addSpriteButton);
-            this.spriteListPanel.Controls.Add(this.removeSpriteButton);
-            this.spriteListPanel.Location = new System.Drawing.Point(2, 27);
-            this.spriteListPanel.Name = "spriteListPanel";
-            this.spriteListPanel.Size = new System.Drawing.Size(190, 258);
-            this.spriteListPanel.TabIndex = 8;
+            this.spriteListEditPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteListEditPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.spriteListEditPanel.Controls.Add(this.moveDownButton);
+            this.spriteListEditPanel.Controls.Add(this.moveUpButton);
+            this.spriteListEditPanel.Controls.Add(this.spritesLabel);
+            this.spriteListEditPanel.Controls.Add(this.spriteList);
+            this.spriteListEditPanel.Controls.Add(this.addSpriteButton);
+            this.spriteListEditPanel.Controls.Add(this.removeSpriteButton);
+            this.spriteListEditPanel.Enabled = false;
+            this.spriteListEditPanel.Location = new System.Drawing.Point(2, 27);
+            this.spriteListEditPanel.Name = "spriteListEditPanel";
+            this.spriteListEditPanel.Size = new System.Drawing.Size(191, 215);
+            this.spriteListEditPanel.TabIndex = 8;
             // 
             // moveDownButton
             // 
-            this.moveDownButton.Location = new System.Drawing.Point(39, 233);
+            this.moveDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.moveDownButton.Location = new System.Drawing.Point(41, 183);
             this.moveDownButton.Name = "moveDownButton";
-            this.moveDownButton.Size = new System.Drawing.Size(70, 18);
+            this.moveDownButton.Size = new System.Drawing.Size(70, 20);
             this.moveDownButton.TabIndex = 5;
             this.moveDownButton.Text = "▼";
             this.moveDownButton.UseVisualStyleBackColor = true;
@@ -146,9 +159,10 @@
             // 
             // moveUpButton
             // 
-            this.moveUpButton.Location = new System.Drawing.Point(115, 233);
+            this.moveUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.moveUpButton.Location = new System.Drawing.Point(117, 183);
             this.moveUpButton.Name = "moveUpButton";
-            this.moveUpButton.Size = new System.Drawing.Size(71, 18);
+            this.moveUpButton.Size = new System.Drawing.Size(71, 20);
             this.moveUpButton.TabIndex = 6;
             this.moveUpButton.Text = "▲";
             this.moveUpButton.UseVisualStyleBackColor = true;
@@ -164,34 +178,32 @@
             this.spritesLabel.TabIndex = 4;
             this.spritesLabel.Text = "Sprites";
             // 
-            // spritePanel
+            // spriteEditPanel
             // 
-            this.spritePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spritePanel.Controls.Add(this.editingOriginCheckBox);
-            this.spritePanel.Controls.Add(this.originYPosBox);
-            this.spritePanel.Controls.Add(this.originXPosBox);
-            this.spritePanel.Controls.Add(this.originYPosLabel);
-            this.spritePanel.Controls.Add(this.originXPosLabel);
-            this.spritePanel.Controls.Add(this.spriteHeightBox);
-            this.spritePanel.Controls.Add(this.spriteWidthBox);
-            this.spritePanel.Controls.Add(this.spriteYPosBox);
-            this.spritePanel.Controls.Add(this.spriteXPosBox);
-            this.spritePanel.Controls.Add(this.heightLabel);
-            this.spritePanel.Controls.Add(this.widthLabel);
-            this.spritePanel.Controls.Add(this.yPosLabel);
-            this.spritePanel.Controls.Add(this.xPosLabel);
-            this.spritePanel.Controls.Add(this.spriteNameLabel);
-            this.spritePanel.Controls.Add(this.spriteSettingsLabel);
-            this.spritePanel.Controls.Add(this.spriteNameBox);
-            this.spritePanel.Location = new System.Drawing.Point(2, 291);
-            this.spritePanel.Name = "spritePanel";
-            this.spritePanel.Size = new System.Drawing.Size(190, 172);
-            this.spritePanel.TabIndex = 9;
+            this.spriteEditPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteEditPanel.Controls.Add(this.originEditPanel);
+            this.spriteEditPanel.Controls.Add(this.editingOriginCheckBox);
+            this.spriteEditPanel.Controls.Add(this.spriteHeightBox);
+            this.spriteEditPanel.Controls.Add(this.spriteWidthBox);
+            this.spriteEditPanel.Controls.Add(this.spriteYPosBox);
+            this.spriteEditPanel.Controls.Add(this.spriteXPosBox);
+            this.spriteEditPanel.Controls.Add(this.heightLabel);
+            this.spriteEditPanel.Controls.Add(this.widthLabel);
+            this.spriteEditPanel.Controls.Add(this.yPosLabel);
+            this.spriteEditPanel.Controls.Add(this.xPosLabel);
+            this.spriteEditPanel.Controls.Add(this.spriteNameLabel);
+            this.spriteEditPanel.Controls.Add(this.spriteSettingsLabel);
+            this.spriteEditPanel.Controls.Add(this.spriteNameBox);
+            this.spriteEditPanel.Enabled = false;
+            this.spriteEditPanel.Location = new System.Drawing.Point(2, 241);
+            this.spriteEditPanel.Name = "spriteEditPanel";
+            this.spriteEditPanel.Size = new System.Drawing.Size(191, 180);
+            this.spriteEditPanel.TabIndex = 9;
             // 
             // editingOriginCheckBox
             // 
             this.editingOriginCheckBox.AutoSize = true;
-            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 108);
+            this.editingOriginCheckBox.Location = new System.Drawing.Point(9, 103);
             this.editingOriginCheckBox.Name = "editingOriginCheckBox";
             this.editingOriginCheckBox.Size = new System.Drawing.Size(107, 17);
             this.editingOriginCheckBox.TabIndex = 23;
@@ -201,8 +213,7 @@
             // 
             // originYPosBox
             // 
-            this.originYPosBox.Enabled = false;
-            this.originYPosBox.Location = new System.Drawing.Point(143, 131);
+            this.originYPosBox.Location = new System.Drawing.Point(143, 4);
             this.originYPosBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -220,8 +231,7 @@
             // 
             // originXPosBox
             // 
-            this.originXPosBox.Enabled = false;
-            this.originXPosBox.Location = new System.Drawing.Point(51, 131);
+            this.originXPosBox.Location = new System.Drawing.Point(51, 4);
             this.originXPosBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -240,8 +250,7 @@
             // originYPosLabel
             // 
             this.originYPosLabel.AutoSize = true;
-            this.originYPosLabel.Enabled = false;
-            this.originYPosLabel.Location = new System.Drawing.Point(98, 134);
+            this.originYPosLabel.Location = new System.Drawing.Point(98, 7);
             this.originYPosLabel.Name = "originYPosLabel";
             this.originYPosLabel.Size = new System.Drawing.Size(44, 13);
             this.originYPosLabel.TabIndex = 20;
@@ -250,8 +259,7 @@
             // originXPosLabel
             // 
             this.originXPosLabel.AutoSize = true;
-            this.originXPosLabel.Enabled = false;
-            this.originXPosLabel.Location = new System.Drawing.Point(6, 134);
+            this.originXPosLabel.Location = new System.Drawing.Point(6, 7);
             this.originXPosLabel.Name = "originXPosLabel";
             this.originXPosLabel.Size = new System.Drawing.Size(44, 13);
             this.originXPosLabel.TabIndex = 19;
@@ -259,7 +267,7 @@
             // 
             // spriteHeightBox
             // 
-            this.spriteHeightBox.Location = new System.Drawing.Point(136, 82);
+            this.spriteHeightBox.Location = new System.Drawing.Point(136, 77);
             this.spriteHeightBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -272,7 +280,7 @@
             // 
             // spriteWidthBox
             // 
-            this.spriteWidthBox.Location = new System.Drawing.Point(44, 82);
+            this.spriteWidthBox.Location = new System.Drawing.Point(44, 77);
             this.spriteWidthBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -285,7 +293,7 @@
             // 
             // spriteYPosBox
             // 
-            this.spriteYPosBox.Location = new System.Drawing.Point(136, 56);
+            this.spriteYPosBox.Location = new System.Drawing.Point(136, 51);
             this.spriteYPosBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -298,7 +306,7 @@
             // 
             // spriteXPosBox
             // 
-            this.spriteXPosBox.Location = new System.Drawing.Point(44, 56);
+            this.spriteXPosBox.Location = new System.Drawing.Point(44, 51);
             this.spriteXPosBox.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -312,7 +320,7 @@
             // heightLabel
             // 
             this.heightLabel.AutoSize = true;
-            this.heightLabel.Location = new System.Drawing.Point(98, 85);
+            this.heightLabel.Location = new System.Drawing.Point(98, 80);
             this.heightLabel.Name = "heightLabel";
             this.heightLabel.Size = new System.Drawing.Size(38, 13);
             this.heightLabel.TabIndex = 14;
@@ -321,7 +329,7 @@
             // widthLabel
             // 
             this.widthLabel.AutoSize = true;
-            this.widthLabel.Location = new System.Drawing.Point(6, 85);
+            this.widthLabel.Location = new System.Drawing.Point(6, 80);
             this.widthLabel.Name = "widthLabel";
             this.widthLabel.Size = new System.Drawing.Size(35, 13);
             this.widthLabel.TabIndex = 12;
@@ -330,16 +338,16 @@
             // yPosLabel
             // 
             this.yPosLabel.AutoSize = true;
-            this.yPosLabel.Location = new System.Drawing.Point(98, 59);
+            this.yPosLabel.Location = new System.Drawing.Point(98, 54);
             this.yPosLabel.Name = "yPosLabel";
-            this.yPosLabel.Size = new System.Drawing.Size(35, 13);
+            this.yPosLabel.Size = new System.Drawing.Size(38, 13);
             this.yPosLabel.TabIndex = 10;
-            this.yPosLabel.Text = "Y Pos";
+            this.yPosLabel.Text = "Y Pos.";
             // 
             // xPosLabel
             // 
             this.xPosLabel.AutoSize = true;
-            this.xPosLabel.Location = new System.Drawing.Point(6, 59);
+            this.xPosLabel.Location = new System.Drawing.Point(6, 54);
             this.xPosLabel.Name = "xPosLabel";
             this.xPosLabel.Size = new System.Drawing.Size(38, 13);
             this.xPosLabel.TabIndex = 8;
@@ -348,7 +356,7 @@
             // spriteNameLabel
             // 
             this.spriteNameLabel.AutoSize = true;
-            this.spriteNameLabel.Location = new System.Drawing.Point(6, 30);
+            this.spriteNameLabel.Location = new System.Drawing.Point(6, 25);
             this.spriteNameLabel.Name = "spriteNameLabel";
             this.spriteNameLabel.Size = new System.Drawing.Size(38, 13);
             this.spriteNameLabel.TabIndex = 6;
@@ -358,7 +366,7 @@
             // 
             this.spriteSettingsLabel.AutoSize = true;
             this.spriteSettingsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.spriteSettingsLabel.Location = new System.Drawing.Point(3, 8);
+            this.spriteSettingsLabel.Location = new System.Drawing.Point(3, 3);
             this.spriteSettingsLabel.Name = "spriteSettingsLabel";
             this.spriteSettingsLabel.Size = new System.Drawing.Size(90, 13);
             this.spriteSettingsLabel.TabIndex = 5;
@@ -366,7 +374,7 @@
             // 
             // spriteNameBox
             // 
-            this.spriteNameBox.Location = new System.Drawing.Point(44, 27);
+            this.spriteNameBox.Location = new System.Drawing.Point(44, 22);
             this.spriteNameBox.Name = "spriteNameBox";
             this.spriteNameBox.Size = new System.Drawing.Size(144, 20);
             this.spriteNameBox.TabIndex = 0;
@@ -391,19 +399,24 @@
             // 
             // spriteViewerPanel
             // 
+            this.spriteViewerPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.spriteViewerPanel.AutoScroll = true;
             this.spriteViewerPanel.BackColor = System.Drawing.SystemColors.ControlDark;
             this.spriteViewerPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.spriteViewerPanel.Controls.Add(this.spriteSheetViewer);
+            this.spriteViewerPanel.Enabled = false;
             this.spriteViewerPanel.Location = new System.Drawing.Point(198, 59);
             this.spriteViewerPanel.Name = "spriteViewerPanel";
-            this.spriteViewerPanel.Size = new System.Drawing.Size(488, 404);
+            this.spriteViewerPanel.Size = new System.Drawing.Size(599, 362);
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
             // 
             // zoomInButton
             // 
-            this.zoomInButton.Location = new System.Drawing.Point(659, 30);
+            this.zoomInButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.zoomInButton.Location = new System.Drawing.Point(219, 3);
             this.zoomInButton.Name = "zoomInButton";
             this.zoomInButton.Size = new System.Drawing.Size(27, 23);
             this.zoomInButton.TabIndex = 5;
@@ -413,7 +426,8 @@
             // 
             // zoomOutButton
             // 
-            this.zoomOutButton.Location = new System.Drawing.Point(566, 30);
+            this.zoomOutButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.zoomOutButton.Location = new System.Drawing.Point(126, 3);
             this.zoomOutButton.Name = "zoomOutButton";
             this.zoomOutButton.Size = new System.Drawing.Size(28, 23);
             this.zoomOutButton.TabIndex = 6;
@@ -423,8 +437,9 @@
             // 
             // zoomLabel
             // 
+            this.zoomLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.zoomLabel.AutoSize = true;
-            this.zoomLabel.Location = new System.Drawing.Point(600, 35);
+            this.zoomLabel.Location = new System.Drawing.Point(160, 8);
             this.zoomLabel.Name = "zoomLabel";
             this.zoomLabel.Size = new System.Drawing.Size(53, 13);
             this.zoomLabel.TabIndex = 15;
@@ -437,7 +452,7 @@
             this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(691, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -489,12 +504,36 @@
             this.saveSpriteMapAsToolStripMenuItem.Text = "Save Sprite Map As...";
             this.saveSpriteMapAsToolStripMenuItem.Click += new System.EventHandler(this.saveMapAsToolStripMenuItem_Click);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.undoToolStripMenuItem,
+            this.redoToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
+            // 
             // highlightCheckBox
             // 
+            this.highlightCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.highlightCheckBox.AutoSize = true;
             this.highlightCheckBox.Checked = true;
             this.highlightCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.highlightCheckBox.Location = new System.Drawing.Point(446, 34);
+            this.highlightCheckBox.Location = new System.Drawing.Point(6, 7);
             this.highlightCheckBox.Name = "highlightCheckBox";
             this.highlightCheckBox.Size = new System.Drawing.Size(114, 17);
             this.highlightCheckBox.TabIndex = 17;
@@ -507,6 +546,52 @@
             this.outlineTimer.Enabled = true;
             this.outlineTimer.Interval = 66;
             this.outlineTimer.Tick += new System.EventHandler(this.outlineTimer_Tick);
+            // 
+            // originPresetBox
+            // 
+            this.originPresetBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.originPresetBox.FormattingEnabled = true;
+            this.originPresetBox.Location = new System.Drawing.Point(78, 30);
+            this.originPresetBox.Name = "originPresetBox";
+            this.originPresetBox.Size = new System.Drawing.Size(110, 21);
+            this.originPresetBox.TabIndex = 24;
+            this.originPresetBox.SelectedIndexChanged += new System.EventHandler(this.originPresetBox_SelectedIndexChanged);
+            // 
+            // originPresetLabel
+            // 
+            this.originPresetLabel.AutoSize = true;
+            this.originPresetLabel.Location = new System.Drawing.Point(6, 33);
+            this.originPresetLabel.Name = "originPresetLabel";
+            this.originPresetLabel.Size = new System.Drawing.Size(70, 13);
+            this.originPresetLabel.TabIndex = 25;
+            this.originPresetLabel.Text = "Origin Preset:";
+            // 
+            // originEditPanel
+            // 
+            this.originEditPanel.Controls.Add(this.originPresetLabel);
+            this.originEditPanel.Controls.Add(this.originPresetBox);
+            this.originEditPanel.Controls.Add(this.originXPosLabel);
+            this.originEditPanel.Controls.Add(this.originYPosLabel);
+            this.originEditPanel.Controls.Add(this.originYPosBox);
+            this.originEditPanel.Controls.Add(this.originXPosBox);
+            this.originEditPanel.Enabled = false;
+            this.originEditPanel.Location = new System.Drawing.Point(0, 123);
+            this.originEditPanel.Name = "originEditPanel";
+            this.originEditPanel.Size = new System.Drawing.Size(191, 54);
+            this.originEditPanel.TabIndex = 18;
+            // 
+            // viewEditPanel
+            // 
+            this.viewEditPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.viewEditPanel.Controls.Add(this.zoomLabel);
+            this.viewEditPanel.Controls.Add(this.highlightCheckBox);
+            this.viewEditPanel.Controls.Add(this.zoomOutButton);
+            this.viewEditPanel.Controls.Add(this.zoomInButton);
+            this.viewEditPanel.Enabled = false;
+            this.viewEditPanel.Location = new System.Drawing.Point(551, 27);
+            this.viewEditPanel.Name = "viewEditPanel";
+            this.viewEditPanel.Size = new System.Drawing.Size(246, 29);
+            this.viewEditPanel.TabIndex = 18;
             // 
             // spriteSheetViewer
             // 
@@ -525,52 +610,27 @@
             this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
             this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
             // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.undoToolStripMenuItem,
-            this.redoToolStripMenuItem});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.editToolStripMenuItem.Text = "Edit";
-            // 
-            // undoToolStripMenuItem
-            // 
-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.undoToolStripMenuItem.Text = "Undo";
-            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
-            // 
-            // redoToolStripMenuItem
-            // 
-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.redoToolStripMenuItem.Text = "Redo";
-            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(691, 465);
-            this.Controls.Add(this.highlightCheckBox);
-            this.Controls.Add(this.zoomLabel);
-            this.Controls.Add(this.zoomInButton);
+            this.ClientSize = new System.Drawing.Size(800, 424);
+            this.Controls.Add(this.viewEditPanel);
             this.Controls.Add(this.spriteViewerPanel);
-            this.Controls.Add(this.zoomOutButton);
-            this.Controls.Add(this.spritePanel);
-            this.Controls.Add(this.spriteListPanel);
+            this.Controls.Add(this.spriteEditPanel);
+            this.Controls.Add(this.spriteListEditPanel);
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(460, 382);
             this.Name = "Form1";
             this.Text = "QUROGames Sprite Map Editor";
             this.Click += new System.EventHandler(this.Form1_Click);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-            this.spriteListPanel.ResumeLayout(false);
-            this.spriteListPanel.PerformLayout();
-            this.spritePanel.ResumeLayout(false);
-            this.spritePanel.PerformLayout();
+            this.spriteListEditPanel.ResumeLayout(false);
+            this.spriteListEditPanel.PerformLayout();
+            this.spriteEditPanel.ResumeLayout(false);
+            this.spriteEditPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.originYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.originXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteHeightBox)).EndInit();
@@ -580,6 +640,10 @@
             this.spriteViewerPanel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.originEditPanel.ResumeLayout(false);
+            this.originEditPanel.PerformLayout();
+            this.viewEditPanel.ResumeLayout(false);
+            this.viewEditPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -591,9 +655,9 @@
         private System.Windows.Forms.ListBox spriteList;
         private System.Windows.Forms.Button addSpriteButton;
         private System.Windows.Forms.Button removeSpriteButton;
-        private System.Windows.Forms.Panel spriteListPanel;
+        private System.Windows.Forms.Panel spriteListEditPanel;
         private System.Windows.Forms.Label spritesLabel;
-        private System.Windows.Forms.Panel spritePanel;
+        private System.Windows.Forms.Panel spriteEditPanel;
         private System.Windows.Forms.Label spriteSettingsLabel;
         private System.Windows.Forms.TextBox spriteNameBox;
         private System.Windows.Forms.Label spriteNameLabel;
@@ -632,6 +696,10 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        private System.Windows.Forms.Label originPresetLabel;
+        private System.Windows.Forms.ComboBox originPresetBox;
+        private System.Windows.Forms.Panel originEditPanel;
+        private System.Windows.Forms.Panel viewEditPanel;
     }
 }
 

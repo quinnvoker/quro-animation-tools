@@ -13,13 +13,14 @@ using Microsoft.Xna;
 using System.IO;
 using QURO;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
+using SpriteMapEditor.SpriteMapModifications;
 
 
 namespace SpriteMapEditor
 {
     public partial class Form1 : Form
     {
-        private SpriteMapModifications.History undoHistory;
+        private History undoHistory;
 
         private BindingList<SpriteMapRegion> sprites;
         private List<SpriteMapRegion> selectedSprites;
@@ -73,9 +74,11 @@ namespace SpriteMapEditor
         public Form1()
         {
             InitializeComponent();
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.Sizable;
 
             undoHistory = new SpriteMapModifications.History();
+
+            originPresetBox.DataSource = Enum.GetValues(typeof(OriginPreset));
 
             spriteSheetViewer.Width = 1;
             spriteSheetViewer.Height = 1;
@@ -105,16 +108,19 @@ namespace SpriteMapEditor
             {
                 spriteSheet = Image.FromFile(loadSpriteSheetDialog.FileName);
                 spriteSheetViewer.Image = spriteSheet;
+                InitializeMask();
+                EnableEditing();
             }
-
-            EnableLoadAndSaveAsSpriteMap();
-            InitializeMask();
         }
 
-        private void EnableLoadAndSaveAsSpriteMap()
+        private void EnableEditing()
         {
             loadSpriteMapToolStripMenuItem.Enabled = true;
             saveSpriteMapAsToolStripMenuItem.Enabled = true;
+            spriteListEditPanel.Enabled = true;
+            spriteEditPanel.Enabled = true;
+            viewEditPanel.Enabled = true;
+            spriteViewerPanel.Enabled = true;
         }
 
         private void spriteSheetViewer_Paint(object sender, PaintEventArgs e)
@@ -170,6 +176,7 @@ namespace SpriteMapEditor
                 originYPosBox.Value = (int)currentSprite.Origin.Y;
                 originYPosBox.Text = ((int)currentSprite.Origin.Y).ToString();
             }
+            originPresetBox.SelectedIndex = 0;
             loadingSprite = false;
         }
 
@@ -296,8 +303,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, x: (int)spriteXPosBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyBounds(selectedSprites, x: (int)spriteXPosBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
@@ -307,8 +314,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, y: (int)spriteYPosBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyBounds(selectedSprites, y: (int)spriteYPosBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
@@ -318,8 +325,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, width: (int)spriteWidthBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyBounds(selectedSprites, width: (int)spriteWidthBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
@@ -329,8 +336,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyBounds(selectedSprites, height: (int)spriteHeightBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyBounds(selectedSprites, height: (int)spriteHeightBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             UpdateHighlightMask();
             spriteSheetViewer.Refresh();
@@ -338,8 +345,8 @@ namespace SpriteMapEditor
 
         private void addSpriteButton_Click(object sender, EventArgs e)
         {
-            var modification = new SpriteMapModifications.AddSprite(sprites, selectedSprites[0]);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new AddSprite(sprites, selectedSprites[0]);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
         }
 
@@ -354,8 +361,8 @@ namespace SpriteMapEditor
 
             if (indexToRemove > -1 && indexToRemove < sprites.Count)
             {
-                var modification = new SpriteMapModifications.RemoveSprite(sprites, indexToRemove);
-                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                var modification = new RemoveSprite(sprites, indexToRemove);
+                ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
                 undoHistory.Add(modification);
             }
         }
@@ -589,9 +596,9 @@ namespace SpriteMapEditor
                 var totalDragY = selectedSprites[0].Bounds.Y - preDragBounds[0].Y;
                 if (totalDragX != 0 || totalDragY != 0)
                 {
-                    var modification = new SpriteMapModifications.MoveBounds(selectedSprites, totalDragX, totalDragY, preDragBounds);
+                    var modification = new MoveBounds(selectedSprites, totalDragX, totalDragY, preDragBounds);
                     modification.Undo();
-                    SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                    ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
                     undoHistory.Add(modification);
                 }
             }
@@ -601,8 +608,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyOrigin(selectedSprites, x: (int)originXPosBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyOrigin(selectedSprites, x: (int)originXPosBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             spriteSheetViewer.Refresh();
         }
@@ -611,8 +618,8 @@ namespace SpriteMapEditor
         {
             if (loadingSprite)
                 return;
-            var modification = new SpriteMapModifications.ModifyOrigin(selectedSprites, y: (int)originYPosBox.Value);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new ModifyOrigin(selectedSprites, y: (int)originYPosBox.Value);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             spriteSheetViewer.Refresh();
         }
@@ -621,8 +628,8 @@ namespace SpriteMapEditor
         {
             if(spriteList.SelectedIndex < sprites.Count - 1)
             {
-                var modification = new SpriteMapModifications.MoveSpriteListEntry(sprites, spriteList.SelectedIndex, 1);
-                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                var modification = new MoveSpriteListEntry(sprites, spriteList.SelectedIndex, 1);
+                ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
                 undoHistory.Add(modification);
                 int newPosition = spriteList.SelectedIndex + 1;
                 spriteList.SelectedIndices.Clear();
@@ -634,8 +641,8 @@ namespace SpriteMapEditor
         {
             if(spriteList.SelectedIndex > 0)
             {
-                var modification = new SpriteMapModifications.MoveSpriteListEntry(sprites, spriteList.SelectedIndex, -1);
-                SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+                var modification = new MoveSpriteListEntry(sprites, spriteList.SelectedIndex, -1);
+                ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
                 undoHistory.Add(modification);
                 int newPosition = spriteList.SelectedIndex - 1;
                 spriteList.SelectedIndices.Clear();
@@ -647,20 +654,7 @@ namespace SpriteMapEditor
         {
             editingOrigin = editingOriginCheckBox.Checked;
 
-            if (editingOrigin)
-            {
-                originXPosLabel.Enabled = true;
-                originXPosBox.Enabled = true;
-                originYPosLabel.Enabled = true;
-                originYPosBox.Enabled = true;
-            }
-            else
-            {
-                originXPosLabel.Enabled = false;
-                originXPosBox.Enabled = false;
-                originYPosLabel.Enabled = false;
-                originYPosBox.Enabled = false;
-            }
+            originEditPanel.Enabled = editingOrigin;
 
             spriteViewerPanel.Refresh();
         }
@@ -686,8 +680,8 @@ namespace SpriteMapEditor
 
         private void UpdateSpriteName()
         {
-            var modification = new SpriteMapModifications.RenameSprite(selectedSprites[0], spriteNameBox.Text);
-            SpriteMapModifications.ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            var modification = new RenameSprite(selectedSprites[0], spriteNameBox.Text);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
             undoHistory.Add(modification);
             sprites.ResetBindings();
         }
@@ -741,6 +735,17 @@ namespace SpriteMapEditor
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             undoHistory.Redo(spriteList);
+        }
+
+        private void originPresetBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((OriginPreset)originPresetBox.SelectedIndex == OriginPreset.None)
+                return;
+            var modification = new ApplyOriginPreset(selectedSprites, 
+                (OriginPreset)originPresetBox.SelectedIndex);
+            ModHelper.DoModificationWithSelectionTracking(modification, spriteList);
+            undoHistory.Add(modification);
+            spriteSheetViewer.Refresh();
         }
     }
 }
