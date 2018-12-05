@@ -60,6 +60,7 @@
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMapDialog = new System.Windows.Forms.SaveFileDialog();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
+            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();
@@ -71,6 +72,7 @@
             this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.importSpriteSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSpriteMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,8 +83,6 @@
             this.viewEditPanel = new System.Windows.Forms.Panel();
             this.saveProjectDialog = new System.Windows.Forms.SaveFileDialog();
             this.openProjectDialog = new System.Windows.Forms.OpenFileDialog();
-            this.importSpriteSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.spriteListEditPanel.SuspendLayout();
             this.spriteEditPanel.SuspendLayout();
             this.originEditPanel.SuspendLayout();
@@ -93,9 +93,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             this.spriteViewerPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.viewEditPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).BeginInit();
             this.SuspendLayout();
             // 
             // spriteList
@@ -456,6 +456,23 @@
             this.spriteViewerPanel.TabIndex = 14;
             this.spriteViewerPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.spriteViewerPanel_Scroll);
             // 
+            // spriteSheetViewer
+            // 
+            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
+            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
+            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.spriteSheetViewer.Name = "spriteSheetViewer";
+            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
+            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.spriteSheetViewer.TabIndex = 13;
+            this.spriteSheetViewer.TabStop = false;
+            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
+            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
+            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
+            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
+            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
+            // 
             // zoomInButton
             // 
             this.zoomInButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -555,6 +572,13 @@
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(181, 6);
             // 
+            // importSpriteSheetToolStripMenuItem
+            // 
+            this.importSpriteSheetToolStripMenuItem.Name = "importSpriteSheetToolStripMenuItem";
+            this.importSpriteSheetToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.importSpriteSheetToolStripMenuItem.Text = "Import Sprite Sheet...";
+            this.importSpriteSheetToolStripMenuItem.Click += new System.EventHandler(this.importSpriteSheetToolStripMenuItem_Click);
+            // 
             // importSpriteMapToolStripMenuItem
             // 
             this.importSpriteMapToolStripMenuItem.Enabled = false;
@@ -641,30 +665,6 @@
             this.openProjectDialog.Filter = "QUROGames Sprite Map Editor Project|*.smappr";
             this.openProjectDialog.Title = "Open Project";
             // 
-            // importSpriteSheetToolStripMenuItem
-            // 
-            this.importSpriteSheetToolStripMenuItem.Name = "importSpriteSheetToolStripMenuItem";
-            this.importSpriteSheetToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.importSpriteSheetToolStripMenuItem.Text = "Import Sprite Sheet...";
-            this.importSpriteSheetToolStripMenuItem.Click += new System.EventHandler(this.importSpriteSheetToolStripMenuItem_Click);
-            // 
-            // spriteSheetViewer
-            // 
-            this.spriteSheetViewer.BackgroundImage = global::SpriteMapEditor.Properties.Resources.transparentUI;
-            this.spriteSheetViewer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.spriteSheetViewer.Location = new System.Drawing.Point(0, 0);
-            this.spriteSheetViewer.Margin = new System.Windows.Forms.Padding(0);
-            this.spriteSheetViewer.Name = "spriteSheetViewer";
-            this.spriteSheetViewer.Size = new System.Drawing.Size(147, 143);
-            this.spriteSheetViewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.spriteSheetViewer.TabIndex = 13;
-            this.spriteSheetViewer.TabStop = false;
-            this.spriteSheetViewer.Paint += new System.Windows.Forms.PaintEventHandler(this.spriteSheetViewer_Paint);
-            this.spriteSheetViewer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseDown);
-            this.spriteSheetViewer.MouseLeave += new System.EventHandler(this.spriteSheetViewer_MouseLeave);
-            this.spriteSheetViewer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseMove);
-            this.spriteSheetViewer.MouseUp += new System.Windows.Forms.MouseEventHandler(this.spriteSheetViewer_MouseUp);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -695,11 +695,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).EndInit();
             this.spriteViewerPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.viewEditPanel.ResumeLayout(false);
             this.viewEditPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spriteSheetViewer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

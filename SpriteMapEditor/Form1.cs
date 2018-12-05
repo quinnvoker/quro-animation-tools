@@ -84,17 +84,6 @@ namespace SpriteMapEditor
 
         private List<Microsoft.Xna.Framework.Rectangle> preDragBounds;
 
-        private int drawingRectangleOffset
-        {
-            get
-            {
-                if (zoomLevel > 2)
-                    return (zoomLevel - 1) / 2;
-                else
-                    return 0;
-            }
-        }
-
         public Form1()
         {
             InitializeComponent();
@@ -298,10 +287,8 @@ namespace SpriteMapEditor
         private Rectangle GetDrawingRect(Microsoft.Xna.Framework.Rectangle baseRect, bool outline = true)
         {
             var drawingRect = new Rectangle(baseRect.X, baseRect.Y, baseRect.Width, baseRect.Height);
-            drawingRect.X = drawingRect.X * zoomLevel - (zoomLevel - 1);
-            drawingRect.Y = drawingRect.Y * zoomLevel - (zoomLevel - 1);
-            drawingRect.X += drawingRectangleOffset;
-            drawingRect.Y += drawingRectangleOffset;
+            drawingRect.X = drawingRect.X * zoomLevel + 1;
+            drawingRect.Y = drawingRect.Y * zoomLevel + 1;
             drawingRect.Width *= zoomLevel;
             drawingRect.Height *= zoomLevel;
 
@@ -314,10 +301,8 @@ namespace SpriteMapEditor
         private Point GetOriginDrawingPoint(SpriteMapRegion sprite)
         {
             var drawingPoint = new Point(sprite.Bounds.X, sprite.Bounds.Y);
-            drawingPoint.X = drawingPoint.X * zoomLevel - (zoomLevel - 1);
-            drawingPoint.Y = drawingPoint.Y * zoomLevel - (zoomLevel - 1);
-            drawingPoint.X += drawingRectangleOffset;
-            drawingPoint.Y += drawingRectangleOffset;
+            drawingPoint.X = drawingPoint.X * zoomLevel;
+            drawingPoint.Y = drawingPoint.Y * zoomLevel;
             drawingPoint.X += (int)sprite.Origin.X * zoomLevel;
             drawingPoint.Y += (int)sprite.Origin.Y * zoomLevel;
             return drawingPoint;
@@ -352,11 +337,21 @@ namespace SpriteMapEditor
                 InitializeMask();
                 foreach (SpriteMapRegion currentSprite in selectedSprites)
                 {
-                    for (int currentY = 0; currentY < currentSprite.Bounds.Height; currentY++)
+                    var highlightRect = currentSprite.Bounds;
+
+                    //make sure highlight mask update doesn't attempt to write to pixels that are out of bounds
+                    var oobX = highlightRect.X + highlightRect.Width - spriteSheet.Width;
+                    var oobY = highlightRect.Y + highlightRect.Height - spriteSheet.Height;
+                    if (oobX > 0)
+                        highlightRect.Width -= oobX;
+                    if (oobY > 0)
+                        highlightRect.Height -= oobY;
+
+                    for (int currentY = 0; currentY < highlightRect.Height; currentY++)
                     {
-                        for (int currentX = 0; currentX < currentSprite.Bounds.Width; currentX++)
+                        for (int currentX = 0; currentX < highlightRect.Width; currentX++)
                         {
-                            highlightMask.SetPixel(currentX + currentSprite.Bounds.X, currentY + currentSprite.Bounds.Y, Color.Transparent);
+                            highlightMask.SetPixel(currentX + highlightRect.X, currentY + highlightRect.Y, Color.Transparent);
                         }
                     }
                 }

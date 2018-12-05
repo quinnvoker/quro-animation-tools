@@ -14,6 +14,7 @@ namespace SpriteMapEditor
         protected override void OnPaint(PaintEventArgs paintEventArgs)
         {
             paintEventArgs.Graphics.InterpolationMode = InterpolationMode;
+            paintEventArgs.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
             base.OnPaint(paintEventArgs);
         }
     }
