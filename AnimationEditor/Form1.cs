@@ -20,15 +20,15 @@ namespace AnimationEditor
 {
     public partial class Form1 : Form
     {
-        public Texture2D SpriteSheet { get; set; }
-        public int FrameRate { get; set; }
+        private Texture2D spriteSheet;
+        private int frameRate;
 
-        public BindingList<SpriteMapRegion> Sprites { get; set; }
-        public BindingList<Frame> Frames { get; set; }
-        public BindingList<Animation> Animations { get; set; }
+        private BindingList<SpriteMapRegion> sprites;
+        private BindingList<Frame> frames;
+        private BindingList<Animation> animations;
 
-        public Animation CurrentAnimation { get; set; }
-        public Frame CurrentFrame { get; set; }
+        private Animation currentAnimation;
+        private Frame currentFrame;
 
         private bool reading = false;
         private float importDelay = 0;
@@ -36,7 +36,7 @@ namespace AnimationEditor
         public Form1()
         {
             InitializeComponent();
-            FrameRate = 60;
+            frameRate = 60;
             importDelayBox.Value = 0;
             animationPreview.FrameChanged += animationPreview_FrameChanged;
             animationPreview.AnimationEnded += animationPreview_AnimationEnded;
@@ -55,46 +55,25 @@ namespace AnimationEditor
             loadAnimationSetToolStripMenuItem.Enabled = true;
         }
 
-        private void EnableSpriteMapControls()
-        {
-            spriteListBox.Enabled = true;
-            addSpriteToFrameListButton.Enabled = true;
-            spritePreview.Enabled = true;
-            importDelayBox.Enabled = true;
-        }
-
         private void EnableAnimationEditingControls()
         {
             saveAnimationToolStripMenuItem.Enabled = true;
             saveAnimationSetToolStripMenuItem.Enabled = true;
 
-            frameListBox.Enabled = true;
-            moveFrameDownButton.Enabled = true;
-            moveFrameUpButton.Enabled = true;
-            removeFrameButton.Enabled = true;
-            delayInputBox.Enabled = true;
-
-            animationBox.Enabled = true;
-            addAnimationButton.Enabled = true;
-            removeAnimationButton.Enabled = true;
-            removeFrameButton.Enabled = true;
-            animationNameBox.Enabled = true;
-            animationLoopCheckBox.Enabled = true;
-            frameTrackBar.Enabled = true;
-            playAnimationButton.Enabled = true;
-            animationPreview.Enabled = true;
-
             editToolStripMenuItem.Enabled = true;
             updateAnimationSpritesFromSpriteMapToolStripMenuItem.Enabled = true;
+
+            frameEditorPanel.Enabled = true;
+            animationPanel.Enabled = true;
         }
 
         private void InitiateAnimationList(bool newAnimation = true)
         {
             if (newAnimation)
-                Animations = new BindingList<Animation>() { new Animation() };
+                animations = new BindingList<Animation>() { new Animation() };
             else
-                Animations = new BindingList<Animation>();
-            animationBox.DataSource = Animations;
+                animations = new BindingList<Animation>();
+            animationBox.DataSource = animations;
             animationBox.DisplayMember = "Name";
         }
 
@@ -104,20 +83,20 @@ namespace AnimationEditor
             {
                 int newSelectedIndex;
 
-                if (Frames.Count == 1 &&  Frames[0].Bounds == Microsoft.Xna.Framework.Rectangle.Empty)
+                if (frames.Count == 1 &&  frames[0].Bounds == Microsoft.Xna.Framework.Rectangle.Empty)
                 {
-                    Frames.Clear();
+                    frames.Clear();
                 }
 
-                if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == Frames.Count - 1)
+                if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == frames.Count - 1)
                 {
-                    Frames.Add(new Frame((SpriteMapRegion)spriteListBox.SelectedItem, importDelay));
-                    frameTrackBar.Maximum = Frames.Count - 1;
-                    newSelectedIndex = Frames.Count - 1;
+                    frames.Add(new Frame((SpriteMapRegion)spriteListBox.SelectedItem, importDelay));
+                    frameTrackBar.Maximum = frames.Count - 1;
+                    newSelectedIndex = frames.Count - 1;
                 }
                 else
                 {
-                    Frames.Insert(frameListBox.SelectedIndex + 1, new Frame((SpriteMapRegion)spriteListBox.SelectedItem, 0.25f));
+                    frames.Insert(frameListBox.SelectedIndex + 1, new Frame((SpriteMapRegion)spriteListBox.SelectedItem, 0.25f));
                     newSelectedIndex = frameListBox.SelectedIndex + 1;
                 }
                 UpdateAnimation();
@@ -127,25 +106,25 @@ namespace AnimationEditor
 
         private void UpdateAnimation()
         {
-            if(Frames?.Count > 0)
+            if(frames?.Count > 0)
             {
-                if(CurrentAnimation == null)
-                    CurrentAnimation = new Animation("unnamed", Frames.ToArray(), true);
+                if(currentAnimation == null)
+                    currentAnimation = new Animation("unnamed", frames.ToArray(), true);
                 else
                 {
-                    CurrentAnimation.Name = animationNameBox.Text;
-                    CurrentAnimation.Frames = Frames.ToArray();
-                    CurrentAnimation.IsLooping = animationLoopCheckBox.Checked;
+                    currentAnimation.Name = animationNameBox.Text;
+                    currentAnimation.Frames = frames.ToArray();
+                    currentAnimation.IsLooping = animationLoopCheckBox.Checked;
                 }
                 if (animationPreview.PreviewSprite == null)
-                    animationPreview.PreviewSprite = new AnimatedSprite(SpriteSheet, CurrentAnimation);
+                    animationPreview.PreviewSprite = new AnimatedSprite(spriteSheet, currentAnimation);
                 else
-                    animationPreview.PreviewSprite.CurrentAnimation = CurrentAnimation;
-                frameTrackBar.Maximum = CurrentAnimation.Frames.Count() - 1;
-                if(Animations.Count < 1)
+                    animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
+                frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
+                if(animations.Count < 1)
                 {
-                    Animations.Add(CurrentAnimation);
-                    animationBox.DataSource = Animations;
+                    animations.Add(currentAnimation);
+                    animationBox.DataSource = animations;
                     animationBox.DisplayMember = "Name";
                 }
             }
@@ -158,12 +137,12 @@ namespace AnimationEditor
         private void ReadAnimationInfo()
         {
             reading = true;
-            frameTrackBar.Maximum = CurrentAnimation.Frames.Count() - 1;
-            Frames = new BindingList<Frame>(CurrentAnimation.Frames.ToList());
-            frameListBox.DataSource = Frames;
+            frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
+            frames = new BindingList<Frame>(currentAnimation.Frames.ToList());
+            frameListBox.DataSource = frames;
             frameListBox.DisplayMember = "Name";
-            animationNameBox.Text = CurrentAnimation.Name;
-            animationLoopCheckBox.Checked = CurrentAnimation.IsLooping;
+            animationNameBox.Text = currentAnimation.Name;
+            animationLoopCheckBox.Checked = currentAnimation.IsLooping;
             reading = false;
         }
 
@@ -173,7 +152,7 @@ namespace AnimationEditor
             {
                 var currentSprite = (SpriteMapRegion)spriteListBox.SelectedItem;
                 Stream texture2DToImageStream = new MemoryStream();
-                Texture2DRegionExtractor.GetTexture2DFromRegion(SpriteSheet, SpriteSheet.GraphicsDevice, currentSprite.Bounds)
+                Texture2DRegionExtractor.GetTexture2DFromRegion(spriteSheet, spriteSheet.GraphicsDevice, currentSprite.Bounds)
                     .SaveAsPng(texture2DToImageStream, currentSprite.Bounds.Width, currentSprite.Bounds.Height);
                 spritePreview.Image = Image.FromStream(texture2DToImageStream);
                 texture2DToImageStream.Close();
@@ -184,7 +163,7 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedItem != null)
             {
-                CurrentFrame = (Frame)frameListBox.SelectedItem;
+                currentFrame = (Frame)frameListBox.SelectedItem;
                 if (animationPreview.PreviewSprite != null && !animationPreview.Playing)
                 {
                     animationPreview.PreviewSprite.CurrentFrameIndex = frameListBox.SelectedIndex;
@@ -196,15 +175,15 @@ namespace AnimationEditor
 
         private void UpdateFrameInformation()
         {
-            delayInputBox.Value = (int)(CurrentFrame.Delay * FrameRate);
+            delayInputBox.Value = (int)(currentFrame.Delay * frameRate);
         }
 
         private void delayInputBox_ValueChanged(object sender, EventArgs e)
         {
             foreach(int index in frameListBox.SelectedIndices)
             {
-                var currentFrame = Frames[index];
-                currentFrame.Delay = (float)delayInputBox.Value / FrameRate;
+                var currentFrame = frames[index];
+                currentFrame.Delay = (float)delayInputBox.Value / frameRate;
             }
         }
 
@@ -214,7 +193,7 @@ namespace AnimationEditor
             if (loadSpriteSheetDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 FileStream fileStream = new FileStream(loadSpriteSheetDialog.FileName, FileMode.Open);
-                SpriteSheet = Texture2D.FromStream(animationPreview.Editor.graphics, fileStream);
+                spriteSheet = Texture2D.FromStream(animationPreview.Editor.graphics, fileStream);
                 EnableMapAndAnimationLoadingControls();
                 fileStream.Close();
             }
@@ -235,25 +214,25 @@ namespace AnimationEditor
                     loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
                 }
 
-                Sprites = new BindingList<SpriteMapRegion>();
+                sprites = new BindingList<SpriteMapRegion>();
                 foreach (KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
                 {
-                    Sprites.Add(sprite.Value);
+                    sprites.Add(sprite.Value);
                 }
 
-                spriteListBox.DataSource = Sprites;
+                spriteListBox.DataSource = sprites;
                 spriteListBox.DisplayMember = "Name";
                 spriteListBox.ValueMember = "Bounds";
 
-                if (CurrentAnimation == null)
+                if (currentAnimation == null)
                 {
-                    Frames = new BindingList<Frame>();
-                    frameListBox.DataSource = Frames;
+                    frames = new BindingList<Frame>();
+                    frameListBox.DataSource = frames;
                     frameListBox.DisplayMember = "Name";
+
                     InitiateAnimationList();
                 }
 
-                EnableSpriteMapControls();
                 EnableAnimationEditingControls();
                 return loadedSpriteMap;
             }
@@ -273,12 +252,12 @@ namespace AnimationEditor
 
         private void animationLoopCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            CurrentAnimation.IsLooping = animationLoopCheckBox.Checked;
+            currentAnimation.IsLooping = animationLoopCheckBox.Checked;
         }
 
         private void playAnimationButton_Click(object sender, EventArgs e)
         {
-            if (CurrentAnimation.Frames.Count() > 0)
+            if (currentAnimation.Frames.Count() > 0)
             {
                 animationPreview.Playing = !animationPreview.Playing;
                 if (!animationPreview.Playing)
@@ -287,7 +266,7 @@ namespace AnimationEditor
                 }
                 else
                 {
-                    animationPreview.PreviewSprite.CurrentAnimation = CurrentAnimation;
+                    animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
                     frameTrackBar.Enabled = false;
                 }
             }
@@ -304,11 +283,11 @@ namespace AnimationEditor
 
         private void moveFrameDownButton_Click(object sender, EventArgs e)
         {
-            if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex < Frames.Count - 1)
+            if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex < frames.Count - 1)
             {
-                var frameBelow = Frames[frameListBox.SelectedIndex + 1];
-                Frames[frameListBox.SelectedIndex + 1] = CurrentFrame;
-                Frames[frameListBox.SelectedIndex] = frameBelow;
+                var frameBelow = frames[frameListBox.SelectedIndex + 1];
+                frames[frameListBox.SelectedIndex + 1] = currentFrame;
+                frames[frameListBox.SelectedIndex] = frameBelow;
                 UpdateAnimation();
                 frameListBox_SetSingleSelection(frameListBox.SelectedIndex + 1);
             }
@@ -318,9 +297,9 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > 0)
             {
-                var frameAbove = Frames[frameListBox.SelectedIndex - 1];
-                Frames[frameListBox.SelectedIndex - 1] = CurrentFrame;
-                Frames[frameListBox.SelectedIndex] = frameAbove;
+                var frameAbove = frames[frameListBox.SelectedIndex - 1];
+                frames[frameListBox.SelectedIndex - 1] = currentFrame;
+                frames[frameListBox.SelectedIndex] = frameAbove;
                 UpdateAnimation();
                 frameListBox_SetSingleSelection(frameListBox.SelectedIndex - 1);
             }
@@ -328,13 +307,13 @@ namespace AnimationEditor
 
         private void removeFrameButton_Click(object sender, EventArgs e)
         {
-            if(frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > -1 && frameListBox.SelectedIndex < Frames.Count)
+            if(frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > -1 && frameListBox.SelectedIndex < frames.Count)
             {
-                Frames.RemoveAt(frameListBox.SelectedIndex);
+                frames.RemoveAt(frameListBox.SelectedIndex);
                 UpdateAnimation();
-                if(Frames.Count > 0 && frameListBox.SelectedIndex > Frames.Count - 1)
+                if(frames.Count > 0 && frameListBox.SelectedIndex > frames.Count - 1)
                 {
-                    frameListBox_SetSingleSelection(Frames.Count - 1);
+                    frameListBox_SetSingleSelection(frames.Count - 1);
                 }
             }
         }
@@ -343,8 +322,8 @@ namespace AnimationEditor
         {
             if (!reading)
             {
-                CurrentAnimation.Name = animationNameBox.Text;
-                Animations.ResetBindings();
+                currentAnimation.Name = animationNameBox.Text;
+                animations.ResetBindings();
             }
         }
 
@@ -354,7 +333,7 @@ namespace AnimationEditor
             {
                 using (XmlWriter writer = XmlWriter.Create(saveAnimationDialog.FileName))
                 {
-                    IntermediateSerializer.Serialize(writer, CurrentAnimation, null);
+                    IntermediateSerializer.Serialize(writer, currentAnimation, null);
                 }
             }
         }
@@ -373,9 +352,9 @@ namespace AnimationEditor
                     EnableAnimationEditingControls();
                     InitiateAnimationList();
                 }
-                Animations.Add(loadedAnimation);
-                animationBox.SelectedIndex = Animations.Count - 1;
-                CurrentAnimation = Animations[animationBox.SelectedIndex];
+                animations.Add(loadedAnimation);
+                animationBox.SelectedIndex = animations.Count - 1;
+                currentAnimation = animations[animationBox.SelectedIndex];
                 ReadAnimationInfo();
                 UpdateAnimation();
             }
@@ -383,32 +362,32 @@ namespace AnimationEditor
 
         private void animationBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentAnimation = Animations[animationBox.SelectedIndex];
+            currentAnimation = animations[animationBox.SelectedIndex];
             ReadAnimationInfo();
             UpdateAnimation();
         }
 
         private void addAnimationButton_Click(object sender, EventArgs e)
         {
-            Animations.Add(new Animation());
-            animationBox.SelectedIndex = Animations.Count - 1;
+            animations.Add(new Animation());
+            animationBox.SelectedIndex = animations.Count - 1;
         }
 
         private void removeAnimationButton_Click(object sender, EventArgs e)
         {
-            if (animationBox.SelectedIndex > -1 && animationBox.SelectedIndex < Animations.Count - 1)
+            if (animationBox.SelectedIndex > -1 && animationBox.SelectedIndex < animations.Count - 1)
             {
-                if (Animations.Count == 1)
+                if (animations.Count == 1)
                 {
-                    CurrentAnimation = new Animation();
-                    Animations[animationBox.SelectedIndex] = CurrentAnimation;
+                    currentAnimation = new Animation();
+                    animations[animationBox.SelectedIndex] = currentAnimation;
                     ReadAnimationInfo();
                     UpdateAnimation();
                 }
                 else
                 {
-                    Animations.RemoveAt(animationBox.SelectedIndex);
-                    if(animationBox.SelectedIndex > Animations.Count - 1)
+                    animations.RemoveAt(animationBox.SelectedIndex);
+                    if(animationBox.SelectedIndex > animations.Count - 1)
                     {
                         animationBox.SelectedIndex--;
                     }
@@ -418,7 +397,7 @@ namespace AnimationEditor
 
         private void importDelayBox_ValueChanged(object sender, EventArgs e)
         {
-            importDelay = (float)importDelayBox.Value / FrameRate; 
+            importDelay = (float)importDelayBox.Value / frameRate; 
         }
 
         private void animationPreview_MouseWheel(object sender, MouseEventArgs e)
@@ -436,7 +415,7 @@ namespace AnimationEditor
         private void saveAnimationSetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var animSet = new AnimationSet();
-            foreach(Animation anim in Animations)
+            foreach(Animation anim in animations)
             {
                 if (animSet.Anims.ContainsKey(anim.Name))
                 {
@@ -480,10 +459,10 @@ namespace AnimationEditor
                 InitiateAnimationList(newAnimation: false);
                 foreach(KeyValuePair<string,Animation> currentEntry in loadedAnimSet.Anims)
                 {
-                    Animations.Add(currentEntry.Value);
+                    animations.Add(currentEntry.Value);
                 }
                 animationBox.SelectedIndex = 0;
-                CurrentAnimation = Animations[animationBox.SelectedIndex];
+                currentAnimation = animations[animationBox.SelectedIndex];
                 ReadAnimationInfo();
                 UpdateAnimation();
             }
@@ -500,7 +479,7 @@ namespace AnimationEditor
 
             int updateCounter = 0;
 
-            foreach(Animation anim in Animations)
+            foreach(Animation anim in animations)
             {
                 foreach(Frame frame in anim.Frames)
                 {
