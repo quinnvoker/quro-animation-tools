@@ -80,8 +80,9 @@
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.animationPreview = new AnimationEditor.AnimationPreview();
             this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
+            this.animationPreview = new AnimationEditor.AnimationPreview();
+            this.addEmptyFrameButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayInputBox)).BeginInit();
@@ -216,7 +217,7 @@
             // moveFrameUpButton
             // 
             this.moveFrameUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveFrameUpButton.Location = new System.Drawing.Point(223, 19);
+            this.moveFrameUpButton.Location = new System.Drawing.Point(225, 19);
             this.moveFrameUpButton.Name = "moveFrameUpButton";
             this.moveFrameUpButton.Size = new System.Drawing.Size(27, 23);
             this.moveFrameUpButton.TabIndex = 13;
@@ -226,7 +227,7 @@
             // 
             // moveFrameDownButton
             // 
-            this.moveFrameDownButton.Location = new System.Drawing.Point(190, 19);
+            this.moveFrameDownButton.Location = new System.Drawing.Point(194, 19);
             this.moveFrameDownButton.Name = "moveFrameDownButton";
             this.moveFrameDownButton.Size = new System.Drawing.Size(27, 23);
             this.moveFrameDownButton.TabIndex = 14;
@@ -404,6 +405,7 @@
             this.frameEditorPanel.Controls.Add(this.moveFrameDownButton);
             this.frameEditorPanel.Controls.Add(this.delayInputBox);
             this.frameEditorPanel.Controls.Add(this.moveFrameUpButton);
+            this.frameEditorPanel.Controls.Add(this.addEmptyFrameButton);
             this.frameEditorPanel.Controls.Add(this.removeFrameButton);
             this.frameEditorPanel.Enabled = false;
             this.frameEditorPanel.Location = new System.Drawing.Point(0, 27);
@@ -638,6 +640,12 @@
             this.animationLabel.TabIndex = 22;
             this.animationLabel.Text = "Animation";
             // 
+            // loadAnimationSetDialog
+            // 
+            this.loadAnimationSetDialog.DefaultExt = "animset";
+            this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
+            // 
             // animationPreview
             // 
             this.animationPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -654,11 +662,15 @@
             this.animationPreview.ZoomLevel = 0F;
             this.animationPreview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.animationPreview_MouseWheel);
             // 
-            // loadAnimationSetDialog
+            // addEmptyFrameButton
             // 
-            this.loadAnimationSetDialog.DefaultExt = "animset";
-            this.loadAnimationSetDialog.FileName = "openFileDialog1";
-            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
+            this.addEmptyFrameButton.Location = new System.Drawing.Point(163, 19);
+            this.addEmptyFrameButton.Name = "addEmptyFrameButton";
+            this.addEmptyFrameButton.Size = new System.Drawing.Size(27, 23);
+            this.addEmptyFrameButton.TabIndex = 12;
+            this.addEmptyFrameButton.Text = "+";
+            this.addEmptyFrameButton.UseVisualStyleBackColor = true;
+            this.addEmptyFrameButton.Click += new System.EventHandler(this.addEmptyFrameButton_Click);
             // 
             // Form1
             // 
@@ -747,6 +759,7 @@
         private System.Windows.Forms.NumericUpDown subSpriteXPosBox;
         private System.Windows.Forms.Panel subSpritePanel;
         private System.Windows.Forms.Label subSpritePositionLabel;
+        private System.Windows.Forms.Button addEmptyFrameButton;
     }
 }
 

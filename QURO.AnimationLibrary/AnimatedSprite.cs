@@ -76,21 +76,37 @@ namespace QURO.AnimationLibrary
         {
             spriteBatch.Draw(SpriteSheet, position - CurrentFrame.Origin, CurrentFrame.Bounds, tint);
             if (CurrentFrame.SubSprites != null)
-            {
-                for (int index = 0; index < CurrentFrame.SubSprites.Count; index++)
-                {
-                    var subSprite = CurrentFrame.SubSprites[index];
-                    spriteBatch.Draw(SpriteSheet, position - subSprite.Origin + CurrentFrame.SubSpritePositions[index], subSprite.Bounds, tint);
-                }
-            }
+                DrawSubSprites(spriteBatch, position, tint);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteOffset, Color tint)
+        public void Draw(SpriteBatch spriteBatch, Vector2 position, Vector2 spriteMapOffset, Color tint, bool offsetSubSprites = false)
         {
             Rectangle sourceRect = CurrentFrame.Bounds;
-            sourceRect.Offset(spriteOffset);
+            sourceRect.Offset(spriteMapOffset);
 
             spriteBatch.Draw(SpriteSheet, position, sourceRect, tint);
+            if (CurrentFrame.SubSprites != null)
+                DrawSubSprites(spriteBatch, position, tint, offsetSubSprites? (Vector2?)spriteMapOffset : null);
+        }
+
+        public void DrawSubSprites(SpriteBatch spriteBatch, Vector2 position, Color tint, Vector2? spriteMapOffset = null)
+        {
+            if (CurrentFrame.SubSprites.Count != CurrentFrame.SubSpritePositions.Count)
+            {
+                System.Console.WriteLine("SubSpriteCount and SubSpritePositionCount are not equal! Skipping subsprites...");
+                return;
+            }
+            for (int index = 0; index < CurrentFrame.SubSprites.Count; index++)
+            {
+                var subSprite = CurrentFrame.SubSprites[index];
+
+                Rectangle sourceRect = subSprite.Bounds;
+
+                if (spriteMapOffset != null)
+                    sourceRect.Offset((Vector2)spriteMapOffset);
+
+                spriteBatch.Draw(SpriteSheet, position - subSprite.Origin + CurrentFrame.SubSpritePositions[index], sourceRect, tint);
+            }
         }
     }
 }

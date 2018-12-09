@@ -31,17 +31,7 @@ namespace AnimationEditor
         private Animation currentAnimation;
         private Frame currentFrame;
 
-        private bool r;
-
-        private bool reading
-        {
-            get { return r; }
-            set
-            {
-                r = value;
-                Console.WriteLine("Reading: " + r);
-            }
-        }
+        private bool reading;
         private float importDelay = 0;
 
         public Form1()
@@ -92,27 +82,32 @@ namespace AnimationEditor
         {
             if (spriteListBox.SelectedItem != null)
             {
-                int newSelectedIndex;
-
-                if (frames.Count == 1 &&  frames[0].Bounds == Microsoft.Xna.Framework.Rectangle.Empty)
-                {
-                    frames.Clear();
-                }
-
-                if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == frames.Count - 1)
-                {
-                    frames.Add(new Frame((SpriteMapRegion)spriteListBox.SelectedItem, importDelay));
-                    frameTrackBar.Maximum = frames.Count - 1;
-                    newSelectedIndex = frames.Count - 1;
-                }
-                else
-                {
-                    frames.Insert(frameListBox.SelectedIndex + 1, new Frame((SpriteMapRegion)spriteListBox.SelectedItem, 0.25f));
-                    newSelectedIndex = frameListBox.SelectedIndex + 1;
-                }
-                UpdateAnimation();
-                frameListBox_SetSingleSelection(newSelectedIndex);
+                AddFrame(new Frame((SpriteMapRegion)spriteListBox.SelectedItem, importDelay));
             }
+        }
+
+        private void AddFrame(Frame frameToAdd)
+        {
+            int newSelectedIndex;
+
+            if (frames.Count == 1 && frames[0].Bounds == Microsoft.Xna.Framework.Rectangle.Empty)
+            {
+                frames.Clear();
+            }
+
+            if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == frames.Count - 1)
+            {
+                frames.Add(frameToAdd);
+                frameTrackBar.Maximum = frames.Count - 1;
+                newSelectedIndex = frames.Count - 1;
+            }
+            else
+            {
+                frames.Insert(frameListBox.SelectedIndex + 1, frameToAdd);
+                newSelectedIndex = frameListBox.SelectedIndex + 1;
+            }
+            UpdateAnimation();
+            frameListBox_SetSingleSelection(newSelectedIndex);
         }
 
         private void UpdateAnimation()
@@ -510,6 +505,18 @@ namespace AnimationEditor
                         frame.Sprite = loadedSpriteMap[frame.Name];
                         updateCounter++;
                     }
+                    if (frame.SubSprites != null)
+                    {
+                        for (int index = 0; index < frame.SubSprites.Count; index++)
+                        {
+                            var subSprite = frame.SubSprites[index];
+                            if (loadedSpriteMap.ContainsKey(subSprite.Name))
+                            {
+                                frame.SubSprites[index] = loadedSpriteMap[subSprite.Name];
+                                updateCounter++;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -559,6 +566,11 @@ namespace AnimationEditor
                 currentFrame.SubSprites = new List<SpriteMapRegion>();
             currentFrame.SubSprites.Add(spriteToAdd);
             subSprites.Add(spriteToAdd);
+        }
+
+        private void addEmptyFrameButton_Click(object sender, EventArgs e)
+        {
+            AddFrame(new Frame());
         }
     }
 }
