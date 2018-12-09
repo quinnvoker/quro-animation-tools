@@ -25,12 +25,23 @@ namespace AnimationEditor
 
         private BindingList<SpriteMapRegion> sprites;
         private BindingList<Frame> frames;
+        private BindingList<SpriteMapRegion> subSprites;
         private BindingList<Animation> animations;
 
         private Animation currentAnimation;
         private Frame currentFrame;
 
-        private bool reading = false;
+        private bool r;
+
+        private bool reading
+        {
+            get { return r; }
+            set
+            {
+                r = value;
+                Console.WriteLine("Reading: " + r);
+            }
+        }
         private float importDelay = 0;
 
         public Form1()
@@ -169,7 +180,18 @@ namespace AnimationEditor
                     animationPreview.PreviewSprite.CurrentFrameIndex = frameListBox.SelectedIndex;
                     frameTrackBar.Value = frameListBox.SelectedIndex;
                 }
+                subSpritePanel.Enabled = true;
+                if (currentFrame.SubSprites != null)
+                    subSprites = new BindingList<SpriteMapRegion>(currentFrame.SubSprites);
+                else
+                    subSprites = new BindingList<SpriteMapRegion>();
+                subSpriteListBox.DataSource = subSprites;
+                subSpriteListBox.DisplayMember = "Name";
                 UpdateFrameInformation();
+            }
+            else if (frameListBox.SelectedIndices.Count > 1)
+            {
+                subSpritePanel.Enabled = false;
             }
         }
 
@@ -320,11 +342,11 @@ namespace AnimationEditor
 
         private void animationNameBox_TextChanged(object sender, EventArgs e)
         {
-            if (!reading)
-            {
-                currentAnimation.Name = animationNameBox.Text;
-                animations.ResetBindings();
-            }
+            if (reading)
+                return;
+
+            currentAnimation.Name = animationNameBox.Text;
+            animations.ResetBindings();
         }
 
         private void saveAnimationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -492,6 +514,51 @@ namespace AnimationEditor
             }
 
             MessageBox.Show("Updated " + updateCounter + " sprites!");
+        }
+
+        private void subSpriteListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReadSubSpritePosition();
+        }
+
+        private void ReadSubSpritePosition()
+        {
+            reading = true;
+            subSpriteXPosBox.Value = (int)currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex].X;
+            subSpriteYPosBox.Value = (int)currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex].Y;
+            reading = false;
+        }
+
+        private void subSpriteXPosBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (reading || subSpriteListBox.SelectedIndex >= currentFrame.SubSpritePositions.Count)
+                return;
+
+            var newPos = currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex];
+            newPos.X = (float)subSpriteXPosBox.Value;
+            currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex] = newPos;
+        }
+
+        private void subSpriteYPosBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (reading || subSpriteListBox.SelectedIndex >= currentFrame.SubSpritePositions.Count)
+                return;
+
+            var newPos = currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex];
+            newPos.Y = (float)subSpriteYPosBox.Value;
+            currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex] = newPos;
+        }
+
+        private void addSpriteToSubSpritesButton_Click(object sender, EventArgs e)
+        {
+            var spriteToAdd = sprites[spriteListBox.SelectedIndex];
+            if (currentFrame.SubSpritePositions == null)
+                currentFrame.SubSpritePositions = new List<Vector2>();
+            currentFrame.SubSpritePositions.Add(Vector2.Zero);
+            if (currentFrame.SubSprites == null)
+                currentFrame.SubSprites = new List<SpriteMapRegion>();
+            currentFrame.SubSprites.Add(spriteToAdd);
+            subSprites.Add(spriteToAdd);
         }
     }
 }

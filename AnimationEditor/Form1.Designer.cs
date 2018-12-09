@@ -61,6 +61,15 @@
             this.addAnimationButton = new System.Windows.Forms.Button();
             this.removeAnimationButton = new System.Windows.Forms.Button();
             this.frameEditorPanel = new System.Windows.Forms.Panel();
+            this.subSpritePanel = new System.Windows.Forms.Panel();
+            this.subSpritePositionLabel = new System.Windows.Forms.Label();
+            this.subSpriteListBox = new System.Windows.Forms.ListBox();
+            this.subSpriteYPosLabel = new System.Windows.Forms.Label();
+            this.subSpriteXPosLabel = new System.Windows.Forms.Label();
+            this.subSpriteListLabel = new System.Windows.Forms.Label();
+            this.addSpriteToSubSpritesButton = new System.Windows.Forms.Button();
+            this.subSpriteYPosBox = new System.Windows.Forms.NumericUpDown();
+            this.subSpriteXPosBox = new System.Windows.Forms.NumericUpDown();
             this.importDelayLabel = new System.Windows.Forms.Label();
             this.importValuesLabel = new System.Windows.Forms.Label();
             this.importDelayBox = new System.Windows.Forms.NumericUpDown();
@@ -71,24 +80,18 @@
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             this.animationPreview = new AnimationEditor.AnimationPreview();
-            this.subSpriteListBox = new System.Windows.Forms.ListBox();
-            this.subSpriteXPosBox = new System.Windows.Forms.NumericUpDown();
-            this.subSpriteXPosLabel = new System.Windows.Forms.Label();
-            this.subSpriteListLabel = new System.Windows.Forms.Label();
-            this.addSpriteToSubSpritesButton = new System.Windows.Forms.Button();
-            this.subSpriteYPosBox = new System.Windows.Forms.NumericUpDown();
-            this.subSpriteYPosLabel = new System.Windows.Forms.Label();
+            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayInputBox)).BeginInit();
             this.mainMenuStrip.SuspendLayout();
             this.frameEditorPanel.SuspendLayout();
+            this.subSpritePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.subSpriteYPosBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subSpriteXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).BeginInit();
             this.animationPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.subSpriteXPosBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.subSpriteYPosBox)).BeginInit();
             this.SuspendLayout();
             // 
             // loadSpriteSheetDialog
@@ -386,25 +389,19 @@
             // 
             this.frameEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.frameEditorPanel.Controls.Add(this.subSpriteListBox);
+            this.frameEditorPanel.Controls.Add(this.subSpritePanel);
             this.frameEditorPanel.Controls.Add(this.importDelayLabel);
             this.frameEditorPanel.Controls.Add(this.importValuesLabel);
             this.frameEditorPanel.Controls.Add(this.importDelayBox);
-            this.frameEditorPanel.Controls.Add(this.subSpriteYPosLabel);
-            this.frameEditorPanel.Controls.Add(this.subSpriteXPosLabel);
             this.frameEditorPanel.Controls.Add(this.delayLabel);
             this.frameEditorPanel.Controls.Add(this.frameInfoLabel);
-            this.frameEditorPanel.Controls.Add(this.subSpriteListLabel);
             this.frameEditorPanel.Controls.Add(this.frameBoxLabel);
             this.frameEditorPanel.Controls.Add(this.spriteBoxLabel);
             this.frameEditorPanel.Controls.Add(this.frameListBox);
             this.frameEditorPanel.Controls.Add(this.spriteListBox);
-            this.frameEditorPanel.Controls.Add(this.addSpriteToSubSpritesButton);
             this.frameEditorPanel.Controls.Add(this.addSpriteToFrameListButton);
             this.frameEditorPanel.Controls.Add(this.spritePreview);
             this.frameEditorPanel.Controls.Add(this.moveFrameDownButton);
-            this.frameEditorPanel.Controls.Add(this.subSpriteYPosBox);
-            this.frameEditorPanel.Controls.Add(this.subSpriteXPosBox);
             this.frameEditorPanel.Controls.Add(this.delayInputBox);
             this.frameEditorPanel.Controls.Add(this.moveFrameUpButton);
             this.frameEditorPanel.Controls.Add(this.removeFrameButton);
@@ -413,6 +410,122 @@
             this.frameEditorPanel.Name = "frameEditorPanel";
             this.frameEditorPanel.Size = new System.Drawing.Size(290, 467);
             this.frameEditorPanel.TabIndex = 19;
+            // 
+            // subSpritePanel
+            // 
+            this.subSpritePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpritePanel.Controls.Add(this.subSpritePositionLabel);
+            this.subSpritePanel.Controls.Add(this.subSpriteListBox);
+            this.subSpritePanel.Controls.Add(this.subSpriteYPosLabel);
+            this.subSpritePanel.Controls.Add(this.subSpriteXPosLabel);
+            this.subSpritePanel.Controls.Add(this.subSpriteListLabel);
+            this.subSpritePanel.Controls.Add(this.addSpriteToSubSpritesButton);
+            this.subSpritePanel.Controls.Add(this.subSpriteYPosBox);
+            this.subSpritePanel.Controls.Add(this.subSpriteXPosBox);
+            this.subSpritePanel.Location = new System.Drawing.Point(128, 342);
+            this.subSpritePanel.Name = "subSpritePanel";
+            this.subSpritePanel.Size = new System.Drawing.Size(161, 124);
+            this.subSpritePanel.TabIndex = 24;
+            // 
+            // subSpritePositionLabel
+            // 
+            this.subSpritePositionLabel.AutoSize = true;
+            this.subSpritePositionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.subSpritePositionLabel.Location = new System.Drawing.Point(34, 75);
+            this.subSpritePositionLabel.Name = "subSpritePositionLabel";
+            this.subSpritePositionLabel.Size = new System.Drawing.Size(112, 13);
+            this.subSpritePositionLabel.TabIndex = 23;
+            this.subSpritePositionLabel.Text = "Sub-Sprite Positon";
+            // 
+            // subSpriteListBox
+            // 
+            this.subSpriteListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteListBox.FormattingEnabled = true;
+            this.subSpriteListBox.Location = new System.Drawing.Point(35, 16);
+            this.subSpriteListBox.Name = "subSpriteListBox";
+            this.subSpriteListBox.Size = new System.Drawing.Size(120, 56);
+            this.subSpriteListBox.TabIndex = 22;
+            this.subSpriteListBox.SelectedIndexChanged += new System.EventHandler(this.subSpriteListBox_SelectedIndexChanged);
+            // 
+            // subSpriteYPosLabel
+            // 
+            this.subSpriteYPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteYPosLabel.AutoSize = true;
+            this.subSpriteYPosLabel.Location = new System.Drawing.Point(95, 95);
+            this.subSpriteYPosLabel.Name = "subSpriteYPosLabel";
+            this.subSpriteYPosLabel.Size = new System.Drawing.Size(14, 13);
+            this.subSpriteYPosLabel.TabIndex = 18;
+            this.subSpriteYPosLabel.Text = "Y";
+            // 
+            // subSpriteXPosLabel
+            // 
+            this.subSpriteXPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteXPosLabel.AutoSize = true;
+            this.subSpriteXPosLabel.Location = new System.Drawing.Point(34, 95);
+            this.subSpriteXPosLabel.Name = "subSpriteXPosLabel";
+            this.subSpriteXPosLabel.Size = new System.Drawing.Size(14, 13);
+            this.subSpriteXPosLabel.TabIndex = 18;
+            this.subSpriteXPosLabel.Text = "X";
+            // 
+            // subSpriteListLabel
+            // 
+            this.subSpriteListLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteListLabel.AutoSize = true;
+            this.subSpriteListLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.subSpriteListLabel.Location = new System.Drawing.Point(34, 0);
+            this.subSpriteListLabel.Name = "subSpriteListLabel";
+            this.subSpriteListLabel.Size = new System.Drawing.Size(72, 13);
+            this.subSpriteListLabel.TabIndex = 16;
+            this.subSpriteListLabel.Text = "Sub-Sprites";
+            // 
+            // addSpriteToSubSpritesButton
+            // 
+            this.addSpriteToSubSpritesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.addSpriteToSubSpritesButton.Location = new System.Drawing.Point(2, 29);
+            this.addSpriteToSubSpritesButton.Name = "addSpriteToSubSpritesButton";
+            this.addSpriteToSubSpritesButton.Size = new System.Drawing.Size(27, 23);
+            this.addSpriteToSubSpritesButton.TabIndex = 5;
+            this.addSpriteToSubSpritesButton.Text = "→";
+            this.addSpriteToSubSpritesButton.UseVisualStyleBackColor = true;
+            this.addSpriteToSubSpritesButton.Click += new System.EventHandler(this.addSpriteToSubSpritesButton_Click);
+            // 
+            // subSpriteYPosBox
+            // 
+            this.subSpriteYPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteYPosBox.Location = new System.Drawing.Point(110, 93);
+            this.subSpriteYPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.subSpriteYPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
+            this.subSpriteYPosBox.Name = "subSpriteYPosBox";
+            this.subSpriteYPosBox.Size = new System.Drawing.Size(43, 20);
+            this.subSpriteYPosBox.TabIndex = 8;
+            this.subSpriteYPosBox.ValueChanged += new System.EventHandler(this.subSpriteYPosBox_ValueChanged);
+            // 
+            // subSpriteXPosBox
+            // 
+            this.subSpriteXPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.subSpriteXPosBox.Location = new System.Drawing.Point(49, 93);
+            this.subSpriteXPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.subSpriteXPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
+            this.subSpriteXPosBox.Name = "subSpriteXPosBox";
+            this.subSpriteXPosBox.Size = new System.Drawing.Size(43, 20);
+            this.subSpriteXPosBox.TabIndex = 8;
+            this.subSpriteXPosBox.ValueChanged += new System.EventHandler(this.subSpriteXPosBox_ValueChanged);
             // 
             // importDelayLabel
             // 
@@ -525,12 +638,6 @@
             this.animationLabel.TabIndex = 22;
             this.animationLabel.Text = "Animation";
             // 
-            // loadAnimationSetDialog
-            // 
-            this.loadAnimationSetDialog.DefaultExt = "animset";
-            this.loadAnimationSetDialog.FileName = "openFileDialog1";
-            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
-            // 
             // animationPreview
             // 
             this.animationPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -547,74 +654,11 @@
             this.animationPreview.ZoomLevel = 0F;
             this.animationPreview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.animationPreview_MouseWheel);
             // 
-            // subSpriteListBox
+            // loadAnimationSetDialog
             // 
-            this.subSpriteListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteListBox.FormattingEnabled = true;
-            this.subSpriteListBox.Location = new System.Drawing.Point(163, 362);
-            this.subSpriteListBox.Name = "subSpriteListBox";
-            this.subSpriteListBox.Size = new System.Drawing.Size(120, 56);
-            this.subSpriteListBox.TabIndex = 22;
-            // 
-            // subSpriteXPosBox
-            // 
-            this.subSpriteXPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteXPosBox.Location = new System.Drawing.Point(177, 435);
-            this.subSpriteXPosBox.Name = "subSpriteXPosBox";
-            this.subSpriteXPosBox.Size = new System.Drawing.Size(43, 20);
-            this.subSpriteXPosBox.TabIndex = 8;
-            this.subSpriteXPosBox.ValueChanged += new System.EventHandler(this.delayInputBox_ValueChanged);
-            // 
-            // subSpriteXPosLabel
-            // 
-            this.subSpriteXPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteXPosLabel.AutoSize = true;
-            this.subSpriteXPosLabel.Location = new System.Drawing.Point(162, 437);
-            this.subSpriteXPosLabel.Name = "subSpriteXPosLabel";
-            this.subSpriteXPosLabel.Size = new System.Drawing.Size(14, 13);
-            this.subSpriteXPosLabel.TabIndex = 18;
-            this.subSpriteXPosLabel.Text = "X";
-            // 
-            // subSpriteListLabel
-            // 
-            this.subSpriteListLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteListLabel.AutoSize = true;
-            this.subSpriteListLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.subSpriteListLabel.Location = new System.Drawing.Point(162, 346);
-            this.subSpriteListLabel.Name = "subSpriteListLabel";
-            this.subSpriteListLabel.Size = new System.Drawing.Size(72, 13);
-            this.subSpriteListLabel.TabIndex = 16;
-            this.subSpriteListLabel.Text = "Sub-Sprites";
-            // 
-            // addSpriteToSubSpritesButton
-            // 
-            this.addSpriteToSubSpritesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.addSpriteToSubSpritesButton.Location = new System.Drawing.Point(130, 371);
-            this.addSpriteToSubSpritesButton.Name = "addSpriteToSubSpritesButton";
-            this.addSpriteToSubSpritesButton.Size = new System.Drawing.Size(27, 23);
-            this.addSpriteToSubSpritesButton.TabIndex = 5;
-            this.addSpriteToSubSpritesButton.Text = "→";
-            this.addSpriteToSubSpritesButton.UseVisualStyleBackColor = true;
-            this.addSpriteToSubSpritesButton.Click += new System.EventHandler(this.addSpriteToFrameListButton_Click);
-            // 
-            // subSpriteYPosBox
-            // 
-            this.subSpriteYPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteYPosBox.Location = new System.Drawing.Point(238, 435);
-            this.subSpriteYPosBox.Name = "subSpriteYPosBox";
-            this.subSpriteYPosBox.Size = new System.Drawing.Size(43, 20);
-            this.subSpriteYPosBox.TabIndex = 8;
-            this.subSpriteYPosBox.ValueChanged += new System.EventHandler(this.delayInputBox_ValueChanged);
-            // 
-            // subSpriteYPosLabel
-            // 
-            this.subSpriteYPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.subSpriteYPosLabel.AutoSize = true;
-            this.subSpriteYPosLabel.Location = new System.Drawing.Point(223, 437);
-            this.subSpriteYPosLabel.Name = "subSpriteYPosLabel";
-            this.subSpriteYPosLabel.Size = new System.Drawing.Size(14, 13);
-            this.subSpriteYPosLabel.TabIndex = 18;
-            this.subSpriteYPosLabel.Text = "Y";
+            this.loadAnimationSetDialog.DefaultExt = "animset";
+            this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
             // 
             // Form1
             // 
@@ -635,11 +679,13 @@
             this.mainMenuStrip.PerformLayout();
             this.frameEditorPanel.ResumeLayout(false);
             this.frameEditorPanel.PerformLayout();
+            this.subSpritePanel.ResumeLayout(false);
+            this.subSpritePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.subSpriteYPosBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subSpriteXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).EndInit();
             this.animationPanel.ResumeLayout(false);
             this.animationPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.subSpriteXPosBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.subSpriteYPosBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -699,6 +745,8 @@
         private System.Windows.Forms.Button addSpriteToSubSpritesButton;
         private System.Windows.Forms.NumericUpDown subSpriteYPosBox;
         private System.Windows.Forms.NumericUpDown subSpriteXPosBox;
+        private System.Windows.Forms.Panel subSpritePanel;
+        private System.Windows.Forms.Label subSpritePositionLabel;
     }
 }
 
