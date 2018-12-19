@@ -11,7 +11,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class ModifyBounds : ISpriteMapModification
     {
-        private readonly List<SpriteMapRegion> sprites;
+        private readonly List<Sprite> sprites;
 
         private readonly int newXPosition;
         private readonly int newYPosition;
@@ -23,7 +23,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public ModifyBounds(List<SpriteMapRegion> spritesToModify, int x = -1, int y = -1, int width = -1, int height = -1)
+        public ModifyBounds(List<Sprite> spritesToModify, int x = -1, int y = -1, int width = -1, int height = -1)
         {
             sprites = spritesToModify.ToList();
             newXPosition = x;

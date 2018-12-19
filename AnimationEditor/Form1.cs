@@ -11,7 +11,7 @@ using System.IO;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using QURO.AnimationLibrary;
+using QURO.Animation;
 using QURO;
 using System.Xml;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
@@ -23,9 +23,9 @@ namespace AnimationEditor
         private Texture2D spriteSheet;
         private int frameRate;
 
-        private BindingList<SpriteMapRegion> sprites;
+        private BindingList<Sprite> sprites;
         private BindingList<Frame> frames;
-        private BindingList<SpriteMapRegion> subSprites;
+        private BindingList<Sprite> subSprites;
         private BindingList<Animation> animations;
 
         private Animation currentAnimation;
@@ -82,7 +82,7 @@ namespace AnimationEditor
         {
             if (spriteListBox.SelectedItem != null)
             {
-                AddFrame(new Frame((SpriteMapRegion)spriteListBox.SelectedItem, importDelay));
+                AddFrame(new Frame((Sprite)spriteListBox.SelectedItem, importDelay));
             }
         }
 
@@ -156,7 +156,7 @@ namespace AnimationEditor
         {
             if (spriteListBox.SelectedItem != null)
             {
-                var currentSprite = (SpriteMapRegion)spriteListBox.SelectedItem;
+                var currentSprite = (Sprite)spriteListBox.SelectedItem;
                 Stream texture2DToImageStream = new MemoryStream();
                 Texture2DRegionExtractor.GetTexture2DFromRegion(spriteSheet, spriteSheet.GraphicsDevice, currentSprite.Bounds)
                     .SaveAsPng(texture2DToImageStream, currentSprite.Bounds.Width, currentSprite.Bounds.Height);
@@ -177,9 +177,9 @@ namespace AnimationEditor
                 }
                 subSpritePanel.Enabled = true;
                 if (currentFrame.SubSprites != null)
-                    subSprites = new BindingList<SpriteMapRegion>(currentFrame.SubSprites);
+                    subSprites = new BindingList<Sprite>(currentFrame.SubSprites);
                 else
-                    subSprites = new BindingList<SpriteMapRegion>();
+                    subSprites = new BindingList<Sprite>();
                 subSpriteListBox.DataSource = subSprites;
                 subSpriteListBox.DisplayMember = "Name";
                 UpdateFrameInformation();
@@ -221,18 +221,18 @@ namespace AnimationEditor
             LoadSpriteMapFromFile();
         }
 
-        private Dictionary<string, SpriteMapRegion> LoadSpriteMapFromFile()
+        private Dictionary<string, Sprite> LoadSpriteMapFromFile()
         {
             if (loadSpriteMapDialog.ShowDialog() == DialogResult.OK)
             {
-                Dictionary<string, SpriteMapRegion> loadedSpriteMap;
+                Dictionary<string, Sprite> loadedSpriteMap;
                 using (XmlReader xmlRead = XmlReader.Create(loadSpriteMapDialog.FileName))
                 {
-                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, Sprite>>(xmlRead, null);
                 }
 
-                sprites = new BindingList<SpriteMapRegion>();
-                foreach (KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
+                sprites = new BindingList<Sprite>();
+                foreach (KeyValuePair<string, Sprite> sprite in loadedSpriteMap)
                 {
                     sprites.Add(sprite.Value);
                 }
@@ -491,7 +491,7 @@ namespace AnimationEditor
 
             using(XmlReader xmlRead = XmlReader.Create(loadSpriteMapDialog.FileName))
             {
-                loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+                loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, Sprite>>(xmlRead, null);
             }
 
             int updateCounter = 0;
@@ -563,7 +563,7 @@ namespace AnimationEditor
                 currentFrame.SubSpritePositions = new List<Vector2>();
             currentFrame.SubSpritePositions.Add(Vector2.Zero);
             if (currentFrame.SubSprites == null)
-                currentFrame.SubSprites = new List<SpriteMapRegion>();
+                currentFrame.SubSprites = new List<Sprite>();
             currentFrame.SubSprites.Add(spriteToAdd);
             subSprites.Add(spriteToAdd);
         }

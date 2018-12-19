@@ -10,7 +10,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class MoveBounds : ISpriteMapModification
     {
-        private readonly List<SpriteMapRegion> sprites;
+        private readonly List<Sprite> sprites;
 
         private readonly int xDiff;
         private readonly int yDiff;
@@ -19,7 +19,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public MoveBounds(List<SpriteMapRegion> spritesToMove, int xDifference, int yDifference, List<Rectangle> preDragBounds = null)
+        public MoveBounds(List<Sprite> spritesToMove, int xDifference, int yDifference, List<Rectangle> preDragBounds = null)
         {
             sprites = spritesToMove.ToList();
             xDiff = xDifference;
@@ -29,7 +29,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         public void Do()
         {
-            foreach (SpriteMapRegion sprite in sprites)
+            foreach (Sprite sprite in sprites)
             {
                 var newBounds = sprite.Bounds;
                 newBounds.X += xDiff;
@@ -48,7 +48,7 @@ namespace SpriteMapEditor.SpriteMapModifications
             }
             else
             {
-                foreach (SpriteMapRegion sprite in sprites)
+                foreach (Sprite sprite in sprites)
                 {
                     var newBounds = sprite.Bounds;
                     newBounds.X -= xDiff;

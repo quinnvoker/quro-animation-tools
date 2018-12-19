@@ -10,7 +10,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class ApplyOriginPreset : ISpriteMapModification
     {
-        private readonly List<SpriteMapRegion> sprites;
+        private readonly List<Sprite> sprites;
 
         private readonly OriginPreset preset;
 
@@ -19,7 +19,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public ApplyOriginPreset(List<SpriteMapRegion> spritesToEditOrigin, OriginPreset presetToApply)
+        public ApplyOriginPreset(List<Sprite> spritesToEditOrigin, OriginPreset presetToApply)
         {
             sprites = spritesToEditOrigin.ToList();
             preset = presetToApply;
@@ -33,7 +33,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 
         public void Do()
         {
-            foreach(SpriteMapRegion sprite in sprites)
+            foreach(Sprite sprite in sprites)
             {
                 Vector2 newOrigin = sprite.Origin;
 

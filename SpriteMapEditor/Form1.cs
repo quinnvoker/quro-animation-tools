@@ -23,8 +23,8 @@ namespace SpriteMapEditor
     {
         private History undoHistory;
 
-        private BindingList<SpriteMapRegion> sprites;
-        private List<SpriteMapRegion> selectedSprites;
+        private BindingList<Sprite> sprites;
+        private List<Sprite> selectedSprites;
 
         private bool highlight = false;
         private int zoomLevel = 3;
@@ -96,8 +96,8 @@ namespace SpriteMapEditor
             spriteSheetViewer.Width = 1;
             spriteSheetViewer.Height = 1;
 
-            sprites = new BindingList<SpriteMapRegion> { new SpriteMapRegion() };
-            selectedSprites = new List<SpriteMapRegion>();
+            sprites = new BindingList<Sprite> { new Sprite() };
+            selectedSprites = new List<Sprite>();
 
             spriteList.DataSource = sprites;
             spriteList.DisplayMember = "Name";
@@ -123,7 +123,7 @@ namespace SpriteMapEditor
             CurrentSpriteMapFileLocation = null;
             CurrentSpriteSheetFileLocation = null;
 
-            sprites = new BindingList<SpriteMapRegion>() { new SpriteMapRegion() };
+            sprites = new BindingList<Sprite>() { new Sprite() };
             LoadSpriteSheet();
             if (spriteSheet == null)
                 return;
@@ -152,14 +152,14 @@ namespace SpriteMapEditor
             {
                 CurrentSpriteMapFileLocation = loadMapDialog.FileName;
 
-                Dictionary<string, SpriteMapRegion> loadedSpriteMap;
+                Dictionary<string, Sprite> loadedSpriteMap;
                 using (XmlReader xmlRead = XmlReader.Create(CurrentSpriteMapFileLocation))
                 {
-                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, SpriteMapRegion>>(xmlRead, null);
+                    loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, Sprite>>(xmlRead, null);
                 }
 
-                sprites = new BindingList<SpriteMapRegion>();
-                foreach (KeyValuePair<string, SpriteMapRegion> sprite in loadedSpriteMap)
+                sprites = new BindingList<Sprite>();
+                foreach (KeyValuePair<string, Sprite> sprite in loadedSpriteMap)
                 {
                     sprites.Add(sprite.Value);
                 }
@@ -210,7 +210,7 @@ namespace SpriteMapEditor
 
             importSpriteSheetToolStripMenuItem.Text = "Replace Sprite Sheet...";
 
-            sprites = new BindingList<SpriteMapRegion>(loadedProject.SpriteMap);
+            sprites = new BindingList<Sprite>(loadedProject.SpriteMap);
             spriteList.DataSource = sprites;
 
             saveProjectToolStripMenuItem.Enabled = true;
@@ -240,7 +240,7 @@ namespace SpriteMapEditor
                     e.Graphics.DrawImage(highlightMask.Bitmap, highlightBounds);
                 }
 
-                foreach (SpriteMapRegion currentSprite in selectedSprites)
+                foreach (Sprite currentSprite in selectedSprites)
                 {
                     DrawHighContrastOutline(GetDrawingRect(currentSprite.Bounds), e.Graphics);
                     DrawOriginPoint(currentSprite, e.Graphics);
@@ -265,7 +265,7 @@ namespace SpriteMapEditor
             }
             else if(spriteList.SelectedIndices.Count > 0)
             {
-                SpriteMapRegion currentSprite = selectedSprites[0];
+                Sprite currentSprite = selectedSprites[0];
                 spriteNameBox.Text = currentSprite.Name;
                 spriteXPosBox.Value = currentSprite.Bounds.X;
                 spriteXPosBox.Text = currentSprite.Bounds.X.ToString();
@@ -298,7 +298,7 @@ namespace SpriteMapEditor
             return drawingRect;
         }
 
-        private Point GetOriginDrawingPoint(SpriteMapRegion sprite)
+        private Point GetOriginDrawingPoint(Sprite sprite)
         {
             var drawingPoint = new Point(sprite.Bounds.X, sprite.Bounds.Y);
             drawingPoint.X = drawingPoint.X * zoomLevel;
@@ -308,7 +308,7 @@ namespace SpriteMapEditor
             return drawingPoint;
         }
 
-        private void DrawOriginPoint(SpriteMapRegion sprite, Graphics graphics)
+        private void DrawOriginPoint(Sprite sprite, Graphics graphics)
         {
             if (editingOrigin)
             {
@@ -335,7 +335,7 @@ namespace SpriteMapEditor
             if (highlight)
             {
                 InitializeMask();
-                foreach (SpriteMapRegion currentSprite in selectedSprites)
+                foreach (Sprite currentSprite in selectedSprites)
                 {
                     var highlightRect = currentSprite.Bounds;
 
@@ -518,7 +518,7 @@ namespace SpriteMapEditor
             Microsoft.Xna.Framework.Rectangle rightMost = selectedSprites[0].Bounds;
             Microsoft.Xna.Framework.Rectangle bottomMost = selectedSprites[0].Bounds;
 
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
+            foreach (Sprite currentSprite in selectedSprites)
             {
                 if (currentSprite.Bounds.X < leftMost.X)
                     leftMost = currentSprite.Bounds;
@@ -537,8 +537,8 @@ namespace SpriteMapEditor
 
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var exportDict = new Dictionary<string, SpriteMapRegion>();
-            foreach (SpriteMapRegion sprite in sprites)
+            var exportDict = new Dictionary<string, Sprite>();
+            foreach (Sprite sprite in sprites)
             {
                 if (exportDict.ContainsKey(sprite.Name))
                 {
@@ -577,7 +577,7 @@ namespace SpriteMapEditor
 
             bool hovering = false;
 
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
+            foreach (Sprite currentSprite in selectedSprites)
             {
                 if (GetDrawingRect(currentSprite.Bounds).Contains(mousePosition))
                 {
@@ -602,7 +602,7 @@ namespace SpriteMapEditor
                     groupRect.Y + groupRect.Height + differenceY > spriteSheet.Height)
                     differenceY = 0;
 
-                foreach (SpriteMapRegion spriteToMove in selectedSprites)
+                foreach (Sprite spriteToMove in selectedSprites)
                 {
                     var newBounds = spriteToMove.Bounds;
                     newBounds.X += differenceX;
@@ -626,13 +626,13 @@ namespace SpriteMapEditor
 
             Point mousePosition = new Point(e.X, e.Y);
 
-            foreach (SpriteMapRegion currentSprite in selectedSprites)
+            foreach (Sprite currentSprite in selectedSprites)
             {
                 if (GetDrawingRect(currentSprite.Bounds).Contains(mousePosition))
                 {
                     movingWithMouse = true;
                     preDragBounds = new List<Microsoft.Xna.Framework.Rectangle>();
-                    foreach (SpriteMapRegion sprite in selectedSprites)
+                    foreach (Sprite sprite in selectedSprites)
                     {
                         preDragBounds.Add(sprite.Bounds);
                     }

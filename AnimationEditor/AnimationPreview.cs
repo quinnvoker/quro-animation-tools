@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Forms.Controls;
-using QURO.AnimationLibrary;
+using QURO.Animation;
 
 namespace AnimationEditor
 {

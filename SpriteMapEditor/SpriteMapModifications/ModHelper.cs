@@ -46,7 +46,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         public static void SelectFromList(ListBox listBox, List<int> newSelection)
         {
             listBox.SelectedIndices.Clear();
-            var source = (BindingList<SpriteMapRegion>)listBox.DataSource;
+            var source = (BindingList<Sprite>)listBox.DataSource;
             foreach (int currentIndex in newSelection)
             {
                 if(currentIndex < source.Count)

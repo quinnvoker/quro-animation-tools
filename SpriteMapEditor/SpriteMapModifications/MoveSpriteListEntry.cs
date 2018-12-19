@@ -10,7 +10,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class MoveSpriteListEntry : ISpriteMapModification
     {
-        private readonly BindingList<SpriteMapRegion> allSprites;
+        private readonly BindingList<Sprite> allSprites;
 
         private readonly int selectedIndex;
         private readonly int dir;
@@ -18,7 +18,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public MoveSpriteListEntry(BindingList<SpriteMapRegion> spriteList, int selection, int direction)
+        public MoveSpriteListEntry(BindingList<Sprite> spriteList, int selection, int direction)
         {
             allSprites = spriteList;
             selectedIndex = selection;

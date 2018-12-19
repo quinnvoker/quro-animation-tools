@@ -9,7 +9,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class RenameSprite : ISpriteMapModification
     {
-        private readonly SpriteMapRegion sprite;
+        private readonly Sprite sprite;
 
         private readonly string newName;
         private readonly string oldName;
@@ -17,7 +17,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public RenameSprite(SpriteMapRegion spriteToRename, string name)
+        public RenameSprite(Sprite spriteToRename, string name)
         {
             sprite = spriteToRename;
             newName = name;

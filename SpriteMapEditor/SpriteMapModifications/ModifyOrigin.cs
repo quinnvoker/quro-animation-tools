@@ -10,7 +10,7 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class ModifyOrigin : ISpriteMapModification
     {
-        private readonly List<SpriteMapRegion> sprites;
+        private readonly List<Sprite> sprites;
 
         private readonly int newOriginX;
         private readonly int newOriginY;
@@ -20,7 +20,7 @@ namespace SpriteMapEditor.SpriteMapModifications
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public ModifyOrigin(List<SpriteMapRegion> spritesToEditOrigin,  int x = -1, int y = -1)
+        public ModifyOrigin(List<Sprite> spritesToEditOrigin,  int x = -1, int y = -1)
         {
             sprites = spritesToEditOrigin.ToList();
             newOriginX = x;

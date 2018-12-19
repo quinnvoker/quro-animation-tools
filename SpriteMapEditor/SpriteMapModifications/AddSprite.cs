@@ -11,14 +11,14 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class AddSprite : ISpriteMapModification
     {
-        private readonly BindingList<SpriteMapRegion> allSprites;
+        private readonly BindingList<Sprite> allSprites;
 
-        private readonly SpriteMapRegion selectedSprite;
+        private readonly Sprite selectedSprite;
 
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public AddSprite(BindingList<SpriteMapRegion> spriteList, SpriteMapRegion selected = null)
+        public AddSprite(BindingList<Sprite> spriteList, Sprite selected = null)
         {
             allSprites = spriteList;
 
@@ -28,9 +28,9 @@ namespace SpriteMapEditor.SpriteMapModifications
         public void Do()
         {
             if (selectedSprite != null)
-                allSprites.Add(new SpriteMapRegion(selectedSprite.Name, selectedSprite.Bounds, selectedSprite.Origin));
+                allSprites.Add(new Sprite(selectedSprite.Name, selectedSprite.Bounds, selectedSprite.Origin));
             else
-                allSprites.Add(new SpriteMapRegion());
+                allSprites.Add(new Sprite());
         }
 
         public void Undo()

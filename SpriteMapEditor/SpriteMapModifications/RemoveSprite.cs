@@ -10,16 +10,16 @@ namespace SpriteMapEditor.SpriteMapModifications
 {
     class RemoveSprite : ISpriteMapModification
     {
-        private readonly BindingList<SpriteMapRegion> allSprites;
+        private readonly BindingList<Sprite> allSprites;
 
         private readonly int index;
 
-        private readonly SpriteMapRegion removedSprite;
+        private readonly Sprite removedSprite;
 
         private List<int> preChangeSelection;
         private List<int> postChangeSelection;
 
-        public RemoveSprite(BindingList<SpriteMapRegion> spriteList, int indexToRemove)
+        public RemoveSprite(BindingList<Sprite> spriteList, int indexToRemove)
         {
             allSprites = spriteList;
             index = indexToRemove;
