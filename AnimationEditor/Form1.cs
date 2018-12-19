@@ -20,12 +20,22 @@ namespace AnimationEditor
 {
     public partial class Form1 : Form
     {
-        private Texture2D spriteSheet;
+        private Texture2D _spriteSheet;
+        //property ensures animationPreview holds a copy of whatever spriteSheet the editor is using
+        private Texture2D spriteSheet
+        {
+            get { return _spriteSheet; }
+            set
+            {
+                _spriteSheet = value;
+                animationPreview.SpriteSheet = value;
+            }
+        }
         private int frameRate;
 
-        private BindingList<Sprite> sprites;
+        private BindingList<Sprite> spriteSet;
         private BindingList<Frame> frames;
-        private BindingList<Sprite> subSprites;
+        private BindingList<Sprite> frameSprites;
         private BindingList<Animation> animations;
 
         private Animation currentAnimation;
@@ -82,7 +92,8 @@ namespace AnimationEditor
         {
             if (spriteListBox.SelectedItem != null)
             {
-                AddFrame(new Frame((Sprite)spriteListBox.SelectedItem, importDelay));
+                var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
+                AddFrame(new Frame(spriteToAdd, importDelay));
             }
         }
 
@@ -90,7 +101,11 @@ namespace AnimationEditor
         {
             int newSelectedIndex;
 
-            if (frames.Count == 1 && frames[0].Bounds == Microsoft.Xna.Framework.Rectangle.Empty)
+            //if only frame in animation is uninitiated and input is not empty, clear the list
+            if (frameToAdd.Name != "empty" &&
+                frames.Count == 1 && 
+                frames[0].Sprites.Count == 1 && 
+                frames[0].Sprites[0].Name == "empty")
             {
                 frames.Clear();
             }
@@ -123,7 +138,7 @@ namespace AnimationEditor
                     currentAnimation.IsLooping = animationLoopCheckBox.Checked;
                 }
                 if (animationPreview.PreviewSprite == null)
-                    animationPreview.PreviewSprite = new AnimatedSprite(spriteSheet, currentAnimation);
+                    animationPreview.PreviewSprite = new AnimatedSprite(currentAnimation);
                 else
                     animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
                 frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
@@ -175,18 +190,19 @@ namespace AnimationEditor
                     animationPreview.PreviewSprite.CurrentFrameIndex = frameListBox.SelectedIndex;
                     frameTrackBar.Value = frameListBox.SelectedIndex;
                 }
-                subSpritePanel.Enabled = true;
-                if (currentFrame.SubSprites != null)
-                    subSprites = new BindingList<Sprite>(currentFrame.SubSprites);
+                frameSpritePanel.Enabled = true;
+                if (currentFrame.Sprites != null)
+                    frameSprites = new BindingList<Sprite>(currentFrame.Sprites);
                 else
-                    subSprites = new BindingList<Sprite>();
-                subSpriteListBox.DataSource = subSprites;
-                subSpriteListBox.DisplayMember = "Name";
+                    frameSprites = new BindingList<Sprite>();
+                Console.WriteLine("Current frame has " + currentFrame.Sprites.Count + " sprites!");
+                frameSpriteListBox.DataSource = frameSprites;
+                frameSpriteListBox.DisplayMember = "Name";
                 UpdateFrameInformation();
             }
             else if (frameListBox.SelectedIndices.Count > 1)
             {
-                subSpritePanel.Enabled = false;
+                frameSpritePanel.Enabled = false;
             }
         }
 
@@ -231,13 +247,13 @@ namespace AnimationEditor
                     loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, Sprite>>(xmlRead, null);
                 }
 
-                sprites = new BindingList<Sprite>();
+                spriteSet = new BindingList<Sprite>();
                 foreach (KeyValuePair<string, Sprite> sprite in loadedSpriteMap)
                 {
-                    sprites.Add(sprite.Value);
+                    spriteSet.Add(sprite.Value);
                 }
 
-                spriteListBox.DataSource = sprites;
+                spriteListBox.DataSource = spriteSet;
                 spriteListBox.DisplayMember = "Name";
                 spriteListBox.ValueMember = "Bounds";
 
@@ -500,19 +516,14 @@ namespace AnimationEditor
             {
                 foreach(Frame frame in anim.Frames)
                 {
-                    if (loadedSpriteMap.ContainsKey(frame.Name))
+                    if (frame.Sprites != null)
                     {
-                        frame.Sprite = loadedSpriteMap[frame.Name];
-                        updateCounter++;
-                    }
-                    if (frame.SubSprites != null)
-                    {
-                        for (int index = 0; index < frame.SubSprites.Count; index++)
+                        for (int index = 0; index < frame.Sprites.Count; index++)
                         {
-                            var subSprite = frame.SubSprites[index];
-                            if (loadedSpriteMap.ContainsKey(subSprite.Name))
+                            var sprite = frame.Sprites[index];
+                            if (loadedSpriteMap.ContainsKey(sprite.Name))
                             {
-                                frame.SubSprites[index] = loadedSpriteMap[subSprite.Name];
+                                frame.Sprites[index] = loadedSpriteMap[sprite.Name];
                                 updateCounter++;
                             }
                         }
@@ -523,49 +534,48 @@ namespace AnimationEditor
             MessageBox.Show("Updated " + updateCounter + " sprites!");
         }
 
-        private void subSpriteListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void frameSpriteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ReadSubSpritePosition();
+            ReadSpriteOffset();
         }
 
-        private void ReadSubSpritePosition()
+        //load selected sprite's position into the sprite position boxes
+        private void ReadSpriteOffset()
         {
             reading = true;
-            subSpriteXPosBox.Value = (int)currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex].X;
-            subSpriteYPosBox.Value = (int)currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex].Y;
+            spriteXPosBox.Value = (int)currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset.X;
+            spriteYPosBox.Value = (int)currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset.Y;
             reading = false;
         }
 
-        private void subSpriteXPosBox_ValueChanged(object sender, EventArgs e)
+        //update X offset of selected sprite with position entered into spriteXPosBox
+        private void spriteXPosBox_ValueChanged(object sender, EventArgs e)
         {
-            if (reading || subSpriteListBox.SelectedIndex >= currentFrame.SubSpritePositions.Count)
+            if (reading || frameSpriteListBox.SelectedIndex >= currentFrame.Sprites.Count)
                 return;
 
-            var newPos = currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex];
-            newPos.X = (float)subSpriteXPosBox.Value;
-            currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex] = newPos;
+            var newPos = currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset;
+            newPos.X = (float)spriteXPosBox.Value;
+            currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset = newPos;
         }
 
-        private void subSpriteYPosBox_ValueChanged(object sender, EventArgs e)
+        //update Y offset of selected sprite with position entered into spriteYPosBox
+        private void spriteYPosBox_ValueChanged(object sender, EventArgs e)
         {
-            if (reading || subSpriteListBox.SelectedIndex >= currentFrame.SubSpritePositions.Count)
+            if (reading || frameSpriteListBox.SelectedIndex >= currentFrame.Sprites.Count)
                 return;
 
-            var newPos = currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex];
-            newPos.Y = (float)subSpriteYPosBox.Value;
-            currentFrame.SubSpritePositions[subSpriteListBox.SelectedIndex] = newPos;
+            var newPos = currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset;
+            newPos.Y = (float)spriteYPosBox.Value;
+            currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset = newPos;
         }
 
-        private void addSpriteToSubSpritesButton_Click(object sender, EventArgs e)
+        private void addSpriteToFrameSpritesButton_Click(object sender, EventArgs e)
         {
-            var spriteToAdd = sprites[spriteListBox.SelectedIndex];
-            if (currentFrame.SubSpritePositions == null)
-                currentFrame.SubSpritePositions = new List<Vector2>();
-            currentFrame.SubSpritePositions.Add(Vector2.Zero);
-            if (currentFrame.SubSprites == null)
-                currentFrame.SubSprites = new List<Sprite>();
-            currentFrame.SubSprites.Add(spriteToAdd);
-            subSprites.Add(spriteToAdd);
+            var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
+            if (currentFrame.Sprites == null)
+                currentFrame.Sprites = new List<Sprite>();
+            currentFrame.Sprites.Add(spriteToAdd);
         }
 
         private void addEmptyFrameButton_Click(object sender, EventArgs e)

@@ -13,6 +13,7 @@ namespace AnimationEditor
 {
     class AnimationPreview : UpdateWindow
     {
+        public Texture2D SpriteSheet { get; set; }
         public AnimatedSprite PreviewSprite { get; set; }
         public float ZoomLevel { get; set; }
 
@@ -89,7 +90,7 @@ namespace AnimationEditor
                 Editor.spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: scaleMatrix);
             else
                 Editor.spriteBatch.Begin(transformMatrix: scaleMatrix);
-            PreviewSprite?.Draw(Editor.spriteBatch, new Vector2((Editor.graphics.PresentationParameters.BackBufferWidth / 2) / ZoomLevel, (Editor.graphics.PresentationParameters.BackBufferHeight / 2) / ZoomLevel), Color.White);
+            PreviewSprite?.Draw(Editor.spriteBatch, SpriteSheet, new Vector2((Editor.graphics.PresentationParameters.BackBufferWidth / 2) / ZoomLevel, (Editor.graphics.PresentationParameters.BackBufferHeight / 2) / ZoomLevel), Color.White);
             Editor.spriteBatch.End();
         }
     }
