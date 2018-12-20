@@ -51,6 +51,7 @@ namespace AnimationEditor
             importDelayBox.Value = 0;
             animationPreview.FrameChanged += animationPreview_FrameChanged;
             animationPreview.AnimationEnded += animationPreview_AnimationEnded;
+            animationPreview.SpriteMoved += animationPreview_SpriteMoved;
         }
 
         private void frameListBox_SetSingleSelection(int index)
@@ -195,7 +196,6 @@ namespace AnimationEditor
                     frameSprites = new BindingList<Sprite>(currentFrame.Sprites);
                 else
                     frameSprites = new BindingList<Sprite>();
-                Console.WriteLine("Current frame has " + currentFrame.Sprites.Count + " sprites!");
                 frameSpriteListBox.DataSource = frameSprites;
                 frameSpriteListBox.DisplayMember = "Name";
                 UpdateFrameInformation();
@@ -208,7 +208,10 @@ namespace AnimationEditor
 
         private void UpdateFrameInformation()
         {
+            reading = true;
             delayInputBox.Value = (int)(currentFrame.Delay * frameRate);
+            frameNameBox.Text = currentFrame.Name;
+            reading = false;
         }
 
         private void delayInputBox_ValueChanged(object sender, EventArgs e)
@@ -353,7 +356,7 @@ namespace AnimationEditor
 
         private void animationNameBox_TextChanged(object sender, EventArgs e)
         {
-            if (reading)
+            if (reading || currentAnimation.Name == animationNameBox.Text)
                 return;
 
             currentAnimation.Name = animationNameBox.Text;
@@ -536,7 +539,11 @@ namespace AnimationEditor
 
         private void frameSpriteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ReadSpriteOffset();
+            if (frameSpriteListBox.SelectedIndex > -1 && frameSpriteListBox.SelectedIndex < frameSprites.Count)
+            {
+                animationPreview.EditSprite = frameSprites[frameSpriteListBox.SelectedIndex];
+                ReadSpriteOffset();
+            }
         }
 
         //load selected sprite's position into the sprite position boxes
@@ -576,11 +583,63 @@ namespace AnimationEditor
             if (currentFrame.Sprites == null)
                 currentFrame.Sprites = new List<Sprite>();
             currentFrame.Sprites.Add(spriteToAdd);
+            frameSprites.ResetBindings();
         }
 
         private void addEmptyFrameButton_Click(object sender, EventArgs e)
         {
             AddFrame(new Frame());
+        }
+
+        private void frameNameBox_TextChanged(object sender, EventArgs e)
+        {
+            if (reading)
+                return;
+            currentFrame.Name = frameNameBox.Text;
+        }
+
+        private void moveSpriteDownButton_Click(object sender, EventArgs e)
+        {
+            if (frameSpriteListBox.SelectedIndex < currentFrame.Sprites.Count - 1)
+            {
+                var index = frameSpriteListBox.SelectedIndex;
+
+                var currentSprite = frameSprites[index];
+                var spriteBelow = frameSprites[index + 1];
+                frameSprites[index + 1] = currentSprite;
+                frameSprites[index] = spriteBelow;
+                UpdateAnimation();
+                frameSpriteListBox.SelectedIndex = index + 1;
+            }
+        }
+
+        private void moveSpriteUpButton_Click(object sender, EventArgs e)
+        {
+            if (frameSpriteListBox.SelectedIndex > 0)
+            {
+                var index = frameSpriteListBox.SelectedIndex;
+
+                var currentSprite = frameSprites[index];
+                var spriteAbove = frameSprites[index - 1];
+                frameSprites[index - 1] = currentSprite;
+                frameSprites[index] = spriteAbove;
+                UpdateAnimation();
+                frameSpriteListBox.SelectedIndex = index - 1;
+            }
+        }
+
+        private void removeSpriteButton_Click(object sender, EventArgs e)
+        {
+            if (frameSpriteListBox.SelectedIndex > -1 && frameSpriteListBox.SelectedIndex < frameSprites.Count)
+            {
+                frameSprites.RemoveAt(frameSpriteListBox.SelectedIndex);
+                UpdateAnimation();
+            }
+        }
+
+        private void animationPreview_SpriteMoved(object sender, EventArgs e)
+        {
+            ReadSpriteOffset();
         }
     }
 }
