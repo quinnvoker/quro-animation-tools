@@ -143,6 +143,7 @@ namespace AnimationEditor
                 else
                     animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
                 frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
+                frameListBox_SetSingleSelection(frameTrackBar.Value);
                 if(animations.Count < 1)
                 {
                     animations.Add(currentAnimation);
@@ -642,6 +643,22 @@ namespace AnimationEditor
         private void animationPreview_SpriteMoved(object sender, EventArgs e)
         {
             ReadSpriteOffset();
+        }
+
+        private void duplicateFrameButton_Click(object sender, EventArgs e)
+        {
+            AddFrame(currentFrame.Clone());
+        }
+
+        private void replaceSpriteButton_Click(object sender, EventArgs e)
+        {
+            var spr = frameSprites[frameSpriteListBox.SelectedIndex];
+            var replacement = spriteSet[spriteListBox.SelectedIndex];
+
+            spr.Bounds = replacement.Bounds;
+            spr.Origin = replacement.Origin;
+            spr.Name = replacement.Name;
+            UpdateAnimation();
         }
     }
 }

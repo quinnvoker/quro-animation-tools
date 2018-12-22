@@ -100,6 +100,7 @@ namespace AnimationEditor
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            MouseControl();
 
             if (Playing && PreviewSprite != null)
             {
@@ -113,16 +114,35 @@ namespace AnimationEditor
                     OnFrameChanged(new EventArgs());
                 }
             }
-            else if(PreviewSprite != null)
-            {
-                MouseControl();
-            }
         }
 
         private void MouseControl()
         {
             mState = Mouse.GetState();
-            if(EditSprite != null)
+
+            //fix for when detecting the mouse being within Bounds made an uninteractable section appear at the top of screen and allowed interaction below bottom
+            Rectangle frame = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
+            frame.Y = 0;
+
+            if (frame.Contains(mState.X, mState.Y))
+            {
+                HandleDragging();
+                HandlePanning();
+            }
+            else
+            {
+                if (hovering)
+                    Cursor = System.Windows.Forms.Cursors.Default;
+                hovering = false;
+                dragging = false;
+            }
+
+            mState_old = mState;
+        }
+
+        private void HandleDragging()
+        {
+            if (EditSprite != null)
             {
                 /*create draggable rect spriteRect at 0,0
                  *rect is scaled by Zoomlevel to match sprite's onscreen size
@@ -137,73 +157,70 @@ namespace AnimationEditor
                 Rectangle frame = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
                 frame.Y = 0;
 
-                if (frame.Contains(mState.X, mState.Y))
+                if (spriteRect.Contains(mState.Position))
                 {
-                    if (spriteRect.Contains(mState.Position))
+                    if (!hovering)
                     {
-                        if (!hovering)
-                        {
-                            Cursor = System.Windows.Forms.Cursors.SizeAll;
-                            hovering = true;
-                        }
-                    }
-                    else
-                    {
-                        if (hovering && !dragging)
-                        {
-                            Cursor = System.Windows.Forms.Cursors.Default;
-                            hovering = false;
-                        }
-                    }
-
-                    if (mState.LeftButton == ButtonState.Pressed && mState_old.LeftButton != ButtonState.Pressed)
-                        dragging = hovering;
-                    else if (mState.RightButton == ButtonState.Pressed && mState_old.RightButton != ButtonState.Pressed)
-                        panning = true;
-
-                    if (mState.LeftButton != ButtonState.Pressed)
-                        dragging = false;
-                    if (mState.RightButton != ButtonState.Pressed)
-                    {
-                        //if the camera has been panned, lock the camera position to integers to prevent ugly misaligned sprites
-                        if (panning)
-                            CameraLocation = new Vector3((int)CameraLocation.X, (int)CameraLocation.Y, (int)CameraLocation.Z);
-                        panning = false;
-                    }
-
-                    if (dragging)
-                    {
-                        var mousePosScaled = (mState.Position.ToVector2() / ZoomLevel).ToPoint();
-                        var mousePosOldScaled = (mState_old.Position.ToVector2() / ZoomLevel).ToPoint();
-
-                        Vector2 distMoved = new Vector2(mousePosScaled.X - mousePosOldScaled.X, mousePosScaled.Y - mousePosOldScaled.Y);
-
-                        if (distMoved != Vector2.Zero)
-                        {
-                            EditSprite.Offset += distMoved;
-                            OnSpriteMoved(new EventArgs());
-                        }
-                    }
-
-                    if (panning)
-                    {
-                        Vector3 distMoved = new Vector3(mState.X - mState_old.X, mState.Y - mState_old.Y, 0);
-
-                        if (distMoved != Vector3.Zero)
-                        {
-                            CameraLocation += distMoved / ZoomLevel;
-                        }
+                        Cursor = System.Windows.Forms.Cursors.SizeAll;
+                        hovering = true;
                     }
                 }
                 else
                 {
-                    if (hovering)
+                    if (hovering && !dragging)
+                    {
                         Cursor = System.Windows.Forms.Cursors.Default;
-                    hovering = false;
+                        hovering = false;
+                    }
+                }
+
+                if (mState.LeftButton == ButtonState.Pressed && mState.RightButton != ButtonState.Pressed && mState_old.LeftButton != ButtonState.Pressed)
+                    dragging = hovering;
+
+                if (mState.LeftButton != ButtonState.Pressed)
                     dragging = false;
+
+                if (dragging)
+                {
+                    var mousePosScaled = (mState.Position.ToVector2() / ZoomLevel).ToPoint();
+                    var mousePosOldScaled = (mState_old.Position.ToVector2() / ZoomLevel).ToPoint();
+
+                    Vector2 distMoved = new Vector2(mousePosScaled.X - mousePosOldScaled.X, mousePosScaled.Y - mousePosOldScaled.Y);
+
+                    if (distMoved != Vector2.Zero)
+                    {
+                        EditSprite.Offset += distMoved;
+                        OnSpriteMoved(new EventArgs());
+                    }
                 }
             }
-            mState_old = mState;
+        }
+
+        private void HandlePanning()
+        {
+            if (Enabled)
+            {
+                if (mState.RightButton == ButtonState.Pressed && mState.LeftButton != ButtonState.Pressed && mState_old.RightButton != ButtonState.Pressed)
+                    panning = true;
+
+                if (mState.RightButton != ButtonState.Pressed)
+                {
+                    //if the camera has been panned, lock the camera position to integers to prevent ugly misaligned sprites
+                    if (panning)
+                        CameraLocation = new Vector3((int)CameraLocation.X, (int)CameraLocation.Y, (int)CameraLocation.Z);
+                    panning = false;
+                }
+
+                if (panning)
+                {
+                    Vector3 distMoved = new Vector3(mState.X - mState_old.X, mState.Y - mState_old.Y, 0);
+
+                    if (distMoved != Vector3.Zero)
+                    {
+                        CameraLocation += distMoved / ZoomLevel;
+                    }
+                }
+            }
         }
 
         protected virtual void OnSpriteMoved(EventArgs e)
