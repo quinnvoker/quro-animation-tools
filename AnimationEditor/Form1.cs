@@ -284,6 +284,7 @@ namespace AnimationEditor
         {
             animationPreview.Playing = false;
             frameTrackBar.Enabled = true;
+            frameListBox_SetSingleSelection(frameTrackBar.Value);
         }
 
         private void animationLoopCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -299,6 +300,7 @@ namespace AnimationEditor
                 if (!animationPreview.Playing)
                 {
                     frameTrackBar.Enabled = true;
+                    frameListBox_SetSingleSelection(frameTrackBar.Value);
                 }
                 else
                 {

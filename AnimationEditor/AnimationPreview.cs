@@ -18,14 +18,21 @@ namespace AnimationEditor
         public Texture2D SpriteSheet { get; set; }
         public AnimatedSprite PreviewSprite { get; set; }
         public float ZoomLevel { get; set; }
+        public Vector3 CameraLocation { get; set; }
 
         public Sprite EditSprite { get; set; }
 
+        public int PixelGridDisplayLevel { get; set; }
         public int GridSpacing { get; set; }
+        public Color OriginGridLineColor { get; set; }
+        public Color FullGridLineColor { get; set; }
+        public Color HalfGridLineColor { get; set; }
+        public Color PixelGridLineColor { get; set; }
 
         private Texture2D gridLine;
         private bool hovering;
         private bool dragging;
+        private bool panning;
         private MouseState mState;
         private MouseState mState_old;
 
@@ -80,7 +87,13 @@ namespace AnimationEditor
             base.Initialize();
             gridLine = new Texture2D(Editor.graphics, 1, 1);
             gridLine.SetData(new Color[] { Color.White });
-            GridSpacing = 8;
+            GridSpacing = 16;
+            PixelGridDisplayLevel = 5;
+            OriginGridLineColor = new Color(204, 204, 204);
+            FullGridLineColor = new Color(145, 135, 120);
+            HalfGridLineColor = new Color(120, 117, 115);
+            PixelGridLineColor = new Color(113, 110, 108);
+            CameraLocation = new Vector3();
             ZoomLevel = 1;
         }
 
@@ -111,10 +124,20 @@ namespace AnimationEditor
             mState = Mouse.GetState();
             if(EditSprite != null)
             {
-                Rectangle spriteRect = new Rectangle((int)(centerPoint.X), (int)(centerPoint.Y), (int)(EditSprite.Bounds.Width * ZoomLevel), (int)(EditSprite.Bounds.Height * ZoomLevel));
-                spriteRect.Offset((EditSprite.Offset - EditSprite.Origin) * ZoomLevel);
+                /*create draggable rect spriteRect at 0,0
+                 *rect is scaled by Zoomlevel to match sprite's onscreen size
+                 *rect is then offset to match sprite's offset & origin(multiplied by the zoomlevel)
+                 *rect is then offset by the camera's location(multiplied by zoomlevel) and the onscreen centerpoint
+                 *this results in a rect that matches the sprite's onscreen position regardless of pan or zoom
+                 */
+                Rectangle spriteRect = new Rectangle(0, 0, (int)(EditSprite.Bounds.Width * ZoomLevel), (int)(EditSprite.Bounds.Height * ZoomLevel));
+                spriteRect.Offset((EditSprite.Offset - EditSprite.Origin) * ZoomLevel + new Vector2(CameraLocation.X, CameraLocation.Y) * ZoomLevel + centerPoint);
 
-                if (Bounds.Contains(mState.X, mState.Y))
+                //fix for when detecting the mouse being within Bounds made an uninteractable section appear at the top of screen and allowed interaction below bottom
+                Rectangle frame = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
+                frame.Y = 0;
+
+                if (frame.Contains(mState.X, mState.Y))
                 {
                     if (spriteRect.Contains(mState.Position))
                     {
@@ -135,8 +158,18 @@ namespace AnimationEditor
 
                     if (mState.LeftButton == ButtonState.Pressed && mState_old.LeftButton != ButtonState.Pressed)
                         dragging = hovering;
-                    else if (mState.LeftButton != ButtonState.Pressed)
+                    else if (mState.RightButton == ButtonState.Pressed && mState_old.RightButton != ButtonState.Pressed)
+                        panning = true;
+
+                    if (mState.LeftButton != ButtonState.Pressed)
                         dragging = false;
+                    if (mState.RightButton != ButtonState.Pressed)
+                    {
+                        //if the camera has been panned, lock the camera position to integers to prevent ugly misaligned sprites
+                        if (panning)
+                            CameraLocation = new Vector3((int)CameraLocation.X, (int)CameraLocation.Y, (int)CameraLocation.Z);
+                        panning = false;
+                    }
 
                     if (dragging)
                     {
@@ -149,6 +182,16 @@ namespace AnimationEditor
                         {
                             EditSprite.Offset += distMoved;
                             OnSpriteMoved(new EventArgs());
+                        }
+                    }
+
+                    if (panning)
+                    {
+                        Vector3 distMoved = new Vector3(mState.X - mState_old.X, mState.Y - mState_old.Y, 0);
+
+                        if (distMoved != Vector3.Zero)
+                        {
+                            CameraLocation += distMoved / ZoomLevel;
                         }
                     }
                 }
@@ -181,65 +224,128 @@ namespace AnimationEditor
         protected override void Draw()
         {
             base.Draw();
-            Matrix scaleMatrix = Matrix.CreateScale(ZoomLevel);
-            Matrix translationMatrix = Matrix.CreateTranslation(new Vector3(centerPoint, 0));
+            //camera matrix moves translates world space in relation to camera position
+            Matrix cameraMatrix = Matrix.CreateTranslation(CameraLocation);
+            //zoom matrix scales up everything in world space
+            Matrix zoomMatrix = Matrix.CreateScale(ZoomLevel);
+            //center matrix repositions camera within zoomed space
+            Matrix centerMatrix = Matrix.CreateTranslation(new Vector3(centerPoint, 0));
+            Matrix transformMatrix = cameraMatrix * zoomMatrix * centerMatrix;
 
             Editor.graphics.Clear(Color.DimGray);
 
-            Editor.spriteBatch.Begin(transformMatrix:translationMatrix);
+            Editor.spriteBatch.Begin();
             DrawGrid();
             Editor.spriteBatch.End();
 
             if (ZoomLevel >= 1)
-                Editor.spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: scaleMatrix * translationMatrix);
+                Editor.spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformMatrix);
             else
-                Editor.spriteBatch.Begin(transformMatrix: scaleMatrix);
+                Editor.spriteBatch.Begin(transformMatrix: transformMatrix);
             PreviewSprite?.Draw(Editor.spriteBatch, SpriteSheet, Vector2.Zero, Color.White);
+
             Editor.spriteBatch.End();
+
         }
 
         private void DrawGrid()
         {
-            int horizontalIterations = (int)(Editor.graphics.PresentationParameters.BackBufferHeight / GridSpacing / 2);
-            int verticalIterations = (int)(Editor.graphics.PresentationParameters.BackBufferWidth / GridSpacing / 2);
+            
+            List<int>[] verticalLines = new List<int>[] { new List<int>(), new List<int>(), new List<int>(), new List<int>() };
+            List<int>[] horizontalLines = new List<int>[] { new List<int>(), new List<int>(), new List<int>(), new List<int>() };
 
-            int offset = GridSpacing * (int)ZoomLevel;
-            Color currentDrawColor = new Color(115, 113, 110);
-
-            for (int index = 0; index <= horizontalIterations || index <= verticalIterations; index++)
+            /*
+             * Scans each horizontal pixel in viewspace
+             * If pixel lines up with a gridmarked position in worldspace, add that position to the verticalLines list, in appropriate category for grid type
+             */
+            int increment = 1;
+            for (int x = 0; x < Editor.graphics.PresentationParameters.BackBufferWidth; x += increment)
             {
-                DrawHorizontalGridLine(offset, currentDrawColor);
-                DrawHorizontalGridLine(-offset, currentDrawColor);
-                DrawVerticalGridLine(offset, currentDrawColor);
-                DrawVerticalGridLine(-offset, currentDrawColor);
-                offset += GridSpacing * (int)ZoomLevel;
+                int xPosInWorldSpace = x - (int)((CameraLocation.X * ZoomLevel) + centerPoint.X);
+                if (xPosInWorldSpace == 0)
+                {
+                    verticalLines[3].Add(x);
+                }
+                else if (xPosInWorldSpace % (GridSpacing * ZoomLevel) == 0)
+                {
+                    verticalLines[2].Add(x);
+                }
+                else if (xPosInWorldSpace % (GridSpacing / 2 * ZoomLevel) == 0)
+                {
+                    verticalLines[1].Add(x);
+                    if(increment == 1 && ZoomLevel < PixelGridDisplayLevel)
+                        increment = (int)(GridSpacing / 2 * ZoomLevel);
+                }
+                else if (ZoomLevel >= PixelGridDisplayLevel && xPosInWorldSpace % ZoomLevel == 0)
+                {
+                    verticalLines[0].Add(x);
+                    if (increment == 1)
+                        increment = (int)ZoomLevel;
+                }
             }
 
-            currentDrawColor = new Color(155, 145, 130);
-
-            offset = 0;
-
-            for (int index = 0; index <= horizontalIterations || index <= verticalIterations; index += 2)
+            //Same as above, but scans vertically for horizontal lines
+            increment = 1;
+            for (int y = 0; y < Editor.graphics.PresentationParameters.BackBufferHeight; y += increment)
             {
-                DrawHorizontalGridLine(offset, currentDrawColor);
-                DrawHorizontalGridLine(-offset, currentDrawColor);
-                DrawVerticalGridLine(offset, currentDrawColor);
-                DrawVerticalGridLine(-offset, currentDrawColor);
-                offset += GridSpacing * (int)ZoomLevel * 2;
+                int yPosInWorldSpace = y - (int)((CameraLocation.Y * ZoomLevel) + centerPoint.Y);
+                if (yPosInWorldSpace == 0)
+                {
+                    horizontalLines[3].Add(y);
+                }
+                else if (yPosInWorldSpace % (GridSpacing * ZoomLevel) == 0)
+                {
+                    horizontalLines[2].Add(y);
+                }
+                else if (yPosInWorldSpace % (GridSpacing / 2 * ZoomLevel) == 0)
+                {
+                    horizontalLines[1].Add(y);
+                    if (increment == 1 && ZoomLevel < PixelGridDisplayLevel)
+                        increment = (int)(GridSpacing / 2 * ZoomLevel);
+                }
+                else if (ZoomLevel >= PixelGridDisplayLevel && yPosInWorldSpace % ZoomLevel == 0)
+                {
+                    horizontalLines[0].Add(y);
+                    if (increment == 1)
+                        increment = (int)ZoomLevel;
+                }
             }
 
-            currentDrawColor = new Color(204, 204, 204);
-            DrawHorizontalGridLine(0, currentDrawColor);
-            DrawVerticalGridLine(0, currentDrawColor);
+            //draw collected gridlines in order from low to high priority (pixelGridLine -> originGridLine)
+            Color drawColor = PixelGridLineColor;
+            for(int index = 0; index < 4; index++)
+            {
+                switch (index)
+                {
+                    case 1:
+                        drawColor = HalfGridLineColor;
+                        break;
+                    case 2:
+                        drawColor = FullGridLineColor;
+                        break;
+                    case 3:
+                        drawColor = OriginGridLineColor;
+                        break;
+                }
+
+                foreach(int x in verticalLines[index])
+                {
+                    DrawVerticalGridLine(x, drawColor);
+                }
+                foreach(int y in horizontalLines[index])
+                {
+                    DrawHorizontalGridLine(y, drawColor);
+                }
+            }
         }
 
         private void DrawHorizontalGridLine(int y, Color color)
         {
-            Editor.spriteBatch.Draw(gridLine, new Rectangle(0 - (int)centerPoint.X, y, Editor.graphics.PresentationParameters.BackBufferWidth, 1), color);
+            Editor.spriteBatch.Draw(gridLine, new Rectangle(0, y, Editor.graphics.PresentationParameters.BackBufferWidth, 1), color);
         }
         private void DrawVerticalGridLine(int x, Color color)
         {
-            Editor.spriteBatch.Draw(gridLine, new Rectangle(x, 0 - (int)centerPoint.Y, 1, Editor.graphics.PresentationParameters.BackBufferHeight), color);
+            Editor.spriteBatch.Draw(gridLine, new Rectangle(x, 0, 1, Editor.graphics.PresentationParameters.BackBufferHeight), color);
         }
     }
 }
