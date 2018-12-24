@@ -63,17 +63,19 @@
             this.frameEditorPanel = new System.Windows.Forms.Panel();
             this.frameNameBox = new System.Windows.Forms.TextBox();
             this.frameSpritePanel = new System.Windows.Forms.Panel();
+            this.spritePosPanel = new System.Windows.Forms.Panel();
+            this.frameSpritePositionLabel = new System.Windows.Forms.Label();
+            this.spriteYPosLabel = new System.Windows.Forms.Label();
+            this.spriteXPosLabel = new System.Windows.Forms.Label();
+            this.spriteYPosBox = new System.Windows.Forms.NumericUpDown();
+            this.spriteXPosBox = new System.Windows.Forms.NumericUpDown();
             this.removeSpriteButton = new System.Windows.Forms.Button();
             this.moveSpriteUpButton = new System.Windows.Forms.Button();
             this.moveSpriteDownButton = new System.Windows.Forms.Button();
-            this.frameSpritePositionLabel = new System.Windows.Forms.Label();
             this.frameSpriteListBox = new System.Windows.Forms.ListBox();
-            this.spriteYPosLabel = new System.Windows.Forms.Label();
-            this.spriteXPosLabel = new System.Windows.Forms.Label();
             this.frameSpriteListLabel = new System.Windows.Forms.Label();
+            this.replaceSpriteButton = new System.Windows.Forms.Button();
             this.addSpriteToFrameSpritesButton = new System.Windows.Forms.Button();
-            this.spriteYPosBox = new System.Windows.Forms.NumericUpDown();
-            this.spriteXPosBox = new System.Windows.Forms.NumericUpDown();
             this.importDelayLabel = new System.Windows.Forms.Label();
             this.importValuesLabel = new System.Windows.Forms.Label();
             this.importDelayBox = new System.Windows.Forms.NumericUpDown();
@@ -82,20 +84,20 @@
             this.frameInfoLabel = new System.Windows.Forms.Label();
             this.frameBoxLabel = new System.Windows.Forms.Label();
             this.spriteBoxLabel = new System.Windows.Forms.Label();
+            this.duplicateFrameButton = new System.Windows.Forms.Button();
             this.addEmptyFrameButton = new System.Windows.Forms.Button();
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
-            this.duplicateFrameButton = new System.Windows.Forms.Button();
             this.animationPreview = new AnimationEditor.AnimationPreview();
-            this.replaceSpriteButton = new System.Windows.Forms.Button();
+            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.frameTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayInputBox)).BeginInit();
             this.mainMenuStrip.SuspendLayout();
             this.frameEditorPanel.SuspendLayout();
             this.frameSpritePanel.SuspendLayout();
+            this.spritePosPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).BeginInit();
@@ -430,26 +432,104 @@
             this.frameNameBox.Name = "frameNameBox";
             this.frameNameBox.Size = new System.Drawing.Size(83, 20);
             this.frameNameBox.TabIndex = 25;
+            this.frameNameBox.TextChanged += new System.EventHandler(this.frameNameBox_TextChanged);
             // 
             // frameSpritePanel
             // 
             this.frameSpritePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.frameSpritePanel.Controls.Add(this.spritePosPanel);
             this.frameSpritePanel.Controls.Add(this.removeSpriteButton);
             this.frameSpritePanel.Controls.Add(this.moveSpriteUpButton);
             this.frameSpritePanel.Controls.Add(this.moveSpriteDownButton);
-            this.frameSpritePanel.Controls.Add(this.frameSpritePositionLabel);
             this.frameSpritePanel.Controls.Add(this.frameSpriteListBox);
-            this.frameSpritePanel.Controls.Add(this.spriteYPosLabel);
-            this.frameSpritePanel.Controls.Add(this.spriteXPosLabel);
             this.frameSpritePanel.Controls.Add(this.frameSpriteListLabel);
             this.frameSpritePanel.Controls.Add(this.replaceSpriteButton);
             this.frameSpritePanel.Controls.Add(this.addSpriteToFrameSpritesButton);
-            this.frameSpritePanel.Controls.Add(this.spriteYPosBox);
-            this.frameSpritePanel.Controls.Add(this.spriteXPosBox);
             this.frameSpritePanel.Location = new System.Drawing.Point(129, 277);
             this.frameSpritePanel.Name = "frameSpritePanel";
             this.frameSpritePanel.Size = new System.Drawing.Size(161, 126);
             this.frameSpritePanel.TabIndex = 24;
+            // 
+            // spritePosPanel
+            // 
+            this.spritePosPanel.Controls.Add(this.frameSpritePositionLabel);
+            this.spritePosPanel.Controls.Add(this.spriteYPosLabel);
+            this.spritePosPanel.Controls.Add(this.spriteXPosLabel);
+            this.spritePosPanel.Controls.Add(this.spriteYPosBox);
+            this.spritePosPanel.Controls.Add(this.spriteXPosBox);
+            this.spritePosPanel.Location = new System.Drawing.Point(32, 81);
+            this.spritePosPanel.Name = "spritePosPanel";
+            this.spritePosPanel.Size = new System.Drawing.Size(128, 44);
+            this.spritePosPanel.TabIndex = 27;
+            // 
+            // frameSpritePositionLabel
+            // 
+            this.frameSpritePositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.frameSpritePositionLabel.AutoSize = true;
+            this.frameSpritePositionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.frameSpritePositionLabel.Location = new System.Drawing.Point(1, 1);
+            this.frameSpritePositionLabel.Name = "frameSpritePositionLabel";
+            this.frameSpritePositionLabel.Size = new System.Drawing.Size(86, 13);
+            this.frameSpritePositionLabel.TabIndex = 23;
+            this.frameSpritePositionLabel.Text = "Sprite Positon";
+            // 
+            // spriteYPosLabel
+            // 
+            this.spriteYPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteYPosLabel.AutoSize = true;
+            this.spriteYPosLabel.Location = new System.Drawing.Point(62, 21);
+            this.spriteYPosLabel.Name = "spriteYPosLabel";
+            this.spriteYPosLabel.Size = new System.Drawing.Size(14, 13);
+            this.spriteYPosLabel.TabIndex = 18;
+            this.spriteYPosLabel.Text = "Y";
+            // 
+            // spriteXPosLabel
+            // 
+            this.spriteXPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteXPosLabel.AutoSize = true;
+            this.spriteXPosLabel.Location = new System.Drawing.Point(1, 21);
+            this.spriteXPosLabel.Name = "spriteXPosLabel";
+            this.spriteXPosLabel.Size = new System.Drawing.Size(14, 13);
+            this.spriteXPosLabel.TabIndex = 18;
+            this.spriteXPosLabel.Text = "X";
+            // 
+            // spriteYPosBox
+            // 
+            this.spriteYPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteYPosBox.Location = new System.Drawing.Point(77, 19);
+            this.spriteYPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.spriteYPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
+            this.spriteYPosBox.Name = "spriteYPosBox";
+            this.spriteYPosBox.Size = new System.Drawing.Size(43, 20);
+            this.spriteYPosBox.TabIndex = 8;
+            this.spriteYPosBox.ValueChanged += new System.EventHandler(this.spriteYPosBox_ValueChanged);
+            // 
+            // spriteXPosBox
+            // 
+            this.spriteXPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.spriteXPosBox.Location = new System.Drawing.Point(16, 19);
+            this.spriteXPosBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.spriteXPosBox.Minimum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            -2147483648});
+            this.spriteXPosBox.Name = "spriteXPosBox";
+            this.spriteXPosBox.Size = new System.Drawing.Size(43, 20);
+            this.spriteXPosBox.TabIndex = 8;
+            this.spriteXPosBox.ValueChanged += new System.EventHandler(this.spriteXPosBox_ValueChanged);
             // 
             // removeSpriteButton
             // 
@@ -487,46 +567,16 @@
             this.moveSpriteDownButton.UseVisualStyleBackColor = true;
             this.moveSpriteDownButton.Click += new System.EventHandler(this.moveSpriteDownButton_Click);
             // 
-            // frameSpritePositionLabel
-            // 
-            this.frameSpritePositionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.frameSpritePositionLabel.AutoSize = true;
-            this.frameSpritePositionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.frameSpritePositionLabel.Location = new System.Drawing.Point(33, 82);
-            this.frameSpritePositionLabel.Name = "frameSpritePositionLabel";
-            this.frameSpritePositionLabel.Size = new System.Drawing.Size(86, 13);
-            this.frameSpritePositionLabel.TabIndex = 23;
-            this.frameSpritePositionLabel.Text = "Sprite Positon";
-            // 
             // frameSpriteListBox
             // 
             this.frameSpriteListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.frameSpriteListBox.FormattingEnabled = true;
             this.frameSpriteListBox.Location = new System.Drawing.Point(34, 23);
             this.frameSpriteListBox.Name = "frameSpriteListBox";
+            this.frameSpriteListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.frameSpriteListBox.Size = new System.Drawing.Size(120, 56);
             this.frameSpriteListBox.TabIndex = 22;
             this.frameSpriteListBox.SelectedIndexChanged += new System.EventHandler(this.frameSpriteListBox_SelectedIndexChanged);
-            // 
-            // spriteYPosLabel
-            // 
-            this.spriteYPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spriteYPosLabel.AutoSize = true;
-            this.spriteYPosLabel.Location = new System.Drawing.Point(94, 102);
-            this.spriteYPosLabel.Name = "spriteYPosLabel";
-            this.spriteYPosLabel.Size = new System.Drawing.Size(14, 13);
-            this.spriteYPosLabel.TabIndex = 18;
-            this.spriteYPosLabel.Text = "Y";
-            // 
-            // spriteXPosLabel
-            // 
-            this.spriteXPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spriteXPosLabel.AutoSize = true;
-            this.spriteXPosLabel.Location = new System.Drawing.Point(33, 102);
-            this.spriteXPosLabel.Name = "spriteXPosLabel";
-            this.spriteXPosLabel.Size = new System.Drawing.Size(14, 13);
-            this.spriteXPosLabel.TabIndex = 18;
-            this.spriteXPosLabel.Text = "X";
             // 
             // frameSpriteListLabel
             // 
@@ -539,6 +589,18 @@
             this.frameSpriteListLabel.TabIndex = 16;
             this.frameSpriteListLabel.Text = "Sprites";
             // 
+            // replaceSpriteButton
+            // 
+            this.replaceSpriteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.replaceSpriteButton.Location = new System.Drawing.Point(1, 56);
+            this.replaceSpriteButton.Name = "replaceSpriteButton";
+            this.replaceSpriteButton.Size = new System.Drawing.Size(27, 23);
+            this.replaceSpriteButton.TabIndex = 5;
+            this.replaceSpriteButton.Text = "@";
+            this.replaceSpriteButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.replaceSpriteButton.UseVisualStyleBackColor = true;
+            this.replaceSpriteButton.Click += new System.EventHandler(this.replaceSpriteButton_Click);
+            // 
             // addSpriteToFrameSpritesButton
             // 
             this.addSpriteToFrameSpritesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -549,44 +611,6 @@
             this.addSpriteToFrameSpritesButton.Text = "→";
             this.addSpriteToFrameSpritesButton.UseVisualStyleBackColor = true;
             this.addSpriteToFrameSpritesButton.Click += new System.EventHandler(this.addSpriteToFrameSpritesButton_Click);
-            // 
-            // spriteYPosBox
-            // 
-            this.spriteYPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spriteYPosBox.Location = new System.Drawing.Point(109, 100);
-            this.spriteYPosBox.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.spriteYPosBox.Minimum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            -2147483648});
-            this.spriteYPosBox.Name = "spriteYPosBox";
-            this.spriteYPosBox.Size = new System.Drawing.Size(43, 20);
-            this.spriteYPosBox.TabIndex = 8;
-            this.spriteYPosBox.ValueChanged += new System.EventHandler(this.spriteYPosBox_ValueChanged);
-            // 
-            // spriteXPosBox
-            // 
-            this.spriteXPosBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.spriteXPosBox.Location = new System.Drawing.Point(48, 100);
-            this.spriteXPosBox.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.spriteXPosBox.Minimum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            -2147483648});
-            this.spriteXPosBox.Name = "spriteXPosBox";
-            this.spriteXPosBox.Size = new System.Drawing.Size(43, 20);
-            this.spriteXPosBox.TabIndex = 8;
-            this.spriteXPosBox.ValueChanged += new System.EventHandler(this.spriteXPosBox_ValueChanged);
             // 
             // importDelayLabel
             // 
@@ -669,6 +693,16 @@
             this.spriteBoxLabel.TabIndex = 15;
             this.spriteBoxLabel.Text = "Sprite Selection";
             // 
+            // duplicateFrameButton
+            // 
+            this.duplicateFrameButton.Location = new System.Drawing.Point(130, 18);
+            this.duplicateFrameButton.Name = "duplicateFrameButton";
+            this.duplicateFrameButton.Size = new System.Drawing.Size(27, 23);
+            this.duplicateFrameButton.TabIndex = 12;
+            this.duplicateFrameButton.Text = "++";
+            this.duplicateFrameButton.UseVisualStyleBackColor = true;
+            this.duplicateFrameButton.Click += new System.EventHandler(this.duplicateFrameButton_Click);
+            // 
             // addEmptyFrameButton
             // 
             this.addEmptyFrameButton.Location = new System.Drawing.Point(162, 18);
@@ -719,29 +753,13 @@
             this.animationLabel.TabIndex = 22;
             this.animationLabel.Text = "Animation";
             // 
-            // loadAnimationSetDialog
-            // 
-            this.loadAnimationSetDialog.DefaultExt = "animset";
-            this.loadAnimationSetDialog.FileName = "openFileDialog1";
-            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
-            // 
-            // duplicateFrameButton
-            // 
-            this.duplicateFrameButton.Location = new System.Drawing.Point(130, 18);
-            this.duplicateFrameButton.Name = "duplicateFrameButton";
-            this.duplicateFrameButton.Size = new System.Drawing.Size(27, 23);
-            this.duplicateFrameButton.TabIndex = 12;
-            this.duplicateFrameButton.Text = "++";
-            this.duplicateFrameButton.UseVisualStyleBackColor = true;
-            this.duplicateFrameButton.Click += new System.EventHandler(this.duplicateFrameButton_Click);
-            // 
             // animationPreview
             // 
             this.animationPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.animationPreview.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.animationPreview.EditSprite = null;
+            this.animationPreview.EditSprites = null;
             this.animationPreview.GridSpacing = 0;
             this.animationPreview.Location = new System.Drawing.Point(3, 26);
             this.animationPreview.Name = "animationPreview";
@@ -755,17 +773,11 @@
             this.animationPreview.ZoomLevel = 0F;
             this.animationPreview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.animationPreview_MouseWheel);
             // 
-            // replaceSpriteButton
+            // loadAnimationSetDialog
             // 
-            this.replaceSpriteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.replaceSpriteButton.Location = new System.Drawing.Point(1, 56);
-            this.replaceSpriteButton.Name = "replaceSpriteButton";
-            this.replaceSpriteButton.Size = new System.Drawing.Size(27, 23);
-            this.replaceSpriteButton.TabIndex = 5;
-            this.replaceSpriteButton.Text = "@";
-            this.replaceSpriteButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.replaceSpriteButton.UseVisualStyleBackColor = true;
-            this.replaceSpriteButton.Click += new System.EventHandler(this.replaceSpriteButton_Click);
+            this.loadAnimationSetDialog.DefaultExt = "animset";
+            this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
             // 
             // Form1
             // 
@@ -788,6 +800,8 @@
             this.frameEditorPanel.PerformLayout();
             this.frameSpritePanel.ResumeLayout(false);
             this.frameSpritePanel.PerformLayout();
+            this.spritePosPanel.ResumeLayout(false);
+            this.spritePosPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).EndInit();
@@ -862,6 +876,7 @@
         private System.Windows.Forms.Button moveSpriteDownButton;
         private System.Windows.Forms.Button duplicateFrameButton;
         private System.Windows.Forms.Button replaceSpriteButton;
+        private System.Windows.Forms.Panel spritePosPanel;
     }
 }
 

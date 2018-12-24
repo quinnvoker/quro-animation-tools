@@ -41,6 +41,7 @@ namespace AnimationEditor
         private Animation currentAnimation;
         private Frame currentFrame;
 
+        private bool tracking;
         private bool reading;
         private float importDelay = 0;
 
@@ -157,6 +158,39 @@ namespace AnimationEditor
             }
         }
 
+        private void UpdateEnabledControls()
+        {
+            bool singleFrameSelected = frameListBox.SelectedIndices.Count < 2;
+            bool singleSpriteSelected = frameSpriteListBox.SelectedIndices.Count < 2;
+
+            //update per-frame controls
+            frameSpritePanel.Enabled = singleFrameSelected;
+            moveFrameDownButton.Enabled = singleFrameSelected;
+            moveFrameUpButton.Enabled = singleFrameSelected;
+            removeFrameButton.Enabled = singleFrameSelected;
+            duplicateFrameButton.Enabled = singleFrameSelected;
+
+            //update per-sprite controls
+            spritePosPanel.Enabled = singleSpriteSelected;
+            replaceSpriteButton.Enabled = singleSpriteSelected;
+            moveSpriteDownButton.Enabled = singleSpriteSelected;
+            moveSpriteUpButton.Enabled = singleSpriteSelected;
+            removeSpriteButton.Enabled = singleSpriteSelected;
+
+            reading = true;
+            if (!singleSpriteSelected)
+            {
+                spriteXPosBox.Text = "";
+                spriteYPosBox.Text = "";
+            }
+            else
+            {
+                spriteXPosBox.Text = spriteXPosBox.Value.ToString();
+                spriteYPosBox.Text = spriteYPosBox.Value.ToString();
+            }
+            reading = false;
+        }
+
         private void ReadAnimationInfo()
         {
             reading = true;
@@ -184,26 +218,61 @@ namespace AnimationEditor
 
         private void frameListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(!tracking)
+                UpdateEnabledControls();
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedItem != null)
             {
+                //create copy of current frameSprite selection
+                List<int> oldFrameSpriteSelection = new List<int>();
+                foreach (int index in frameSpriteListBox.SelectedIndices)
+                {
+                    oldFrameSpriteSelection.Add(index);
+                }
+
+                //update currentFrame to match selection
                 currentFrame = (Frame)frameListBox.SelectedItem;
+                //update preview and frameTrackBar frame positions
                 if (animationPreview.PreviewSprite != null && !animationPreview.Playing)
                 {
                     animationPreview.PreviewSprite.CurrentFrameIndex = frameListBox.SelectedIndex;
                     frameTrackBar.Value = frameListBox.SelectedIndex;
                 }
-                frameSpritePanel.Enabled = true;
+
+                //update frameSpriteListBox with the current frame's sprites
                 if (currentFrame.Sprites != null)
                     frameSprites = new BindingList<Sprite>(currentFrame.Sprites);
                 else
                     frameSprites = new BindingList<Sprite>();
                 frameSpriteListBox.DataSource = frameSprites;
                 frameSpriteListBox.DisplayMember = "Name";
+
+                //restore old frameSprite selection
+                frameSpriteListBox.SelectedIndices.Clear();
+                foreach(int index in oldFrameSpriteSelection)
+                {
+                    if(index < frameSprites.Count)
+                    {
+                        frameSpriteListBox.SelectedIndex = index;
+                    }
+                }
+
+                //update forms fields to match selected frame's informations
                 UpdateFrameInformation();
             }
             else if (frameListBox.SelectedIndices.Count > 1)
             {
+                //disable frameSpritePanel, as multi frame sprite editing is not yet possible
                 frameSpritePanel.Enabled = false;
+
+                //disable single frame controls
+                moveFrameDownButton.Enabled = false;
+                moveFrameUpButton.Enabled = false;
+                removeFrameButton.Enabled = false;
+                duplicateFrameButton.Enabled = false;
+
+                //disable preview sprite drag+drop functionality
+                if (animationPreview.EditSprites != null)
+                    animationPreview.EditSprites.Clear();
             }
         }
 
@@ -223,7 +292,6 @@ namespace AnimationEditor
                 currentFrame.Delay = (float)delayInputBox.Value / frameRate;
             }
         }
-
 
         private void loadSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -315,8 +383,10 @@ namespace AnimationEditor
         {
             if (!animationPreview.Playing)
             {
+                tracking = true;
                 animationPreview.PreviewSprite.CurrentFrameIndex = frameTrackBar.Value;
                 frameListBox_SetSingleSelection(frameTrackBar.Value);
+                tracking = false;
             }
         }
 
@@ -542,10 +612,25 @@ namespace AnimationEditor
 
         private void frameSpriteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(!tracking)
+                UpdateEnabledControls();
             if (frameSpriteListBox.SelectedIndex > -1 && frameSpriteListBox.SelectedIndex < frameSprites.Count)
             {
-                animationPreview.EditSprite = frameSprites[frameSpriteListBox.SelectedIndex];
-                ReadSpriteOffset();
+                //check if animationPreview has initialized EditSprites; do so if not, and if so, clear it
+                if (animationPreview.EditSprites == null)
+                    animationPreview.EditSprites = new List<Sprite>();
+                else
+                    animationPreview.EditSprites.Clear();
+                //add selected sprites to EditSprites list
+                foreach(int index in frameSpriteListBox.SelectedIndices)
+                {
+                    if(index < frameSprites.Count)
+                        animationPreview.EditSprites.Add(frameSprites[index]);
+                }
+                if (frameSpriteListBox.SelectedIndices.Count == 1)
+                {
+                    ReadSpriteOffset();
+                }
             }
         }
 
@@ -598,7 +683,36 @@ namespace AnimationEditor
         {
             if (reading)
                 return;
-            currentFrame.Name = frameNameBox.Text;
+
+            bool changed = false;
+
+            foreach(int index in frameListBox.SelectedIndices)
+            {
+                if (frames[index].Name != frameNameBox.Text)
+                {
+                    frames[index].Name = frameNameBox.Text;
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                //store current frame selection data
+                List<int> selection = new List<int>();
+                foreach (int index in frameListBox.SelectedIndices)
+                {
+                    selection.Add(index);
+                }
+                //refresh list so name changes are reflected in form
+                frames.ResetBindings();
+                //restore selection
+                reading = true;
+                foreach(int index in selection)
+                {
+                    frameListBox.SelectedIndex = index;
+                }
+                reading = false;
+            }
         }
 
         private void moveSpriteDownButton_Click(object sender, EventArgs e)
@@ -642,7 +756,8 @@ namespace AnimationEditor
 
         private void animationPreview_SpriteMoved(object sender, EventArgs e)
         {
-            ReadSpriteOffset();
+            if(frameSpriteListBox.SelectedIndices.Count == 1)
+                ReadSpriteOffset();
         }
 
         private void duplicateFrameButton_Click(object sender, EventArgs e)

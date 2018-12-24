@@ -20,7 +20,7 @@ namespace AnimationEditor
         public float ZoomLevel { get; set; }
         public Vector3 CameraLocation { get; set; }
 
-        public Sprite EditSprite { get; set; }
+        public List<Sprite> EditSprites { get; set; }
 
         public int PixelGridDisplayLevel { get; set; }
         public int GridSpacing { get; set; }
@@ -142,22 +142,27 @@ namespace AnimationEditor
 
         private void HandleDragging()
         {
-            if (EditSprite != null)
+            if (EditSprites != null && EditSprites.Count > 0)
             {
-                /*create draggable rect spriteRect at 0,0
-                 *rect is scaled by Zoomlevel to match sprite's onscreen size
-                 *rect is then offset to match sprite's offset & origin(multiplied by the zoomlevel)
-                 *rect is then offset by the camera's location(multiplied by zoomlevel) and the onscreen centerpoint
-                 *this results in a rect that matches the sprite's onscreen position regardless of pan or zoom
-                 */
-                Rectangle spriteRect = new Rectangle(0, 0, (int)(EditSprite.Bounds.Width * ZoomLevel), (int)(EditSprite.Bounds.Height * ZoomLevel));
-                spriteRect.Offset((EditSprite.Offset - EditSprite.Origin) * ZoomLevel + new Vector2(CameraLocation.X, CameraLocation.Y) * ZoomLevel + centerPoint);
+                bool hoverFound = false;
+                foreach (Sprite spr in EditSprites)
+                {
+                    /*create draggable rect spriteRect at 0,0
+                     *rect is scaled by Zoomlevel to match sprite's onscreen size
+                     *rect is then offset to match sprite's offset & origin(multiplied by the zoomlevel)
+                     *rect is then offset by the camera's location(multiplied by zoomlevel) and the onscreen centerpoint
+                     *this results in a rect that matches the sprite's onscreen position regardless of pan or zoom
+                     */
+                    Rectangle sprRect = new Rectangle(0, 0, (int)(spr.Bounds.Width * ZoomLevel), (int)(spr.Bounds.Height * ZoomLevel));
+                    sprRect.Offset((spr.Offset - spr.Origin) * ZoomLevel + new Vector2(CameraLocation.X, CameraLocation.Y) * ZoomLevel + centerPoint);
+                    if (sprRect.Contains(mState.Position))
+                    {
+                        hoverFound = true;
+                        break;
+                    }
+                }
 
-                //fix for when detecting the mouse being within Bounds made an uninteractable section appear at the top of screen and allowed interaction below bottom
-                Rectangle frame = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
-                frame.Y = 0;
-
-                if (spriteRect.Contains(mState.Position))
+                if (hoverFound)
                 {
                     if (!hovering)
                     {
@@ -189,7 +194,10 @@ namespace AnimationEditor
 
                     if (distMoved != Vector2.Zero)
                     {
-                        EditSprite.Offset += distMoved;
+                        foreach(Sprite spr in EditSprites)
+                        {
+                            spr.Offset += distMoved;
+                        }
                         OnSpriteMoved(new EventArgs());
                     }
                 }
