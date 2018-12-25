@@ -261,15 +261,6 @@ namespace AnimationEditor
             }
             else if (frameListBox.SelectedIndices.Count > 1)
             {
-                //disable frameSpritePanel, as multi frame sprite editing is not yet possible
-                frameSpritePanel.Enabled = false;
-
-                //disable single frame controls
-                moveFrameDownButton.Enabled = false;
-                moveFrameUpButton.Enabled = false;
-                removeFrameButton.Enabled = false;
-                duplicateFrameButton.Enabled = false;
-
                 //disable preview sprite drag+drop functionality
                 if (animationPreview.EditSprites != null)
                     animationPreview.EditSprites.Clear();
