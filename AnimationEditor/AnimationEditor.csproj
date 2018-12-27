@@ -66,6 +66,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modifications\AddAnimation.cs" />
+    <Compile Include="Modifications\RemoveAnimation.cs" />
+    <Compile Include="Modifications\RemoveSprite.cs" />
+    <Compile Include="Modifications\RemoveFrame.cs" />
+    <Compile Include="Modifications\AddFrame.cs" />
+    <Compile Include="Modifications\History.cs" />
+    <Compile Include="Modifications\IModification.cs" />
     <Compile Include="AnimationPreview.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -75,6 +82,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Modifications\ModHelper.cs" />
+    <Compile Include="Modifications\SelectionState.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\ContentIdentity.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\InvalidContentException.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\NamedValueDictionary.cs" />
@@ -136,6 +145,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -156,6 +166,12 @@
       <Project>{4581e0c8-b14a-454d-9a7b-52d37535e7e9}</Project>
       <Name>QURO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\15test.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\13test.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

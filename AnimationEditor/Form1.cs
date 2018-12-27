@@ -14,12 +14,15 @@ using Microsoft.Xna.Framework.Graphics;
 using QURO.Animation;
 using QURO;
 using System.Xml;
+using AnimationEditor.Modifications;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
 
 namespace AnimationEditor
 {
     public partial class Form1 : Form
     {
+        private History undoHistory;
+
         private Texture2D _spriteSheet;
         //property ensures animationPreview holds a copy of whatever spriteSheet the editor is using
         private Texture2D spriteSheet
@@ -48,6 +51,7 @@ namespace AnimationEditor
         public Form1()
         {
             InitializeComponent();
+            undoHistory = new History();
             frameRate = 60;
             importDelayBox.Value = 0;
             animationPreview.FrameChanged += animationPreview_FrameChanged;
@@ -101,30 +105,10 @@ namespace AnimationEditor
 
         private void AddFrame(Frame frameToAdd)
         {
-            int newSelectedIndex;
-
-            //if only frame in animation is uninitiated and input is not empty, clear the list
-            if (frameToAdd.Name != "empty" &&
-                frames.Count == 1 && 
-                frames[0].Sprites.Count == 1 && 
-                frames[0].Sprites[0].Name == "empty")
-            {
-                frames.Clear();
-            }
-
-            if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == frames.Count - 1)
-            {
-                frames.Add(frameToAdd);
-                frameTrackBar.Maximum = frames.Count - 1;
-                newSelectedIndex = frames.Count - 1;
-            }
-            else
-            {
-                frames.Insert(frameListBox.SelectedIndex + 1, frameToAdd);
-                newSelectedIndex = frameListBox.SelectedIndex + 1;
-            }
+            var modification = new AddFrame(frames, frameListBox, frameToAdd);
+            ModHelper.DoModificationWithSelectionTracking(modification, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(modification);
             UpdateAnimation();
-            frameListBox_SetSingleSelection(newSelectedIndex);
         }
 
         private void UpdateAnimation()
@@ -235,6 +219,7 @@ namespace AnimationEditor
                 if (animationPreview.PreviewSprite != null && !animationPreview.Playing)
                 {
                     animationPreview.PreviewSprite.CurrentFrameIndex = frameListBox.SelectedIndex;
+                    frameTrackBar.Maximum = frames.Count - 1;
                     frameTrackBar.Value = frameListBox.SelectedIndex;
                 }
 
@@ -409,12 +394,10 @@ namespace AnimationEditor
         {
             if(frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > -1 && frameListBox.SelectedIndex < frames.Count)
             {
-                frames.RemoveAt(frameListBox.SelectedIndex);
+                var mod = new RemoveFrame(frames, frameListBox, frameListBox.SelectedIndex);
+                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, spriteListBox);
+                undoHistory.Add(mod);
                 UpdateAnimation();
-                if(frames.Count > 0 && frameListBox.SelectedIndex > frames.Count - 1)
-                {
-                    frameListBox_SetSingleSelection(frames.Count - 1);
-                }
             }
         }
 
@@ -452,12 +435,18 @@ namespace AnimationEditor
                     EnableAnimationEditingControls();
                     InitiateAnimationList();
                 }
-                animations.Add(loadedAnimation);
-                animationBox.SelectedIndex = animations.Count - 1;
+                AddAnimation(loadedAnimation);
                 currentAnimation = animations[animationBox.SelectedIndex];
                 ReadAnimationInfo();
                 UpdateAnimation();
             }
+        }
+
+        private void AddAnimation(Animation anim)
+        {
+            var mod = new AddAnimation(animations, animationBox, anim);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
         }
 
         private void animationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -469,29 +458,18 @@ namespace AnimationEditor
 
         private void addAnimationButton_Click(object sender, EventArgs e)
         {
-            animations.Add(new Animation());
-            animationBox.SelectedIndex = animations.Count - 1;
+            AddAnimation(new Animation());
         }
 
         private void removeAnimationButton_Click(object sender, EventArgs e)
         {
-            if (animationBox.SelectedIndex > -1 && animationBox.SelectedIndex < animations.Count - 1)
+            if (animationBox.SelectedIndex > -1 && animationBox.SelectedIndex < animations.Count)
             {
-                if (animations.Count == 1)
-                {
-                    currentAnimation = new Animation();
-                    animations[animationBox.SelectedIndex] = currentAnimation;
-                    ReadAnimationInfo();
-                    UpdateAnimation();
-                }
-                else
-                {
-                    animations.RemoveAt(animationBox.SelectedIndex);
-                    if(animationBox.SelectedIndex > animations.Count - 1)
-                    {
-                        animationBox.SelectedIndex--;
-                    }
-                }
+                var mod = new RemoveAnimation(animations, animationBox, animationBox.SelectedIndex);
+                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+                undoHistory.Add(mod);
+                ReadAnimationInfo();
+                UpdateAnimation();
             }
         }
 
@@ -545,6 +523,7 @@ namespace AnimationEditor
         {
             if (loadAnimationSetDialog.ShowDialog() == DialogResult.OK)
             {
+                undoHistory = new History();
                 AnimationSet loadedAnimSet;
 
                 using (XmlReader xmlRead = XmlReader.Create(loadAnimationSetDialog.FileName))
@@ -740,7 +719,9 @@ namespace AnimationEditor
         {
             if (frameSpriteListBox.SelectedIndex > -1 && frameSpriteListBox.SelectedIndex < frameSprites.Count)
             {
-                frameSprites.RemoveAt(frameSpriteListBox.SelectedIndex);
+                var mod = new RemoveSprite(frameSprites, frameSpriteListBox, frameSpriteListBox.SelectedIndex);
+                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+                undoHistory.Add(mod);
                 UpdateAnimation();
             }
         }
@@ -764,6 +745,18 @@ namespace AnimationEditor
             spr.Bounds = replacement.Bounds;
             spr.Origin = replacement.Origin;
             spr.Name = replacement.Name;
+            UpdateAnimation();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            undoHistory.Undo(animationBox, frameListBox, frameSpriteListBox);
+            UpdateAnimation();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            undoHistory.Redo(animationBox, frameListBox, frameSpriteListBox);
             UpdateAnimation();
         }
     }
