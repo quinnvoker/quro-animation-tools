@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modifications\AddAnimation.cs" />
+    <Compile Include="Modifications\AddSprite.cs" />
     <Compile Include="Modifications\RemoveAnimation.cs" />
     <Compile Include="Modifications\RemoveSprite.cs" />
     <Compile Include="Modifications\RemoveFrame.cs" />

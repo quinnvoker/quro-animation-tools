@@ -7,6 +7,7 @@ using System.ComponentModel;
 using QURO;
 using QURO.Animation;
 using System.Windows.Forms;
+using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
@@ -53,7 +54,7 @@ namespace AnimationEditor.Modifications
         {
             if(removedFrame != null)
             {
-                if(frames.Count == 1 && removeIndex == 0)
+                if (frames.Count == 1 && removeIndex == 0 && (frames[0].Sprites == null || frames[0].Sprites[0].Bounds == Rectangle.Empty))
                 {
                     frames.Clear();
                     frames.Add(removedFrame);

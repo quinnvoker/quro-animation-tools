@@ -608,8 +608,8 @@ namespace AnimationEditor
         private void ReadSpriteOffset()
         {
             reading = true;
-            spriteXPosBox.Value = (int)currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset.X;
-            spriteYPosBox.Value = (int)currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset.Y;
+            spriteXPosBox.Value = (int)frameSprites[frameSpriteListBox.SelectedIndex].Offset.X;
+            spriteYPosBox.Value = (int)frameSprites[frameSpriteListBox.SelectedIndex].Offset.Y;
             reading = false;
         }
 
@@ -638,10 +638,10 @@ namespace AnimationEditor
         private void addSpriteToFrameSpritesButton_Click(object sender, EventArgs e)
         {
             var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
-            if (currentFrame.Sprites == null)
-                currentFrame.Sprites = new List<Sprite>();
-            currentFrame.Sprites.Add(spriteToAdd);
-            frameSprites.ResetBindings();
+
+            var mod = new AddSprite(frameSprites, frameSpriteListBox, currentFrame, spriteToAdd);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
         }
 
         private void addEmptyFrameButton_Click(object sender, EventArgs e)
