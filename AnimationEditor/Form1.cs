@@ -370,11 +370,14 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex < frames.Count - 1)
             {
+                MoveListItem(frames, frameListBox, 1);
+                /*
                 var frameBelow = frames[frameListBox.SelectedIndex + 1];
                 frames[frameListBox.SelectedIndex + 1] = currentFrame;
                 frames[frameListBox.SelectedIndex] = frameBelow;
                 UpdateAnimation();
                 frameListBox_SetSingleSelection(frameListBox.SelectedIndex + 1);
+                */
             }
         }
 
@@ -382,12 +385,23 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > 0)
             {
+                MoveListItem(frames, frameListBox, -1);
+                /*
                 var frameAbove = frames[frameListBox.SelectedIndex - 1];
                 frames[frameListBox.SelectedIndex - 1] = currentFrame;
                 frames[frameListBox.SelectedIndex] = frameAbove;
                 UpdateAnimation();
                 frameListBox_SetSingleSelection(frameListBox.SelectedIndex - 1);
+                */
             }
+        }
+
+        private void MoveListItem(BindingList<Frame> frameList, ListBox frameBox, int dir)
+        {
+            var mod = new ReorderFrame(frameList, frameBox, dir);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
+            UpdateAnimation();
         }
 
         private void removeFrameButton_Click(object sender, EventArgs e)
