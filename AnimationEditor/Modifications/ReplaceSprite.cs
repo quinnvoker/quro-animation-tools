@@ -11,38 +11,36 @@ using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class ReorderFrame : IModification
+    class ReplaceSprite : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
-        private readonly BindingList<Frame> frames;
-        private readonly ListBox listBox;
-        private readonly int index;
-        private readonly int dir;
+        private BindingList<Sprite> sprites;
+        private int index;
+        private Sprite original;
+        private Sprite replacement;
 
-        public ReorderFrame(BindingList<Frame> frameList, ListBox frameListBox, int direction)
+        public ReplaceSprite(BindingList<Sprite> spriteList, int origIndex, Sprite newSprite)
         {
-            frames = frameList;
-            listBox = frameListBox;
-            index = frameListBox.SelectedIndex;
-            dir = Math.Sign(direction);
+            sprites = spriteList;
+            index = origIndex;
+            original = sprites[index].Clone();
+            replacement = newSprite;
         }
 
         public void Do()
         {
-            var movingFrame = frames[index];
-            frames[index] = frames[index + dir];
-            frames[index + dir] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index + dir);
+            sprites[index].Name = replacement.Name;
+            sprites[index].Bounds = replacement.Bounds;
+            sprites[index].Origin = replacement.Origin;
         }
 
         public void Undo()
         {
-            var movingFrame = frames[index + dir];
-            frames[index + dir] = frames[index];
-            frames[index] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index);
+            sprites[index].Name = original.Name;
+            sprites[index].Bounds = original.Bounds;
+            sprites[index].Origin = original.Origin;
         }
 
         public SelectionState GetPreChangeSelection()
@@ -65,7 +63,7 @@ namespace AnimationEditor.Modifications
 
         public override string ToString()
         {
-            return "Move Frame";
+            return "Replace Sprite";
         }
     }
 }

@@ -11,38 +11,34 @@ using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class ReorderFrame : IModification
+    class RenameAnimation : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
-        private readonly BindingList<Frame> frames;
-        private readonly ListBox listBox;
-        private readonly int index;
-        private readonly int dir;
+        private BindingList<Animation> anims;
+        private int index;
+        private string originalName;
+        private string newName;
 
-        public ReorderFrame(BindingList<Frame> frameList, ListBox frameListBox, int direction)
+        public RenameAnimation(BindingList<Animation> animList, int index, string name)
         {
-            frames = frameList;
-            listBox = frameListBox;
-            index = frameListBox.SelectedIndex;
-            dir = Math.Sign(direction);
+            anims = animList;
+            this.index = index;
+            originalName = anims[index].Name;
+            newName = name;
         }
 
         public void Do()
         {
-            var movingFrame = frames[index];
-            frames[index] = frames[index + dir];
-            frames[index + dir] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index + dir);
+            anims[index].Name = newName;
+            anims.ResetBindings();
         }
 
         public void Undo()
         {
-            var movingFrame = frames[index + dir];
-            frames[index + dir] = frames[index];
-            frames[index] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index);
+            anims[index].Name = originalName;
+            anims.ResetBindings();
         }
 
         public SelectionState GetPreChangeSelection()
@@ -62,10 +58,10 @@ namespace AnimationEditor.Modifications
             postChangeSelection = currentSelection;
         }
 
-
         public override string ToString()
         {
-            return "Move Frame";
+            return "Rename Animation";
         }
     }
 }
+

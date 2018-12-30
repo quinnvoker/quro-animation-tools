@@ -11,38 +11,34 @@ using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class ReorderFrame : IModification
+    class SetSpritePosition : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
-        private readonly BindingList<Frame> frames;
-        private readonly ListBox listBox;
-        private readonly int index;
-        private readonly int dir;
+        private BindingList<Sprite> sprites;
+        private ListBox listBox;
+        private int index;
+        private Vector2 originalPosition;
+        private Vector2 newPosition;
 
-        public ReorderFrame(BindingList<Frame> frameList, ListBox frameListBox, int direction)
+        public SetSpritePosition(BindingList<Sprite> spriteList, ListBox spriteListBox, Vector2 newPos)
         {
-            frames = frameList;
-            listBox = frameListBox;
-            index = frameListBox.SelectedIndex;
-            dir = Math.Sign(direction);
+            sprites = spriteList;
+            listBox = spriteListBox;
+            index = spriteListBox.SelectedIndex;
+            originalPosition = sprites[index].Offset;
+            newPosition = newPos;
         }
 
         public void Do()
         {
-            var movingFrame = frames[index];
-            frames[index] = frames[index + dir];
-            frames[index + dir] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index + dir);
+            sprites[index].Offset = newPosition;
         }
 
         public void Undo()
         {
-            var movingFrame = frames[index + dir];
-            frames[index + dir] = frames[index];
-            frames[index] = movingFrame;
-            ModHelper.SetSingleSelection(listBox, index);
+            sprites[index].Offset = originalPosition;
         }
 
         public SelectionState GetPreChangeSelection()
@@ -62,10 +58,10 @@ namespace AnimationEditor.Modifications
             postChangeSelection = currentSelection;
         }
 
-
         public override string ToString()
         {
-            return "Move Frame";
+            return "Set Sprite Position";
         }
     }
 }
+

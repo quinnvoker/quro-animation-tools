@@ -7,49 +7,48 @@ using System.ComponentModel;
 using QURO;
 using QURO.Animation;
 using System.Windows.Forms;
+using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class RemoveSprite : IModification
+    class MoveSprite : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
         private BindingList<Sprite> sprites;
-        private ListBox spriteListBox;
-        private int removeIndex;
+        private ListBox listBox;
+        private List<int> indices;
+        private Dictionary<int, Vector2> originalPositions;
+        private Vector2 dist;
 
-        private Sprite removedSprite; 
-
-        public RemoveSprite(BindingList<Sprite> spriteList, ListBox spriteBox, int index)
+        public MoveSprite(BindingList<Sprite> spriteList, ListBox spriteListBox, Vector2 distance)
         {
             sprites = spriteList;
-            spriteListBox = spriteBox;
-            removeIndex = index;
+            listBox = spriteListBox;
+            indices = new List<int>();
+            originalPositions = new Dictionary<int, Vector2>();
+            foreach (int i in spriteListBox.SelectedIndices)
+            {
+                indices.Add(i);
+                originalPositions.Add(i, sprites[i].Offset);
+            }
+            dist = distance;
         }
 
         public void Do()
         {
-            removedSprite = sprites[removeIndex];
-
-            if(sprites.Count == 1)
+            foreach (int index in indices)
             {
-                sprites.Clear();
-            }
-            else
-                sprites.RemoveAt(removeIndex);
-
-            if (sprites.Count > -1 && spriteListBox.SelectedIndex > sprites.Count - 1)
-            {
-                ModHelper.SetSingleSelection(spriteListBox, sprites.Count - 1);
+                sprites[index].Offset += dist;
             }
         }
 
         public void Undo()
         {
-            if(removedSprite != null)
+            foreach (int index in indices)
             {
-                sprites.Insert(removeIndex, removedSprite);
+                sprites[index].Offset = originalPositions[index];
             }
         }
 
@@ -70,10 +69,13 @@ namespace AnimationEditor.Modifications
             postChangeSelection = currentSelection;
         }
 
-
         public override string ToString()
         {
-            return "Remove Sprite";
+            if (indices.Count == 1)
+                return "Move Sprite";
+            else
+                return "Move Sprites";
         }
     }
 }
+

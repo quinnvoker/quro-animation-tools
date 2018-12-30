@@ -18,7 +18,8 @@ namespace AnimationEditor.Modifications
 
         private BindingList<Frame> frames;
         private ListBox frameListBox;
-        private Frame frameToAdd; 
+        private Frame frameToAdd;
+        private int index;
 
         public AddFrame(BindingList<Frame> frameList, ListBox frameBox, Frame frame = null)
         {
@@ -27,6 +28,7 @@ namespace AnimationEditor.Modifications
             if (frame != null)
                 frameToAdd = frame;
             else frameToAdd = new Frame();
+            index = frameListBox.SelectedIndex;
         }
 
         public void Do()
@@ -42,15 +44,15 @@ namespace AnimationEditor.Modifications
                 frames.Clear();
             }
 
-            if (frameListBox.SelectedItem == null || frameListBox.SelectedIndex == frames.Count - 1)
+            if (frameListBox.SelectedItem == null || index == frames.Count - 1)
             {
                 frames.Add(frameToAdd);
                 newSelectedIndex = frames.Count - 1;
             }
             else
             {
-                frames.Insert(frameListBox.SelectedIndex + 1, frameToAdd);
-                newSelectedIndex = frameListBox.SelectedIndex + 1;
+                frames.Insert(index + 1, frameToAdd);
+                newSelectedIndex = index + 1;
             }
             ModHelper.SetSingleSelection(frameListBox, newSelectedIndex);
         }

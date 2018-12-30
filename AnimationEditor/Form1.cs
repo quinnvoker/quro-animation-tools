@@ -44,6 +44,7 @@ namespace AnimationEditor
         private Animation currentAnimation;
         private Frame currentFrame;
 
+        private bool frameNameBoxEdited;
         private bool tracking;
         private bool reading;
         private float importDelay = 0;
@@ -128,7 +129,8 @@ namespace AnimationEditor
                 else
                     animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
                 frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
-                frameListBox_SetSingleSelection(frameTrackBar.Value);
+                if(frameListBox.SelectedIndices.Count < 2 && frameListBox.SelectedIndex != frameTrackBar.Value)
+                    frameListBox_SetSingleSelection(frameTrackBar.Value);
                 if(animations.Count < 1)
                 {
                     animations.Add(currentAnimation);
@@ -156,7 +158,7 @@ namespace AnimationEditor
 
             //update per-sprite controls
             spritePosPanel.Enabled = singleSpriteSelected;
-            replaceSpriteButton.Enabled = singleSpriteSelected;
+            replaceSpriteButton.Enabled = singleSpriteSelected && spriteSet != null;
             moveSpriteDownButton.Enabled = singleSpriteSelected;
             moveSpriteUpButton.Enabled = singleSpriteSelected;
             removeSpriteButton.Enabled = singleSpriteSelected;
@@ -241,6 +243,10 @@ namespace AnimationEditor
                     }
                 }
 
+                //ensure at least one sprite is selected
+                if (frameSprites.Count > 0 && frameSpriteListBox.SelectedIndices.Count < 1)
+                    frameSpriteListBox.SelectedIndex = 0;
+
                 //update forms fields to match selected frame's informations
                 UpdateFrameInformation();
             }
@@ -262,11 +268,11 @@ namespace AnimationEditor
 
         private void delayInputBox_ValueChanged(object sender, EventArgs e)
         {
-            foreach(int index in frameListBox.SelectedIndices)
-            {
-                var currentFrame = frames[index];
-                currentFrame.Delay = (float)delayInputBox.Value / frameRate;
-            }
+            if (reading || tracking)
+                return;
+            var mod = new ChangeFrameDelay(frames, frameListBox, (float)delayInputBox.Value / frameRate);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
         }
 
         private void loadSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -304,6 +310,11 @@ namespace AnimationEditor
                 spriteListBox.DataSource = spriteSet;
                 spriteListBox.DisplayMember = "Name";
                 spriteListBox.ValueMember = "Bounds";
+
+                //enable spriteMap-required controls
+                addSpriteToFrameListButton.Enabled = true;
+                addSpriteToFrameSpritesButton.Enabled = true;
+                replaceSpriteButton.Enabled = true;
 
                 if (currentAnimation == null)
                 {
@@ -370,14 +381,7 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex < frames.Count - 1)
             {
-                MoveListItem(frames, frameListBox, 1);
-                /*
-                var frameBelow = frames[frameListBox.SelectedIndex + 1];
-                frames[frameListBox.SelectedIndex + 1] = currentFrame;
-                frames[frameListBox.SelectedIndex] = frameBelow;
-                UpdateAnimation();
-                frameListBox_SetSingleSelection(frameListBox.SelectedIndex + 1);
-                */
+                MoveFrame(frames, frameListBox, 1);
             }
         }
 
@@ -385,18 +389,11 @@ namespace AnimationEditor
         {
             if (frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > 0)
             {
-                MoveListItem(frames, frameListBox, -1);
-                /*
-                var frameAbove = frames[frameListBox.SelectedIndex - 1];
-                frames[frameListBox.SelectedIndex - 1] = currentFrame;
-                frames[frameListBox.SelectedIndex] = frameAbove;
-                UpdateAnimation();
-                frameListBox_SetSingleSelection(frameListBox.SelectedIndex - 1);
-                */
+                MoveFrame(frames, frameListBox, -1);
             }
         }
 
-        private void MoveListItem(BindingList<Frame> frameList, ListBox frameBox, int dir)
+        private void MoveFrame(BindingList<Frame> frameList, ListBox frameBox, int dir)
         {
             var mod = new ReorderFrame(frameList, frameBox, dir);
             ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
@@ -413,15 +410,6 @@ namespace AnimationEditor
                 undoHistory.Add(mod);
                 UpdateAnimation();
             }
-        }
-
-        private void animationNameBox_TextChanged(object sender, EventArgs e)
-        {
-            if (reading || currentAnimation.Name == animationNameBox.Text)
-                return;
-
-            currentAnimation.Name = animationNameBox.Text;
-            animations.ResetBindings();
         }
 
         private void saveAnimationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -633,9 +621,13 @@ namespace AnimationEditor
             if (reading || frameSpriteListBox.SelectedIndex >= currentFrame.Sprites.Count)
                 return;
 
+            SetSpritePosition();
+            currentFrame.Sprites = frameSprites.ToList();
+            /*
             var newPos = currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset;
             newPos.X = (float)spriteXPosBox.Value;
             currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset = newPos;
+            */
         }
 
         //update Y offset of selected sprite with position entered into spriteYPosBox
@@ -644,9 +636,20 @@ namespace AnimationEditor
             if (reading || frameSpriteListBox.SelectedIndex >= currentFrame.Sprites.Count)
                 return;
 
+            SetSpritePosition();
+            currentFrame.Sprites = frameSprites.ToList();
+            /*
             var newPos = currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset;
             newPos.Y = (float)spriteYPosBox.Value;
             currentFrame.Sprites[frameSpriteListBox.SelectedIndex].Offset = newPos;
+            */
+        }
+
+        private void SetSpritePosition()
+        {
+            var mod = new SetSpritePosition(frameSprites, frameSpriteListBox, new Vector2((float)spriteXPosBox.Value, (float)spriteYPosBox.Value));
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
         }
 
         private void addSpriteToFrameSpritesButton_Click(object sender, EventArgs e)
@@ -663,39 +666,24 @@ namespace AnimationEditor
             AddFrame(new Frame());
         }
 
-        private void frameNameBox_TextChanged(object sender, EventArgs e)
+        private void RenameFrames()
         {
-            if (reading)
-                return;
-
             bool changed = false;
 
             foreach(int index in frameListBox.SelectedIndices)
             {
                 if (frames[index].Name != frameNameBox.Text)
                 {
-                    frames[index].Name = frameNameBox.Text;
                     changed = true;
+                    break;
                 }
             }
 
             if (changed)
             {
-                //store current frame selection data
-                List<int> selection = new List<int>();
-                foreach (int index in frameListBox.SelectedIndices)
-                {
-                    selection.Add(index);
-                }
-                //refresh list so name changes are reflected in form
-                frames.ResetBindings();
-                //restore selection
-                reading = true;
-                foreach(int index in selection)
-                {
-                    frameListBox.SelectedIndex = index;
-                }
-                reading = false;
+                var mod = new RenameFrame(frames, frameListBox, frameNameBox.Text);
+                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+                undoHistory.Add(mod);
             }
         }
 
@@ -703,14 +691,7 @@ namespace AnimationEditor
         {
             if (frameSpriteListBox.SelectedIndex < currentFrame.Sprites.Count - 1)
             {
-                var index = frameSpriteListBox.SelectedIndex;
-
-                var currentSprite = frameSprites[index];
-                var spriteBelow = frameSprites[index + 1];
-                frameSprites[index + 1] = currentSprite;
-                frameSprites[index] = spriteBelow;
-                UpdateAnimation();
-                frameSpriteListBox.SelectedIndex = index + 1;
+                MoveSprite(frameSprites, frameSpriteListBox, 1);
             }
         }
 
@@ -718,15 +699,16 @@ namespace AnimationEditor
         {
             if (frameSpriteListBox.SelectedIndex > 0)
             {
-                var index = frameSpriteListBox.SelectedIndex;
-
-                var currentSprite = frameSprites[index];
-                var spriteAbove = frameSprites[index - 1];
-                frameSprites[index - 1] = currentSprite;
-                frameSprites[index] = spriteAbove;
-                UpdateAnimation();
-                frameSpriteListBox.SelectedIndex = index - 1;
+                MoveSprite(frameSprites, frameSpriteListBox, -1);
             }
+        }
+
+        private void MoveSprite(BindingList<Sprite> spriteList, ListBox spriteBox, int dir)
+        {
+            var mod = new ReorderSprite(spriteList, spriteBox, dir);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
+            UpdateAnimation();
         }
 
         private void removeSpriteButton_Click(object sender, EventArgs e)
@@ -753,12 +735,9 @@ namespace AnimationEditor
 
         private void replaceSpriteButton_Click(object sender, EventArgs e)
         {
-            var spr = frameSprites[frameSpriteListBox.SelectedIndex];
-            var replacement = spriteSet[spriteListBox.SelectedIndex];
-
-            spr.Bounds = replacement.Bounds;
-            spr.Origin = replacement.Origin;
-            spr.Name = replacement.Name;
+            var mod = new ReplaceSprite(frameSprites, frameSpriteListBox.SelectedIndex, spriteSet[spriteListBox.SelectedIndex]);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
             UpdateAnimation();
         }
 
@@ -772,6 +751,51 @@ namespace AnimationEditor
         {
             undoHistory.Redo(animationBox, frameListBox, frameSpriteListBox);
             UpdateAnimation();
+        }
+
+        private void UpdateAnimationName()
+        {
+            var mod = new RenameAnimation(animations, animationBox.SelectedIndex, animationNameBox.Text);
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
+        }
+
+        private void animationNameBox_Leave(object sender, EventArgs e)
+        {
+            if (animations[animationBox.SelectedIndex].Name != animationNameBox.Text)
+            {
+                UpdateAnimationName();
+            }
+        }
+
+        private void animationNameBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return && animations[animationBox.SelectedIndex].Name != animationNameBox.Text)
+            {
+                UpdateAnimationName();
+            }
+        }
+
+        private void frameNameBox_Leave(object sender, EventArgs e)
+        {
+            if (frameNameBoxEdited)
+                RenameFrames();
+            frameNameBoxEdited = false;
+        }
+
+        private void frameNameBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return && frameNameBoxEdited)
+                RenameFrames();
+            frameNameBoxEdited = false;
+        }
+
+        private void frameNameBox_TextChanged(object sender, EventArgs e)
+        {
+            if(!reading && !tracking)
+            {
+                frameNameBoxEdited = true;
+            }
         }
     }
 }

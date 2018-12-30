@@ -71,6 +71,8 @@
             this.spriteYPosBox = new System.Windows.Forms.NumericUpDown();
             this.spriteXPosBox = new System.Windows.Forms.NumericUpDown();
             this.removeSpriteButton = new System.Windows.Forms.Button();
+            this.moveSpriteUpButton = new System.Windows.Forms.Button();
+            this.moveSpriteDownButton = new System.Windows.Forms.Button();
             this.frameSpriteListBox = new System.Windows.Forms.ListBox();
             this.frameSpriteListLabel = new System.Windows.Forms.Label();
             this.replaceSpriteButton = new System.Windows.Forms.Button();
@@ -83,16 +85,14 @@
             this.frameInfoLabel = new System.Windows.Forms.Label();
             this.frameBoxLabel = new System.Windows.Forms.Label();
             this.spriteBoxLabel = new System.Windows.Forms.Label();
+            this.spritePreview = new System.Windows.Forms.PictureBox();
             this.duplicateFrameButton = new System.Windows.Forms.Button();
             this.addEmptyFrameButton = new System.Windows.Forms.Button();
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.animationPreview = new AnimationEditor.AnimationPreview();
             this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
-            this.moveSpriteUpButton = new System.Windows.Forms.Button();
-            this.moveSpriteDownButton = new System.Windows.Forms.Button();
-            this.spritePreview = new System.Windows.Forms.PictureBox();
+            this.animationPreview = new AnimationEditor.AnimationPreview();
             ((System.ComponentModel.ISupportInitialize)(this.frameTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayInputBox)).BeginInit();
             this.mainMenuStrip.SuspendLayout();
@@ -102,8 +102,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).BeginInit();
-            this.animationPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).BeginInit();
+            this.animationPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // loadSpriteSheetDialog
@@ -147,6 +147,7 @@
             // addSpriteToFrameListButton
             // 
             this.addSpriteToFrameListButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.addSpriteToFrameListButton.Enabled = false;
             this.addSpriteToFrameListButton.Location = new System.Drawing.Point(130, 130);
             this.addSpriteToFrameListButton.Name = "addSpriteToFrameListButton";
             this.addSpriteToFrameListButton.Size = new System.Drawing.Size(27, 23);
@@ -190,7 +191,8 @@
             this.animationNameBox.Name = "animationNameBox";
             this.animationNameBox.Size = new System.Drawing.Size(100, 20);
             this.animationNameBox.TabIndex = 10;
-            this.animationNameBox.TextChanged += new System.EventHandler(this.animationNameBox_TextChanged);
+            this.animationNameBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.animationNameBox_KeyPress);
+            this.animationNameBox.Leave += new System.EventHandler(this.animationNameBox_Leave);
             // 
             // playAnimationButton
             // 
@@ -440,6 +442,8 @@
             this.frameNameBox.Size = new System.Drawing.Size(83, 20);
             this.frameNameBox.TabIndex = 25;
             this.frameNameBox.TextChanged += new System.EventHandler(this.frameNameBox_TextChanged);
+            this.frameNameBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frameNameBox_KeyPress);
+            this.frameNameBox.Leave += new System.EventHandler(this.frameNameBox_Leave);
             // 
             // frameSpritePanel
             // 
@@ -550,6 +554,30 @@
             this.removeSpriteButton.UseVisualStyleBackColor = true;
             this.removeSpriteButton.Click += new System.EventHandler(this.removeSpriteButton_Click);
             // 
+            // moveSpriteUpButton
+            // 
+            this.moveSpriteUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.moveSpriteUpButton.Location = new System.Drawing.Point(109, 0);
+            this.moveSpriteUpButton.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.moveSpriteUpButton.Name = "moveSpriteUpButton";
+            this.moveSpriteUpButton.Size = new System.Drawing.Size(23, 23);
+            this.moveSpriteUpButton.TabIndex = 26;
+            this.moveSpriteUpButton.Text = "↑";
+            this.moveSpriteUpButton.UseVisualStyleBackColor = true;
+            this.moveSpriteUpButton.Click += new System.EventHandler(this.moveSpriteUpButton_Click);
+            // 
+            // moveSpriteDownButton
+            // 
+            this.moveSpriteDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.moveSpriteDownButton.Location = new System.Drawing.Point(86, 0);
+            this.moveSpriteDownButton.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            this.moveSpriteDownButton.Name = "moveSpriteDownButton";
+            this.moveSpriteDownButton.Size = new System.Drawing.Size(23, 23);
+            this.moveSpriteDownButton.TabIndex = 26;
+            this.moveSpriteDownButton.Text = "↓";
+            this.moveSpriteDownButton.UseVisualStyleBackColor = true;
+            this.moveSpriteDownButton.Click += new System.EventHandler(this.moveSpriteDownButton_Click);
+            // 
             // frameSpriteListBox
             // 
             this.frameSpriteListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -575,6 +603,7 @@
             // replaceSpriteButton
             // 
             this.replaceSpriteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.replaceSpriteButton.Enabled = false;
             this.replaceSpriteButton.Location = new System.Drawing.Point(1, 56);
             this.replaceSpriteButton.Name = "replaceSpriteButton";
             this.replaceSpriteButton.Size = new System.Drawing.Size(27, 23);
@@ -587,6 +616,7 @@
             // addSpriteToFrameSpritesButton
             // 
             this.addSpriteToFrameSpritesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.addSpriteToFrameSpritesButton.Enabled = false;
             this.addSpriteToFrameSpritesButton.Location = new System.Drawing.Point(1, 36);
             this.addSpriteToFrameSpritesButton.Name = "addSpriteToFrameSpritesButton";
             this.addSpriteToFrameSpritesButton.Size = new System.Drawing.Size(27, 23);
@@ -676,6 +706,17 @@
             this.spriteBoxLabel.TabIndex = 15;
             this.spriteBoxLabel.Text = "Sprite Selection";
             // 
+            // spritePreview
+            // 
+            this.spritePreview.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.spritePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.spritePreview.Location = new System.Drawing.Point(5, 19);
+            this.spritePreview.Name = "spritePreview";
+            this.spritePreview.Size = new System.Drawing.Size(119, 43);
+            this.spritePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.spritePreview.TabIndex = 6;
+            this.spritePreview.TabStop = false;
+            // 
             // duplicateFrameButton
             // 
             this.duplicateFrameButton.Location = new System.Drawing.Point(130, 18);
@@ -736,6 +777,12 @@
             this.animationLabel.TabIndex = 22;
             this.animationLabel.Text = "Animation";
             // 
+            // loadAnimationSetDialog
+            // 
+            this.loadAnimationSetDialog.DefaultExt = "animset";
+            this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
+            // 
             // animationPreview
             // 
             this.animationPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -755,47 +802,6 @@
             this.animationPreview.Text = "animationPreview1";
             this.animationPreview.ZoomLevel = 0F;
             this.animationPreview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.animationPreview_MouseWheel);
-            // 
-            // loadAnimationSetDialog
-            // 
-            this.loadAnimationSetDialog.DefaultExt = "animset";
-            this.loadAnimationSetDialog.FileName = "openFileDialog1";
-            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
-            // 
-            // moveSpriteUpButton
-            // 
-            this.moveSpriteUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.moveSpriteUpButton.Location = new System.Drawing.Point(109, 0);
-            this.moveSpriteUpButton.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
-            this.moveSpriteUpButton.Name = "moveSpriteUpButton";
-            this.moveSpriteUpButton.Size = new System.Drawing.Size(23, 23);
-            this.moveSpriteUpButton.TabIndex = 26;
-            this.moveSpriteUpButton.Text = "↑";
-            this.moveSpriteUpButton.UseVisualStyleBackColor = true;
-            this.moveSpriteUpButton.Click += new System.EventHandler(this.moveSpriteUpButton_Click);
-            // 
-            // moveSpriteDownButton
-            // 
-            this.moveSpriteDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.moveSpriteDownButton.Location = new System.Drawing.Point(86, 0);
-            this.moveSpriteDownButton.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
-            this.moveSpriteDownButton.Name = "moveSpriteDownButton";
-            this.moveSpriteDownButton.Size = new System.Drawing.Size(23, 23);
-            this.moveSpriteDownButton.TabIndex = 26;
-            this.moveSpriteDownButton.Text = "↓";
-            this.moveSpriteDownButton.UseVisualStyleBackColor = true;
-            this.moveSpriteDownButton.Click += new System.EventHandler(this.moveSpriteDownButton_Click);
-            // 
-            // spritePreview
-            // 
-            this.spritePreview.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.spritePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.spritePreview.Location = new System.Drawing.Point(5, 19);
-            this.spritePreview.Name = "spritePreview";
-            this.spritePreview.Size = new System.Drawing.Size(119, 43);
-            this.spritePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.spritePreview.TabIndex = 6;
-            this.spritePreview.TabStop = false;
             // 
             // Form1
             // 
@@ -822,9 +828,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.spriteYPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spriteXPosBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.importDelayBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).EndInit();
             this.animationPanel.ResumeLayout(false);
             this.animationPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spritePreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

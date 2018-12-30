@@ -40,13 +40,13 @@ namespace AnimationEditor.Modifications
             frameBox.SelectedIndices.Clear();
             foreach(int index in selection.SelectedFrames)
             {
-                frameBox.SelectedIndex = index;
+                frameBox.SelectedIndices.Add(index);
             }
 
             frameSpriteBox.SelectedIndices.Clear();
             foreach(int index in selection.SelectedFrameSprites)
             {
-                frameSpriteBox.SelectedIndex = index;
+                frameSpriteBox.SelectedIndices.Add(index);
             }
         }
 

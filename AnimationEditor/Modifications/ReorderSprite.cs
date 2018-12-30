@@ -11,37 +11,37 @@ using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class ReorderFrame : IModification
+    class ReorderSprite : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
-        private readonly BindingList<Frame> frames;
-        private readonly ListBox listBox;
-        private readonly int index;
-        private readonly int dir;
+        private BindingList<Sprite> sprites;
+        private ListBox listBox;
+        private int index;
+        private int dir;
 
-        public ReorderFrame(BindingList<Frame> frameList, ListBox frameListBox, int direction)
+        public ReorderSprite(BindingList<Sprite> spriteList, ListBox spriteListBox, int direction)
         {
-            frames = frameList;
-            listBox = frameListBox;
-            index = frameListBox.SelectedIndex;
+            sprites = spriteList;
+            listBox = spriteListBox;
+            index = spriteListBox.SelectedIndex;
             dir = Math.Sign(direction);
         }
 
         public void Do()
         {
-            var movingFrame = frames[index];
-            frames[index] = frames[index + dir];
-            frames[index + dir] = movingFrame;
+            var movingFrame = sprites[index];
+            sprites[index] = sprites[index + dir];
+            sprites[index + dir] = movingFrame;
             ModHelper.SetSingleSelection(listBox, index + dir);
         }
 
         public void Undo()
         {
-            var movingFrame = frames[index + dir];
-            frames[index + dir] = frames[index];
-            frames[index] = movingFrame;
+            var movingFrame = sprites[index + dir];
+            sprites[index + dir] = sprites[index];
+            sprites[index] = movingFrame;
             ModHelper.SetSingleSelection(listBox, index);
         }
 
@@ -65,7 +65,7 @@ namespace AnimationEditor.Modifications
 
         public override string ToString()
         {
-            return "Move Frame";
+            return "Move Sprite";
         }
     }
 }

@@ -68,6 +68,13 @@
   <ItemGroup>
     <Compile Include="Modifications\AddAnimation.cs" />
     <Compile Include="Modifications\AddSprite.cs" />
+    <Compile Include="Modifications\SetSpritePosition.cs" />
+    <Compile Include="Modifications\MoveSprite.cs" />
+    <Compile Include="Modifications\ChangeFrameDelay.cs" />
+    <Compile Include="Modifications\RenameFrame.cs" />
+    <Compile Include="Modifications\RenameAnimation.cs" />
+    <Compile Include="Modifications\ReplaceSprite.cs" />
+    <Compile Include="Modifications\ReorderSprite.cs" />
     <Compile Include="Modifications\ReorderFrame.cs" />
     <Compile Include="Modifications\RemoveAnimation.cs" />
     <Compile Include="Modifications\RemoveSprite.cs" />

@@ -31,20 +31,17 @@ namespace AnimationEditor.Modifications
 
         public void Do()
         {
-            if (removeIndex > -1 && removeIndex < animations.Count)
+            removedAnim = animations[removeIndex];
+            if (animations.Count == 1)
             {
-                removedAnim = animations[removeIndex];
-                if (animations.Count == 1)
+                animations[removeIndex] = new Animation();
+            }
+            else
+            {
+                animations.RemoveAt(removeIndex);
+                if (animationBox.SelectedIndex > animations.Count - 1)
                 {
-                    animations[removeIndex] = new Animation();
-                }
-                else
-                {
-                    animations.RemoveAt(removeIndex);
-                    if (animationBox.SelectedIndex > animations.Count - 1)
-                    {
-                        animationBox.SelectedIndex--;
-                    }
+                    animationBox.SelectedIndex--;
                 }
             }
         }

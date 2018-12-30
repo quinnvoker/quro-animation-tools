@@ -11,54 +11,52 @@ using Microsoft.Xna.Framework;
 
 namespace AnimationEditor.Modifications
 {
-    class RemoveFrame : IModification
+    class RenameFrame : IModification
     {
         private SelectionState preChangeSelection;
         private SelectionState postChangeSelection;
 
         private BindingList<Frame> frames;
-        private ListBox frameListBox;
-        private int removeIndex;
+        private ListBox listBox;
+        private List<int> indices;
+        private Dictionary<int, string> originalNames;
+        private string newName;
 
-        private Frame removedFrame; 
-
-        public RemoveFrame(BindingList<Frame> frameList, ListBox frameBox, int index)
+        public RenameFrame(BindingList<Frame> frameList, ListBox frameListBox, string name)
         {
             frames = frameList;
-            frameListBox = frameBox;
-            removeIndex = index;
+            listBox = frameListBox;
+            indices = new List<int>();
+            originalNames = new Dictionary<int, string>();
+            foreach(int i in frameListBox.SelectedIndices)
+            {
+                indices.Add(i);
+                originalNames.Add(i, frames[i].Name);
+            }
+            newName = name;
         }
 
         public void Do()
         {
-            removedFrame = frames[removeIndex];
-
-            if(frames.Count == 1)
+            foreach (int index in indices)
             {
-                frames.Clear();
-                frames.Add(new Frame());
+                frames[index].Name = newName;
             }
-            else
-                frames.RemoveAt(removeIndex);
-
-            if (frames.Count > -1 && frameListBox.SelectedIndex > frames.Count - 1)
+            frames.ResetBindings();
+            listBox.SelectedIndices.Clear();
+            foreach (int index in indices)
             {
-                ModHelper.SetSingleSelection(frameListBox, frames.Count - 1);
+                listBox.SelectedIndices.Add(index);
             }
         }
 
         public void Undo()
         {
-            if(removedFrame != null)
+            foreach (int index in indices)
             {
-                if (frames.Count == 1 && removeIndex == 0 && (frames[0].Sprites == null || frames[0].Sprites[0].Bounds == Rectangle.Empty))
-                {
-                    frames.Clear();
-                    frames.Add(removedFrame);
-                }
-                else
-                    frames.Insert(removeIndex, removedFrame);
+                frames[index].Name = originalNames[index];
             }
+            frames.ResetBindings();
         }
 
         public SelectionState GetPreChangeSelection()
@@ -78,10 +76,13 @@ namespace AnimationEditor.Modifications
             postChangeSelection = currentSelection;
         }
 
-
         public override string ToString()
         {
-            return "Remove Sprite";
+            if (indices.Count == 1)
+                return "Rename Frame";
+            else
+                return "Rename Frames";
         }
     }
 }
+
