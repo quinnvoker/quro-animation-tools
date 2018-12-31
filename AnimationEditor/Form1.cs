@@ -61,13 +61,18 @@ namespace AnimationEditor
             animationPreview.SpriteDragCompleted += animationPreview_SpriteDragComplete;
         }
 
+        private void DoModification(IModification mod)
+        {
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
+        }
+
         private void animationPreview_SpriteDragComplete(object sender, EventArgs e)
         {
             var args = e as SpriteDragArgs;
             var mod = new MoveSprite(frameSprites, frameSpriteListBox, args.DragDistance);
             mod.Undo();
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(mod);
         }
 
         private void frameListBox_SetSingleSelection(int index)
@@ -116,9 +121,7 @@ namespace AnimationEditor
 
         private void AddFrame(Frame frameToAdd)
         {
-            var modification = new AddFrame(frames, frameListBox, frameToAdd);
-            ModHelper.DoModificationWithSelectionTracking(modification, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(modification);
+            DoModification(new AddFrame(frames, frameListBox, frameToAdd));
             UpdateAnimation();
         }
 
@@ -287,9 +290,7 @@ namespace AnimationEditor
         {
             if (reading || tracking)
                 return;
-            var mod = new ChangeFrameDelay(frames, frameListBox, (float)delayInputBox.Value / frameRate);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new ChangeFrameDelay(frames, frameListBox, (float)delayInputBox.Value / frameRate));
         }
 
         private void loadSpriteSheetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -412,9 +413,7 @@ namespace AnimationEditor
 
         private void MoveFrame(BindingList<Frame> frameList, ListBox frameBox, int dir)
         {
-            var mod = new ReorderFrame(frameList, frameBox, dir);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new ReorderFrame(frameList, frameBox, dir));
             UpdateAnimation();
         }
 
@@ -422,9 +421,7 @@ namespace AnimationEditor
         {
             if(frameListBox.SelectedIndices.Count == 1 && frameListBox.SelectedIndex > -1 && frameListBox.SelectedIndex < frames.Count)
             {
-                var mod = new RemoveFrame(frames, frameListBox, frameListBox.SelectedIndex);
-                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, spriteListBox);
-                undoHistory.Add(mod);
+                DoModification(new RemoveFrame(frames, frameListBox, frameListBox.SelectedIndex));
                 UpdateAnimation();
             }
         }
@@ -463,9 +460,7 @@ namespace AnimationEditor
 
         private void AddAnimation(Animation anim)
         {
-            var mod = new AddAnimation(animations, animationBox, anim);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new AddAnimation(animations, animationBox, anim));
         }
 
         private void animationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -484,9 +479,7 @@ namespace AnimationEditor
         {
             if (animationBox.SelectedIndex > -1 && animationBox.SelectedIndex < animations.Count)
             {
-                var mod = new RemoveAnimation(animations, animationBox, animationBox.SelectedIndex);
-                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-                undoHistory.Add(mod);
+                DoModification(new RemoveAnimation(animations, animationBox, animationBox.SelectedIndex));
                 ReadAnimationInfo();
                 UpdateAnimation();
             }
@@ -664,18 +657,14 @@ namespace AnimationEditor
 
         private void SetSpritePosition()
         {
-            var mod = new SetSpritePosition(frameSprites, frameSpriteListBox, new Vector2((float)spriteXPosBox.Value, (float)spriteYPosBox.Value));
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new SetSpritePosition(frameSprites, frameSpriteListBox, new Vector2((float)spriteXPosBox.Value, (float)spriteYPosBox.Value)));
         }
 
         private void addSpriteToFrameSpritesButton_Click(object sender, EventArgs e)
         {
             var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
 
-            var mod = new AddSprite(frameSprites, frameSpriteListBox, currentFrame, spriteToAdd);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new AddSprite(frameSprites, frameSpriteListBox, currentFrame, spriteToAdd));
         }
 
         private void addEmptyFrameButton_Click(object sender, EventArgs e)
@@ -698,9 +687,7 @@ namespace AnimationEditor
 
             if (changed)
             {
-                var mod = new RenameFrame(frames, frameListBox, frameNameBox.Text);
-                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-                undoHistory.Add(mod);
+                DoModification(new RenameFrame(frames, frameListBox, frameNameBox.Text));
             }
         }
 
@@ -722,9 +709,7 @@ namespace AnimationEditor
 
         private void MoveSprite(BindingList<Sprite> spriteList, ListBox spriteBox, int dir)
         {
-            var mod = new ReorderSprite(spriteList, spriteBox, dir);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new ReorderSprite(spriteList, spriteBox, dir));
             UpdateAnimation();
         }
 
@@ -732,9 +717,7 @@ namespace AnimationEditor
         {
             if (frameSpriteListBox.SelectedIndex > -1 && frameSpriteListBox.SelectedIndex < frameSprites.Count)
             {
-                var mod = new RemoveSprite(frameSprites, frameSpriteListBox, frameSpriteListBox.SelectedIndex);
-                ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-                undoHistory.Add(mod);
+                DoModification(new RemoveSprite(frameSprites, frameSpriteListBox, frameSpriteListBox.SelectedIndex));
                 UpdateAnimation();
             }
         }
@@ -752,9 +735,7 @@ namespace AnimationEditor
 
         private void replaceSpriteButton_Click(object sender, EventArgs e)
         {
-            var mod = new ReplaceSprite(frameSprites, frameSpriteListBox.SelectedIndex, spriteSet[spriteListBox.SelectedIndex]);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new ReplaceSprite(frameSprites, frameSpriteListBox.SelectedIndex, spriteSet[spriteListBox.SelectedIndex]));
             UpdateAnimation();
         }
 
@@ -772,9 +753,7 @@ namespace AnimationEditor
 
         private void UpdateAnimationName()
         {
-            var mod = new RenameAnimation(animations, animationBox.SelectedIndex, animationNameBox.Text);
-            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
-            undoHistory.Add(mod);
+            DoModification(new RenameAnimation(animations, animationBox.SelectedIndex, animationNameBox.Text));
         }
 
         private void animationNameBox_Leave(object sender, EventArgs e)

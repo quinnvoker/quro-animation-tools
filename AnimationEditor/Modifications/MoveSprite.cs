@@ -26,6 +26,10 @@ namespace AnimationEditor.Modifications
             sprites = spriteList;
             listBox = spriteListBox;
             indices = new List<int>();
+            foreach(int index in spriteListBox.SelectedIndices)
+            {
+                indices.Add(index);
+            }
             dist = distance;
         }
 
