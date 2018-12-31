@@ -36,7 +36,7 @@ namespace AnimationEditor
         }
         private int frameRate;
 
-        private BindingList<Sprite> spriteSet;
+        private BindingList<Sprite> spriteMap;
         private BindingList<Frame> frames;
         private BindingList<Sprite> frameSprites;
         private BindingList<Animation> animations;
@@ -112,9 +112,9 @@ namespace AnimationEditor
 
         private void addSpriteToFrameListButton_Click(object sender, EventArgs e)
         {
-            if (spriteListBox.SelectedItem != null)
+            if (spriteMapListBox.SelectedItem != null)
             {
-                var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
+                var spriteToAdd = spriteMap[spriteMapListBox.SelectedIndex].Clone();
                 AddFrame(new Frame(spriteToAdd, importDelay));
             }
         }
@@ -178,7 +178,7 @@ namespace AnimationEditor
 
             //update per-sprite controls
             spritePosPanel.Enabled = singleSpriteSelected;
-            replaceSpriteButton.Enabled = singleSpriteSelected && spriteSet != null;
+            replaceSpriteButton.Enabled = singleSpriteSelected && spriteMap != null;
             moveSpriteDownButton.Enabled = singleSpriteSelected;
             moveSpriteUpButton.Enabled = singleSpriteSelected;
             removeSpriteButton.Enabled = singleSpriteSelected;
@@ -211,9 +211,9 @@ namespace AnimationEditor
 
         private void spriteListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (spriteListBox.SelectedItem != null)
+            if (spriteMapListBox.SelectedItem != null)
             {
-                var currentSprite = (Sprite)spriteListBox.SelectedItem;
+                var currentSprite = (Sprite)spriteMapListBox.SelectedItem;
                 Stream texture2DToImageStream = new MemoryStream();
                 Texture2DRegionExtractor.GetTexture2DFromRegion(spriteSheet, spriteSheet.GraphicsDevice, currentSprite.Bounds)
                     .SaveAsPng(texture2DToImageStream, currentSprite.Bounds.Width, currentSprite.Bounds.Height);
@@ -319,15 +319,15 @@ namespace AnimationEditor
                     loadedSpriteMap = IntermediateSerializer.Deserialize<Dictionary<string, Sprite>>(xmlRead, null);
                 }
 
-                spriteSet = new BindingList<Sprite>();
+                spriteMap = new BindingList<Sprite>();
                 foreach (KeyValuePair<string, Sprite> sprite in loadedSpriteMap)
                 {
-                    spriteSet.Add(sprite.Value);
+                    spriteMap.Add(sprite.Value);
                 }
 
-                spriteListBox.DataSource = spriteSet;
-                spriteListBox.DisplayMember = "Name";
-                spriteListBox.ValueMember = "Bounds";
+                spriteMapListBox.DataSource = spriteMap;
+                spriteMapListBox.DisplayMember = "Name";
+                spriteMapListBox.ValueMember = "Bounds";
 
                 //enable spriteMap-required controls
                 addSpriteToFrameListButton.Enabled = true;
@@ -662,7 +662,7 @@ namespace AnimationEditor
 
         private void addSpriteToFrameSpritesButton_Click(object sender, EventArgs e)
         {
-            var spriteToAdd = spriteSet[spriteListBox.SelectedIndex].Clone();
+            var spriteToAdd = spriteMap[spriteMapListBox.SelectedIndex].Clone();
 
             DoModification(new AddSprite(frameSprites, frameSpriteListBox, currentFrame, spriteToAdd));
         }
@@ -735,7 +735,7 @@ namespace AnimationEditor
 
         private void replaceSpriteButton_Click(object sender, EventArgs e)
         {
-            DoModification(new ReplaceSprite(frameSprites, frameSpriteListBox.SelectedIndex, spriteSet[spriteListBox.SelectedIndex]));
+            DoModification(new ReplaceSprite(frameSprites, frameSpriteListBox.SelectedIndex, spriteMap[spriteMapListBox.SelectedIndex]));
             UpdateAnimation();
         }
 

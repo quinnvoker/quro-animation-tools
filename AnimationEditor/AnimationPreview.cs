@@ -29,6 +29,7 @@ namespace AnimationEditor
         public Color HalfGridLineColor { get; set; }
         public Color PixelGridLineColor { get; set; }
 
+        private Color background;
         private Texture2D gridLine;
         private bool hovering;
         private bool dragging;
@@ -108,6 +109,7 @@ namespace AnimationEditor
             FullGridLineColor = new Color(145, 135, 120);
             HalfGridLineColor = new Color(120, 117, 115);
             PixelGridLineColor = new Color(113, 110, 108);
+            background = new Color(BackColor.R, BackColor.G, BackColor.B);
             CameraLocation = new Vector3();
             ZoomLevel = 1;
         }
@@ -291,7 +293,7 @@ namespace AnimationEditor
             Matrix centerMatrix = Matrix.CreateTranslation(new Vector3(centerPoint, 0));
             Matrix transformMatrix = cameraMatrix * zoomMatrix * centerMatrix;
 
-            Editor.graphics.Clear(Color.DimGray);
+            Editor.graphics.Clear(background);
 
             Editor.spriteBatch.Begin();
             DrawGrid();
