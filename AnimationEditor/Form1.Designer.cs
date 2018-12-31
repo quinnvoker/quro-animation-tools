@@ -91,8 +91,8 @@
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             this.animationPreview = new AnimationEditor.AnimationPreview();
+            this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.frameTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.delayInputBox)).BeginInit();
             this.mainMenuStrip.SuspendLayout();
@@ -136,12 +136,14 @@
             this.frameListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.frameListBox.BackColor = System.Drawing.SystemColors.Window;
+            this.frameListBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.frameListBox.FormattingEnabled = true;
             this.frameListBox.Location = new System.Drawing.Point(163, 41);
             this.frameListBox.Name = "frameListBox";
             this.frameListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.frameListBox.Size = new System.Drawing.Size(120, 160);
             this.frameListBox.TabIndex = 4;
+            this.frameListBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.frameListBox_DrawItem);
             this.frameListBox.SelectedIndexChanged += new System.EventHandler(this.frameListBox_SelectedIndexChanged);
             // 
             // addSpriteToFrameListButton
@@ -777,12 +779,6 @@
             this.animationLabel.TabIndex = 22;
             this.animationLabel.Text = "Animation";
             // 
-            // loadAnimationSetDialog
-            // 
-            this.loadAnimationSetDialog.DefaultExt = "animset";
-            this.loadAnimationSetDialog.FileName = "openFileDialog1";
-            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
-            // 
             // animationPreview
             // 
             this.animationPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -802,6 +798,12 @@
             this.animationPreview.Text = "animationPreview1";
             this.animationPreview.ZoomLevel = 0F;
             this.animationPreview.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.animationPreview_MouseWheel);
+            // 
+            // loadAnimationSetDialog
+            // 
+            this.loadAnimationSetDialog.DefaultExt = "animset";
+            this.loadAnimationSetDialog.FileName = "openFileDialog1";
+            this.loadAnimationSetDialog.Filter = "QUROGames AnimationSet|*.animSet";
             // 
             // Form1
             // 

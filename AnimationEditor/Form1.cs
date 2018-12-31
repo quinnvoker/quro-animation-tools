@@ -793,5 +793,43 @@ namespace AnimationEditor
                 frameNameBoxEdited = true;
             }
         }
+
+        private void frameListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            // Draw the background of the ListBox control for each item.
+            //e.DrawBackground();
+            // Define the default color of the brush as black.
+            Brush nameBrush = Brushes.Black;
+            Brush indexBrush = Brushes.Gray;
+
+            if (e.BackColor.GetBrightness() < 0.5)
+                nameBrush = Brushes.White;
+
+            System.Drawing.Rectangle indexRect = e.Bounds;
+            System.Drawing.Rectangle nameRect = e.Bounds;
+            indexRect.Width = 26;
+            nameRect.X += 24;
+            nameRect.Width -= 24;
+
+            string indexString = "";
+            for(int index = 3 - e.Index.ToString().Length; index > 0; index--)
+            {
+                indexString += "0";
+            }
+            indexString += e.Index;
+            indexString += ":";
+
+            e.Graphics.FillRectangle(Brushes.White, indexRect);
+            e.Graphics.FillRectangle(new SolidBrush(e.BackColor), nameRect);
+            // Draw the current item text based on the current Font 
+            // and the custom brush settings.
+            e.Graphics.DrawString(indexString,
+                e.Font, indexBrush, indexRect, StringFormat.GenericDefault);
+
+            e.Graphics.DrawString(frames[e.Index].Name,
+                e.Font, nameBrush, nameRect, StringFormat.GenericDefault);
+            // If the ListBox has focus, draw a focus rectangle around the selected item.
+            e.DrawFocusRectangle();
+        }
     }
 }
