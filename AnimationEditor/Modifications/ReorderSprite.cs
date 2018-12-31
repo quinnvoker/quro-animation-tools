@@ -65,7 +65,7 @@ namespace AnimationEditor.Modifications
 
         public override string ToString()
         {
-            return "Move Sprite";
+            return "Reorder Sprite";
         }
     }
 }

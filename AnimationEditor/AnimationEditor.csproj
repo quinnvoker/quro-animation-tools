@@ -93,6 +93,7 @@
     </Compile>
     <Compile Include="Modifications\ModHelper.cs" />
     <Compile Include="Modifications\SelectionState.cs" />
+    <Compile Include="Modifications\SpriteDragArgs.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\ContentIdentity.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\InvalidContentException.cs" />
     <Compile Include="MonoGame.Framework.Content.Pipeline\NamedValueDictionary.cs" />

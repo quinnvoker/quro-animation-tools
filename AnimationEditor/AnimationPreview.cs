@@ -36,6 +36,8 @@ namespace AnimationEditor
         private MouseState mState;
         private MouseState mState_old;
 
+        private Vector2 totalDragDist;
+
         private Vector2 centerPoint
         {
             get { return  new Vector2((Editor.graphics.PresentationParameters.BackBufferWidth / 2), (Editor.graphics.PresentationParameters.BackBufferHeight / 2)); }
@@ -54,16 +56,29 @@ namespace AnimationEditor
             }
         }
 
-        private EventHandler onSpriteMoved;
-        public event EventHandler SpriteMoved
+        private EventHandler onSpriteDragUpdate;
+        public event EventHandler SpriteDragUpdate
         {
             add
             {
-                onSpriteMoved += value;
+                onSpriteDragUpdate += value;
             }
             remove
             {
-                onSpriteMoved -= value;
+                onSpriteDragUpdate -= value;
+            }
+        }
+
+        private EventHandler onSpriteDragCompleted;
+        public event EventHandler SpriteDragCompleted
+        {
+            add
+            {
+                onSpriteDragCompleted += value;
+            }
+            remove
+            {
+                onSpriteDragCompleted -= value;
             }
         }
 
@@ -180,10 +195,23 @@ namespace AnimationEditor
                 }
 
                 if (mState.LeftButton == ButtonState.Pressed && mState.RightButton != ButtonState.Pressed && mState_old.LeftButton != ButtonState.Pressed)
+                {
                     dragging = hovering;
+                    if (dragging)
+                    {
+                        totalDragDist = Vector2.Zero;
+                    }
+                }
 
                 if (mState.LeftButton != ButtonState.Pressed)
+                {
+                    if(dragging && totalDragDist != Vector2.Zero)
+                    {
+                        OnSpriteDragCompleted(new Modifications.SpriteDragArgs(totalDragDist));
+
+                    }
                     dragging = false;
+                }
 
                 if (dragging)
                 {
@@ -194,11 +222,12 @@ namespace AnimationEditor
 
                     if (distMoved != Vector2.Zero)
                     {
+                        totalDragDist += distMoved;
                         foreach(Sprite spr in EditSprites)
                         {
                             spr.Offset += distMoved;
                         }
-                        OnSpriteMoved(new EventArgs());
+                        OnSpriteDragUpdate(new EventArgs());
                     }
                 }
             }
@@ -231,9 +260,14 @@ namespace AnimationEditor
             }
         }
 
-        protected virtual void OnSpriteMoved(EventArgs e)
+        protected virtual void OnSpriteDragCompleted(EventArgs e)
+        { 
+            onSpriteDragCompleted?.Invoke(this, e);
+        }
+
+        protected virtual void OnSpriteDragUpdate(EventArgs e)
         {
-            onSpriteMoved?.Invoke(this, e);
+            onSpriteDragUpdate?.Invoke(this, e);
         }
 
         protected virtual void OnFrameChanged(EventArgs e)

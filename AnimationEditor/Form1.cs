@@ -57,7 +57,17 @@ namespace AnimationEditor
             importDelayBox.Value = 0;
             animationPreview.FrameChanged += animationPreview_FrameChanged;
             animationPreview.AnimationEnded += animationPreview_AnimationEnded;
-            animationPreview.SpriteMoved += animationPreview_SpriteMoved;
+            animationPreview.SpriteDragUpdate += animationPreview_SpriteDragUpdate;
+            animationPreview.SpriteDragCompleted += animationPreview_SpriteDragComplete;
+        }
+
+        private void animationPreview_SpriteDragComplete(object sender, EventArgs e)
+        {
+            var args = e as SpriteDragArgs;
+            var mod = new MoveSprite(frameSprites, frameSpriteListBox, args.DragDistance);
+            mod.Undo();
+            ModHelper.DoModificationWithSelectionTracking(mod, animationBox, frameListBox, frameSpriteListBox);
+            undoHistory.Add(mod);
         }
 
         private void frameListBox_SetSingleSelection(int index)
@@ -116,6 +126,7 @@ namespace AnimationEditor
         {
             if(frames?.Count > 0)
             {
+                //update currentAnimation's data
                 if(currentAnimation == null)
                     currentAnimation = new Animation("unnamed", frames.ToArray(), true);
                 else
@@ -124,13 +135,19 @@ namespace AnimationEditor
                     currentAnimation.Frames = frames.ToArray();
                     currentAnimation.IsLooping = animationLoopCheckBox.Checked;
                 }
+                //ensure frameTrackBar length matches current animation
+                frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
+                //send currentAnimation to animationPreview
                 if (animationPreview.PreviewSprite == null)
                     animationPreview.PreviewSprite = new AnimatedSprite(currentAnimation);
                 else
                     animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
-                frameTrackBar.Maximum = currentAnimation.Frames.Count() - 1;
-                if(frameListBox.SelectedIndices.Count < 2 && frameListBox.SelectedIndex != frameTrackBar.Value)
+                //restore currently viewed frame
+                if (frameListBox.SelectedIndices.Count < 2)
                     frameListBox_SetSingleSelection(frameTrackBar.Value);
+                else
+                    frameListBox.SelectedIndex = frameTrackBar.Value;
+                //if animations list is empty, send created currentAnimation to it
                 if(animations.Count < 1)
                 {
                     animations.Add(currentAnimation);
@@ -722,7 +739,7 @@ namespace AnimationEditor
             }
         }
 
-        private void animationPreview_SpriteMoved(object sender, EventArgs e)
+        private void animationPreview_SpriteDragUpdate(object sender, EventArgs e)
         {
             if(frameSpriteListBox.SelectedIndices.Count == 1)
                 ReadSpriteOffset();

@@ -19,7 +19,6 @@ namespace AnimationEditor.Modifications
         private BindingList<Sprite> sprites;
         private ListBox listBox;
         private List<int> indices;
-        private Dictionary<int, Vector2> originalPositions;
         private Vector2 dist;
 
         public MoveSprite(BindingList<Sprite> spriteList, ListBox spriteListBox, Vector2 distance)
@@ -27,12 +26,6 @@ namespace AnimationEditor.Modifications
             sprites = spriteList;
             listBox = spriteListBox;
             indices = new List<int>();
-            originalPositions = new Dictionary<int, Vector2>();
-            foreach (int i in spriteListBox.SelectedIndices)
-            {
-                indices.Add(i);
-                originalPositions.Add(i, sprites[i].Offset);
-            }
             dist = distance;
         }
 
@@ -48,7 +41,7 @@ namespace AnimationEditor.Modifications
         {
             foreach (int index in indices)
             {
-                sprites[index].Offset = originalPositions[index];
+                sprites[index].Offset -= dist;
             }
         }
 
