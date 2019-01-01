@@ -53,6 +53,7 @@ namespace AnimationEditor
         {
             InitializeComponent();
             undoHistory = new History();
+            undoHistory.HistoryUpdated += OnUndoHistoryUpdated;
             frameRate = 60;
             importDelayBox.Value = 0;
             animationPreview.FrameChanged += animationPreview_FrameChanged;
@@ -739,16 +740,26 @@ namespace AnimationEditor
             UpdateAnimation();
         }
 
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Undo()
         {
             undoHistory.Undo(animationBox, frameListBox, frameSpriteListBox);
             UpdateAnimation();
         }
 
-        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Redo()
         {
             undoHistory.Redo(animationBox, frameListBox, frameSpriteListBox);
             UpdateAnimation();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Redo();
         }
 
         private void UpdateAnimationName()
@@ -794,11 +805,32 @@ namespace AnimationEditor
             }
         }
 
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                if (e.KeyCode == Keys.Z)
+                {
+                    
+                    Undo();
+                }
+                else if (e.KeyCode == Keys.Y)
+                {
+                    Redo();
+                }
+            }
+        }
+
+        private void OnUndoHistoryUpdated(object sender, EventArgs e)
+        {
+            undoToolStripMenuItem.Enabled = undoHistory.CanUndo;
+            undoToolStripMenuItem.Text = undoHistory.NextUndoString();
+            redoToolStripMenuItem.Enabled = undoHistory.CanRedo;
+            redoToolStripMenuItem.Text = undoHistory.NextRedoString();
+        }
+
         private void frameListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            // Draw the background of the ListBox control for each item.
-            //e.DrawBackground();
-            // Define the default color of the brush as black.
             Brush nameBrush = Brushes.Black;
             Brush indexBrush = Brushes.Gray;
 
@@ -821,8 +853,6 @@ namespace AnimationEditor
 
             e.Graphics.FillRectangle(Brushes.White, indexRect);
             e.Graphics.FillRectangle(new SolidBrush(e.BackColor), nameRect);
-            // Draw the current item text based on the current Font 
-            // and the custom brush settings.
             e.Graphics.DrawString(indexString,
                 e.Font, indexBrush, indexRect, StringFormat.GenericDefault);
 

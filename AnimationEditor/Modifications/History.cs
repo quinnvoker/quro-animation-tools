@@ -22,6 +22,19 @@ namespace AnimationEditor.Modifications
             get { return position < changes.Count - 1; }
         }
 
+        private EventHandler onHistoryUpdated;
+        public event EventHandler HistoryUpdated
+        {
+            add
+            {
+                onHistoryUpdated += value;
+            }
+            remove
+            {
+                onHistoryUpdated -= value;
+            }
+        }
+
         public History()
         {
             changes = new List<IModification>();
@@ -35,6 +48,7 @@ namespace AnimationEditor.Modifications
             }
             changes.Add(change);
             position = changes.Count - 1;
+            OnHistoryUpdated();
         }
 
         public void Undo()
@@ -43,6 +57,7 @@ namespace AnimationEditor.Modifications
             { 
                 changes[position].Undo();
                 position--;
+                OnHistoryUpdated();
             }
         }
 
@@ -53,6 +68,7 @@ namespace AnimationEditor.Modifications
                 Console.Write("Hist.Pos(" + position + "): ");
                 ModHelper.UndoAndRestoreSelection(changes[position], animBox, frameBox, spriteBox);
                 position--;
+                OnHistoryUpdated();
             }
         }
 
@@ -62,6 +78,7 @@ namespace AnimationEditor.Modifications
             {
                 changes[position + 1].Do();
                 position++;
+                OnHistoryUpdated();
             }
         }
 
@@ -72,6 +89,7 @@ namespace AnimationEditor.Modifications
                 Console.Write("Hist.Pos(" + position + "): ");
                 ModHelper.RedoAndRestoreSelection(changes[position + 1], animBox, frameBox, spriteBox);
                 position++;
+                OnHistoryUpdated();
             }
         }
 
@@ -89,6 +107,11 @@ namespace AnimationEditor.Modifications
                 return "Redo...";
             else
                 return "Redo " + changes[position + 1];
+        }
+
+        public void OnHistoryUpdated()
+        {
+            onHistoryUpdated?.Invoke(this, new EventArgs());
         }
     }
 }

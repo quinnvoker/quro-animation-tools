@@ -151,6 +151,10 @@ namespace AnimationEditor
                 if (hovering)
                     Cursor = System.Windows.Forms.Cursors.Default;
                 hovering = false;
+                if (dragging && totalDragDist != Vector2.Zero)
+                {
+                    OnSpriteDragCompleted(new Modifications.SpriteDragArgs(totalDragDist));
+                }
                 dragging = false;
             }
 
@@ -210,7 +214,6 @@ namespace AnimationEditor
                     if(dragging && totalDragDist != Vector2.Zero)
                     {
                         OnSpriteDragCompleted(new Modifications.SpriteDragArgs(totalDragDist));
-
                     }
                     dragging = false;
                 }
