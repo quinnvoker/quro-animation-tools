@@ -1,6 +1,6 @@
 ﻿namespace AnimationEditor
 {
-    partial class Form1
+    partial class AnimationEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnimationEditor));
             this.loadSpriteSheetDialog = new System.Windows.Forms.OpenFileDialog();
             this.loadSpriteMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.spriteMapListBox = new System.Windows.Forms.ListBox();
@@ -81,7 +81,7 @@
             this.animationPanel = new System.Windows.Forms.Panel();
             this.animationNameLabel = new System.Windows.Forms.Label();
             this.animationLabel = new System.Windows.Forms.Label();
-            this.animationPreview = new AnimationEditor.AnimationPreview();
+            this.animationPreview = new global::AnimationEditor.AnimationPreview();
             this.loadAnimationSetDialog = new System.Windows.Forms.OpenFileDialog();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.addAnimationButton = new System.Windows.Forms.Button();

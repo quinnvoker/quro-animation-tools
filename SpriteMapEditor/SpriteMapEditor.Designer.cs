@@ -1,6 +1,6 @@
 ﻿namespace SpriteMapEditor
 {
-    partial class Form1
+    partial class SpriteMapEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -60,7 +60,7 @@
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMapDialog = new System.Windows.Forms.SaveFileDialog();
             this.spriteViewerPanel = new System.Windows.Forms.Panel();
-            this.spriteSheetViewer = new SpriteMapEditor.PictureBoxWithInterpolationMode();
+            this.spriteSheetViewer = new global::SpriteMapEditor.PictureBoxWithInterpolationMode();
             this.zoomInButton = new System.Windows.Forms.Button();
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.zoomLabel = new System.Windows.Forms.Label();

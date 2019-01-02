@@ -32,7 +32,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
 */
 namespace AnimationEditor
 {
-    public partial class Form1 : Form
+    public partial class AnimationEditor : Form
     {
         private History undoHistory;
 
@@ -62,7 +62,7 @@ namespace AnimationEditor
         private bool reading;
         private float importDelay = 0;
 
-        public Form1()
+        public AnimationEditor()
         {
             InitializeComponent();
             undoHistory = new History();

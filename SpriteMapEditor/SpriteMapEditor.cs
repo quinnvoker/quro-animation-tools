@@ -19,7 +19,7 @@ using SpriteMapEditor.SpriteMapModifications;
 
 namespace SpriteMapEditor
 {
-    public partial class Form1 : Form
+    public partial class SpriteMapEditor : Form
     {
         private History undoHistory;
 
@@ -84,7 +84,7 @@ namespace SpriteMapEditor
 
         private List<Microsoft.Xna.Framework.Rectangle> preDragBounds;
 
-        public Form1()
+        public SpriteMapEditor()
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.Sizable;
