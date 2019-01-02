@@ -17,6 +17,19 @@ using System.Xml;
 using AnimationEditor.Modifications;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate;
 
+/*
+ * Editor for creating animations for use with the QURO.Animation library
+ * Coded in C# as a first Windows application project for me, from mid-November 2018 to January 1st, 2019
+ * Was created alongside the SpriteMapEditor app, this one being much more advanced in design
+ * Had a lot of fun with this one. Probably had the hardest time with the grid drawing in AnimationPreview!
+ * It was a great experience, but I'm excited to see what comes next. Especially trying WPF.
+ * After making a couple of games using this I hope to return to QURO.Animation and give it a few enhancements!
+ * Maybe something like adding sprite scaling and rotation, 
+ * and restructuring animations to use moving objects translated between frames, to save resources and make tweening a possibility
+ * And then of course rewriting this editor but in WPF...haha! See you then!
+ * -Quinn
+ * PS. Sorry for not properly documenting half of what I did when I made this. Hope it's not too hard to unravel later.
+*/
 namespace AnimationEditor
 {
     public partial class Form1 : Form
@@ -360,6 +373,7 @@ namespace AnimationEditor
             animationPreview.Playing = false;
             frameTrackBar.Enabled = true;
             frameListBox_SetSingleSelection(frameTrackBar.Value);
+            playAnimationButton.Image = Properties.Resources.play;
         }
 
         private void animationLoopCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -376,11 +390,13 @@ namespace AnimationEditor
                 {
                     frameTrackBar.Enabled = true;
                     frameListBox_SetSingleSelection(frameTrackBar.Value);
+                    playAnimationButton.Image = Properties.Resources.play;
                 }
                 else
                 {
                     animationPreview.PreviewSprite.CurrentAnimation = currentAnimation;
                     frameTrackBar.Enabled = false;
+                    playAnimationButton.Image = Properties.Resources.pause;
                 }
             }
         }
